@@ -1,0 +1,8 @@
+{%- set interface = salt['pillar.get']('linux:network:interface:'+interface_name) %}
+Interface={{ interface_name }}
+Connection=wireless
+Security={{ interface.wireless.security }}
+ESSID={{ interface.wireless.essid }}
+IP=dhcp
+Key={{ interface.wireless.key }}
+Priority={{ interface.wireless.get('priority', '1') }}

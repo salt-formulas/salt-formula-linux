@@ -1,0 +1,117 @@
+{% set system = salt['grains.filter_by']({
+    'Arch': {
+        'pkgs': ['sudo', 'vim', 'wget'],
+        'utc': true,
+        'user': {},
+        'group': {},
+        'job': {},
+        'repo': {},
+        'package': {},
+        'selinux': 'permissive',
+        'ca_certs_dir': '/usr/local/share/ca-certificates',
+    },
+    'Debian': {
+        'pkgs': ['python-apt','vim'],
+        'utc': true,
+        'user': {},
+        'group': {},
+        'job': {},
+        'repo': {},
+        'package': {},
+        'selinux': 'permissive',
+        'ca_certs_dir': '/usr/local/share/ca-certificates',
+    },
+    'RedHat': {
+        'pkgs': ['policycoreutils', 'policycoreutils-python', 'vim-enhanced', 'telnet', 'wget'],
+        'utc': true,
+        'user': {},
+        'group': {},
+        'job': {},
+        'repo': {},
+        'package': {},
+        'selinux': 'permissive',
+        'ca_certs_dir': '/usr/local/share/ca-certificates',
+    },
+}, grain='os_family', merge=salt['pillar.get']('linux:system')) %}
+
+{#    'network_name', #}
+
+{% set interface_params = [
+    'gateway',
+    'mtu',
+    'network',
+    'broadcast',
+    'master',
+    'miimon',
+    'mode',
+    'lacp-rate',
+    'dns-search',
+    'up_cmds',
+    'pre_up_cmds',
+    'post_up_cmds',
+    'down_cmds',
+    'pre_down_cmds',
+    'post_down_cmds',
+] %}
+
+{% set network = salt['grains.filter_by']({
+    'Arch': {
+        'pkgs': ['wpa_supplicant', 'dhclient', 'wireless_tools'],
+        'bridge_pkgs': ['bridge-utils'],
+        'ovs_pkgs': ['openvswitch-switch'],
+        'hostname_file': '/etc/hostname',
+        'network_manager': False,
+        'interface': {},
+        'interface_params': interface_params,
+        'bridge': 'none',
+        'proxy': {
+           'host': 'none',
+        },
+        'host': {},
+    },
+    'Debian': {
+        'hostname_file': '/etc/hostname',
+        'bridge_pkgs': ['bridge-utils'],
+        'ovs_pkgs': ['openvswitch-switch'],
+        'network_manager': False,
+        'interface': {},
+        'interface_params': interface_params,
+        'bridge': 'none',
+        'proxy': {
+           'host': 'none',
+        },
+        'host': {},
+    },
+    'RedHat': {
+        'bridge_pkgs': ['bridge-utils'],
+        'ovs_pkgs': ['openvswitch-switch'],
+        'hostname_file': '/etc/sysconfig/network',
+        'network_manager': False,
+        'interface': {},
+        'interface_params': interface_params,
+        'bridge': 'none',
+        'proxy': {
+           'host': 'none',
+        },
+        'host': {},
+    },
+}, grain='os_family', merge=salt['pillar.get']('linux:network')) %}
+
+{% set storage = salt['grains.filter_by']({
+    'Arch': {
+        'mount': {},
+        'swap': {},
+        'multipath': False,
+    },
+    'Debian': {
+        'mount': {},
+        'swap': {},
+        'multipath': False,
+        'multipath_pkgs': ['multipath-tools']
+    },
+    'RedHat': {
+        'mount': {},
+        'swap': {},
+        'multipath': False,
+    },
+}, grain='os_family', merge=salt['pillar.get']('linux:storage')) %}

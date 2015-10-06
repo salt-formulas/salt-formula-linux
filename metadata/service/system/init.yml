@@ -1,0 +1,19 @@
+applications:
+- linux
+parameters:
+  linux:
+    system:
+      enabled: true
+      user:
+        root:
+          enabled: true
+          name: root
+          home: /root
+      timezone: Europe/Prague
+      cluster: default
+    network:
+      enabled: true
+      hostname: ${linux:system:name}
+      fqdn: ${linux:system:name}.${linux:system:domain}
+    storage:
+      enabled: true

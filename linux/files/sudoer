@@ -1,0 +1,5 @@
+# managed by salt
+
+# user {{ user_name }} is system administrator.
+# It has passwordless sudo functionality.
+{{ user_name }} ALL=(ALL) NOPASSWD:ALL

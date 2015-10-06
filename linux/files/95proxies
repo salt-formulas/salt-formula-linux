@@ -1,0 +1,4 @@
+{%- from "linux/map.jinja" import network with context %}
+Acquire::http::proxy "http://{{ network.proxy.host }}:{{ network.proxy.port }}/";
+Acquire::ftp::proxy "ftp://{{ network.proxy.host }}:{{ network.proxy.port }}/";
+Acquire::https::proxy "https://{{ network.proxy.host }}:{{ network.proxy.port }}/";
