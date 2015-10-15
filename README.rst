@@ -106,6 +106,18 @@ Linux with cron jobs
             hour: 2
             minute: 0
 
+Enable autologin on tty1 (may work only for Ubuntu 14.04):
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        console:
+          tty1:
+            autologin: root
+
+To disable set autologin to `false`.
+
 Repositories
 ~~~~~~~~~~~~
 

@@ -33,3 +33,6 @@ include:
 {%- if system.apparmor is defined %}
 - linux.system.apparmor
 {%- endif %}
+{%- if system.console is defined %}
+- linux.system.console
+{%- endif %}
