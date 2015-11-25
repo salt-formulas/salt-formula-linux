@@ -6,7 +6,7 @@ parameters:
       enabled: true
       logging:
         heka:
-          enabled: true
+          enabled: false
       metering:
         collectd:
           enabled: true
