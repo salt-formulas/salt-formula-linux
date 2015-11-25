@@ -4,6 +4,15 @@ parameters:
   linux:
     system:
       enabled: true
+      logging:
+        heka:
+          enabled: true
+      metering:
+        collectd:
+          enabled: true
+      monitoring:
+        sensu:
+          enabled: true
       user:
         root:
           enabled: true
