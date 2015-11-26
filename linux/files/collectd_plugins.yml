@@ -1,0 +1,43 @@
+linux_network_interface:
+  plugin: interface
+  interval: 60
+linux_system_cpu:
+  plugin: cpu
+  interval: 60
+linux_system_entropy:
+  plugin: entropy
+  interval: 60
+linux_system_memory:
+  plugin: memory
+  interval: 60
+linux_system_processes:
+  plugin: processes
+  interval: 60
+linux_system_uptime:
+  plugin: uptime
+  interval: 60
+linux_system_users:
+  plugin: users
+  interval: 60
+linux_storage_df:
+  plugin: df
+  interval: 60
+  template: linux/files/collectd_df.conf
+  ignore_selected: true
+  fs_types:
+  - rootfs
+  - sysfs
+  - proc
+  - devtmpfs
+  - devpts
+  - tmpfs
+  - fusectl
+  - cgroup
+linux_storage_disk:
+  plugin: disk
+  interval: 60
+  template: linux/files/collectd_disk.conf
+  ignore_selected: true
+linux_storage_swap:
+  plugin: swap
+  interval: 60

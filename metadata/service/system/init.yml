@@ -1,18 +1,11 @@
 applications:
 - linux
+classes:
+- service.linux.support
 parameters:
   linux:
     system:
       enabled: true
-      logging:
-        heka:
-          enabled: false
-      metering:
-        collectd:
-          enabled: true
-      monitoring:
-        sensu:
-          enabled: true
       user:
         root:
           enabled: true
