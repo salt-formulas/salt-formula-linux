@@ -36,3 +36,6 @@ include:
 {%- if system.console is defined %}
 - linux.system.console
 {%- endif %}
+{%- if system.doc is defined %}
+- linux.system.doc
+{%- endif %}
