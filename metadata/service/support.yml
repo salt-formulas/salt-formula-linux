@@ -7,3 +7,5 @@ parameters:
         enabled: false
       sensu:
         enabled: true
+      sphinx:
+        enabled: true
