@@ -106,6 +106,22 @@ Linux with cron jobs
             hour: 2
             minute: 0
 
+Linux security limits (limit sensu user memory usage to max 1GB):
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        limit:
+          sensu:
+            enabled: true
+            domain: sensu
+            limits:
+              - type: hard
+                item: as
+                value: 1000000
+
 Enable autologin on tty1 (may work only for Ubuntu 14.04):
 
 .. code-block:: yaml
