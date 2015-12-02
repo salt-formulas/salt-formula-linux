@@ -9,9 +9,9 @@ doc:
         name:
           value: {{ system.name }}
         kernel:
-          value: {{ grains.kernel }} {{ grains.kernelrelease }}
+          value: {{ salt['grains.item']('kernel')['kernel'] }} {{ salt['grains.item']('kernelrelease')['kernelrelease'] }}
         distribution:
-          value: {{ grains.lsb_distrib_description }}
+          value: {{ salt['grains.item']('lsb_distrib_description')['lsb_distrib_description'] }}
     network:
       name: Network
       param:
@@ -20,4 +20,4 @@ doc:
           value: {{ network.fqdn }}
         ip:
           name: IP Addresses
-          value: {{ grains.ipv4 }}
+          value: {{ salt['grains.item']('ipv4')['ipv4'] }}
