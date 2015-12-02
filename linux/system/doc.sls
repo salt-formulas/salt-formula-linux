@@ -17,4 +17,14 @@ linux_system_doc_grain:
   - require:
     - file: linux_system_doc_grains_dir
 
+linux_system_doc_validity_check:
+  pkg.installed:
+  - name: python-yaml 
+  cmd.wait:
+  - name: python -c "import yaml; stream = file('/etc/salt/grains.d/sphinx', 'r'); yaml.load(stream); stream.close()"
+  - require:
+    - pkg: linux_system_doc_validity_check
+  - watch:
+    - file: linux_system_doc_grain
+
 {%- endif %}

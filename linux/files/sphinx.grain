@@ -1,9 +1,10 @@
-sphinx_doc:
+{%- set grains = {'sphinx': {'doc': {}}} %}
 {%- for service_name, service in pillar.items() %}
 {%- if service.get('_support', {}).get('sphinx', {}).get('enabled', False) %}
 {%- set grains_fragment_file = service_name+'/meta/sphinx.yml' %}
-  {{ service_name }}:
-{%- macro indent_grains_dict() %}{% include grains_fragment_file %}{% endmacro %}
-{{ indent_grains_dict()|indent(4, true) }}
+{%- macro load_grains_file() %}{% include grains_fragment_file %}{% endmacro %}
+{%- set grains_yaml = load_grains_file()|load_yaml %}
+{%- set _dummy = grains.sphinx.doc.update({ service_name: grains_yaml.doc }) %}
 {%- endif %}
 {%- endfor %}
+{{ grains|yaml(False) }}

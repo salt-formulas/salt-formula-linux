@@ -1,22 +1,23 @@
 {%- from "linux/map.jinja" import system with context -%}
 {%- from "linux/map.jinja" import network with context -%}
-name: Linux
-role:
-  system:
-    name: System
-    param:
-      name:
-        value: {{ system.name }}
-      kernel:
-        value: {{ grains.kernel }} {{ grains.kernelrelease }}
-      distribution:
-        value: {{ grains.lsb_distrib_description }}
-  network:
-    name: Network
-    param:
-      fqdn:
-        name: FQDN
-        value: {{ network.fqdn }}
-      ip:
-        name: IP Addresses
-        value: {{ grains.ipv4 }}
+doc:
+  name: Linux
+  role:
+    system:
+      name: System
+      param:
+        name:
+          value: {{ system.name }}
+        kernel:
+          value: {{ salt['grains.item']('kernel')['kernel'] }} {{ salt['grains.item']('kernelrelease')['kernelrelease'] }}
+        distribution:
+          value: {{ salt['grains.item']('lsb_distrib_description')['lsb_distrib_description'] }}
+    network:
+      name: Network
+      param:
+        fqdn:
+          name: FQDN
+          value: {{ network.fqdn }}
+        ip:
+          name: IP Addresses
+          value: {{ salt['grains.item']('ipv4')['ipv4'] }}

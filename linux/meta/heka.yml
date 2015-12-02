@@ -1,18 +1,19 @@
-linux_rsyslog_syslog:
-  engine: logstreamer
-  log_directory: /var/log
-  file_match: syslog\.?(?P<Index>\d+)?(.gz)?
-  priority: ["^Index"]
-  decoder: RsyslogDecoder
-linux_rsyslog_auth:
-  engine: logstreamer
-  log_directory: /var/log
-  file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
-  priority: ["^Index"]
-  decoder: RsyslogDecoder
-linux_rsyslog_kern:
-  engine: logstreamer
-  log_directory: /var/log
-  file_match: kern\.log\.?(?P<Index>\d+)?(.gz)?
-  priority: ["^Index"]
-  decoder: RsyslogDecoder
+input:
+  linux_rsyslog_syslog:
+    engine: logstreamer
+    log_directory: /var/log
+    file_match: syslog\.?(?P<Index>\d+)?(.gz)?
+    priority: ["^Index"]
+    decoder: RsyslogDecoder
+  linux_rsyslog_auth:
+    engine: logstreamer
+    log_directory: /var/log
+    file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
+    priority: ["^Index"]
+    decoder: RsyslogDecoder
+  linux_rsyslog_kern:
+    engine: logstreamer
+    log_directory: /var/log
+    file_match: kern\.log\.?(?P<Index>\d+)?(.gz)?
+    priority: ["^Index"]
+    decoder: RsyslogDecoder
