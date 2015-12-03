@@ -11,9 +11,6 @@ plugin:
   linux_system_memory:
     plugin: memory
     interval: 60
-  linux_system_processes:
-    plugin: processes
-    interval: 60
   linux_system_uptime:
     plugin: uptime
     interval: 60
