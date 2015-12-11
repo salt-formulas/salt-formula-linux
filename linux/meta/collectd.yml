@@ -8,6 +8,9 @@ plugin:
   linux_system_entropy:
     plugin: entropy
     interval: 60
+  linux_system_load:
+    plugin: load
+    interval: 60
   linux_system_memory:
     plugin: memory
     interval: 60
