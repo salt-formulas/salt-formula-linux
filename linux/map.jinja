@@ -104,17 +104,21 @@
     'Arch': {
         'mount': {},
         'swap': {},
+        'lvm': {},
         'multipath': False,
     },
     'Debian': {
         'mount': {},
         'swap': {},
+        'lvm': {},
         'multipath': False,
         'multipath_pkgs': ['multipath-tools']
+        'lvm_pkgs': ['lvm2']
     },
     'RedHat': {
         'mount': {},
         'swap': {},
+        'lvm': {},
         'multipath': False,
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:storage')) %}

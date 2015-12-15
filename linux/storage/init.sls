@@ -7,6 +7,9 @@ include:
 {%- if storage.swap|length > 0 %}
 - linux.storage.swap
 {%- endif %}
+{%- if storage.lvm|length > 0 %}
+- linux.storage.lvm
+{%- endif %}
 {%- if storage.multipath %}
 - linux.storage.multipath
 {%- endif %}

@@ -369,6 +369,28 @@ Linux with file swap
             device: /swapfile
             size: 1024
 
+LVM group `vg1` with one device and `data` volume mounted into `/mnt/data`
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        storage:
+          mount:
+            data:
+              device: /dev/vg1/data
+              file_system: ext4
+              path: /mnt/data
+          lvm:
+            vg1:
+              enabled: true
+              devices:
+                - /dev/sdb
+              volume:
+                data:
+                  size: 40G
+                  mount: ${linux:storage:mount:data}
+
 Usage
 =====
 
