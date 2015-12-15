@@ -118,7 +118,7 @@ linux_interface_{{ interface_name }}:
   - bypassfirewall: True
   - use:
     {%- for network in interface.use_interfaces %}
-    - network: {{ network }}
+    - network: linux_interface_{{ network }}
     {%- endfor %}
   - ports: {% for network in interface.use_interfaces %}{{ network }} {% endfor %}
   - require:
