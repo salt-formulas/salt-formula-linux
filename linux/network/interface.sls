@@ -133,7 +133,7 @@ linux_interface_{{ interface_name }}:
     {%- endfor %}
   - require:
     {%- for network in interface.use_interfaces %}
-    - network: linux_interface_{{ network }}
+    - network: {{ network }}
     {%- endfor %}
   {%- endif %}
 
