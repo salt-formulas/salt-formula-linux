@@ -223,6 +223,19 @@ Linux with bonded interfaces
             - interface: ${linux:interface:eth0}
             - interface: ${linux:interface:eth0}
 
+Linux with vlan interface_params
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        enabled: true
+        interface:
+          vlan69:
+            type: vlan
+            use_interfaces:
+            - interface: ${linux:interface:bond0}
+
 Linux with wireless interface parameters
 
 .. code-block:: yaml
@@ -231,7 +244,7 @@ Linux with wireless interface parameters
       network:
         enabled: true
         gateway: 10.0.0.1
-        default_interface: eth0 
+        default_interface: eth0
         interface:
           wlan0:
             type: eth
@@ -249,7 +262,7 @@ Linux networks with routes defined
       network:
         enabled: true
         gateway: 10.0.0.1
-        default_interface: eth0 
+        default_interface: eth0
         interface:
           eth0:
             type: eth
