@@ -233,11 +233,8 @@ Linux with vlan interface_params
         interface:
           vlan69:
             type: vlan
-            use_in:
+            use_interfaces:
             - interface: ${linux:interface:bond0}
-            require:
-            - interface: ${linux:interface:bond0}
-
 
 Linux with wireless interface parameters
 
