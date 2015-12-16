@@ -126,16 +126,6 @@ linux_interface_{{ interface_name }}:
     - network: linux_interface_{{ network }}
     {%- endfor %}
   {%- endif %}
-  {%- if interface.type == 'vlan' %}
-  - use:
-    {%- for network in interface.use_interfaces %}
-    - network: {{ network }}
-    {%- endfor %}
-  - require:
-    {%- for network in interface.use_interfaces %}
-    - network: {{ network }}
-    {%- endfor %}
-  {%- endif %}
   {%- if interface.type == 'bond' %}
   - slaves: {{ interface.slaves }}
   - mode: {{ interface.mode }}
