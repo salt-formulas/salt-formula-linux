@@ -136,6 +136,10 @@ linux_interface_{{ interface_name }}:
     - network: {{ network }}
     {%- endfor %}
   {%- endif %}
+  {%- if interface.type == 'bond' %}
+  - slaves: {{ interface.slaves }}
+  - mode: {{ interface.mode }}
+  {%- endif %}
 
 {%- if interface.gateway is defined %}
 
