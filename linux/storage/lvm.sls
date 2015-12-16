@@ -13,7 +13,7 @@ linux_lvm_pkgs:
 {%- for dev in vg.devices %}
 lvm_{{ vgname }}_pv_{{ dev }}:
   lvm.pv_present:
-    - name: dev
+    - name: {{ dev }}
     - require:
       - pkg: linux_lvm_pkgs
     - require_in:
@@ -23,7 +23,7 @@ lvm_{{ vgname }}_pv_{{ dev }}:
 lvm_vg_{{ vgname }}:
   lvm.vg_present:
     - name: {{ vgname }}
-    - devices: {{ vg.devices }}
+    - devices: {{ vg.devices|join(',') }}
 
 {%- for lvname, volume in vg.volume.iteritems() %}
 
