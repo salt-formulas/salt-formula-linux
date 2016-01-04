@@ -134,6 +134,33 @@ Enable autologin on tty1 (may work only for Ubuntu 14.04):
 
 To disable set autologin to `false`.
 
+Kernel
+~~~~~~
+
+Install always up to date LTS kernel and headers from Ubuntu trusty:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          type: generic
+          lts: trusty
+          headers: true
+
+Install specific kernel version and ensure all other kernel packages are
+not present. Also install extra modules and headers for this kernel:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          type: generic
+          extra: true
+          headers: true
+          version: 4.2.0-22
+
 Repositories
 ~~~~~~~~~~~~
 

@@ -3,68 +3,40 @@
 
 {%- if system.kernel is defined %}
 
-Basic kernel:
-
-  linux:
-    system:
-      kernel:
-        hold: true
-        versions:
-          generic:
-            headers: true
-
-
-  linux:
-    system:
-      kernel:
-        source:
-          engine: pkg
-          repo: from_repo
-        version: 1.13.42
-        hold: true
-        headers: true
-        generic: true
-
-linux-headers-3.13.0-34
-linux-image-3.13.0-34-generic
-linux-headers-3.13.0-34-generic
-
-{%- if system.kernel.get('source', {'engine': 'pkg'}).engine == 'pkg' %}
-
 {%- if system.kernel.version is defined %}
 
 linux_kernel_package:
   pkg.installed:
-  - name: linux-image-{{ system.kernel.version }}
+  - names:
+    - linux-image-{{ system.kernel.version }}-{{ system.kernel.type|default('generic') }}
+    {%- if system.kernel.get('headers', False) %}
+    - linux-headers-{{ system.kernel.version }}-{{ system.kernel.type|default('generic') }}
+    {%- endif %}
+    {%- if system.kernel.get('extra', False) %}
+    - linux-extra-{{ system.kernel.version }}-{{ system.kernel.type|default('generic') }}
+    {%- endif %}
   - refresh: true
+
+# Not very Salt-ish.. :-(
+linux_kernel_old_absent:
+  cmd.wait:
+  - name: "apt-get purge -y --no-input $(dpkg -l '*linux-image-[0-9]*' '*linux-headers-[0-9]*' '*linux-extra-[0-9]*' | grep -E '^ii' | awk '{print $2}' | grep -v '{{ system.kernel.version }}')"
+  - watch:
+    - pkg: linux_kernel_package
 
 {%- else %}
 
 linux_kernel_package:
   pkg.latest:
-  - name: linux-image-generic
+  - names:
+    - linux-image-{{ system.kernel.type|default('generic') }}{% if system.kernel.get('lts', False) %}-lts-{{ system.kernel.lts }}{% endif %}
+    {%- if system.kernel.get('headers', False) %}
+    - linux-headers-{{ system.kernel.type|default('generic') }}{% if system.kernel.get('lts', False) %}-lts-{{ system.kernel.lts }}{% endif %}
+    {%- endif %}
+    {%- if system.kernel.get('extra', False) %}
+    - linux-extra-{{ system.kernel.type|default('generic') }}{% if system.kernel.get('lts', False) %}-lts-{{ system.kernel.lts }}{% endif %}
+    {%- endif %}
   - refresh: true
-
-{%- endif %}
-
-{%- if system.kernel.headers is defined %}
-{%- if system.kernel.version is defined %}
-
-linux_kernel_package:
-  pkg.installed:
-  - name: linux-image-{{ system.kernel.version }}
-  - version: 
-  - refresh: true
-
-{%- else %}
-
-linux_kernel_package:
-  pkg.latest:
-  - name: linux-image-generic
-  - refresh: true
-
-{%- endif %}
-{%- endif %}
 
 {%- endif %}
 
