@@ -13,14 +13,14 @@ linux_kernel_package:
     - linux-headers-{{ system.kernel.version }}-{{ system.kernel.type|default('generic') }}
     {%- endif %}
     {%- if system.kernel.get('extra', False) %}
-    - linux-extra-{{ system.kernel.version }}-{{ system.kernel.type|default('generic') }}
+    - linux-image-extra-{{ system.kernel.version }}-{{ system.kernel.type|default('generic') }}
     {%- endif %}
   - refresh: true
 
 # Not very Salt-ish.. :-(
 linux_kernel_old_absent:
   cmd.wait:
-  - name: "apt-get purge -y $(dpkg -l '*linux-image-[0-9]*' '*linux-headers-[0-9]*' '*linux-extra-[0-9]*' | grep -E '^ii' | awk '{print $2}' | grep -v '{{ system.kernel.version }}')"
+  - name: "apt-get purge -y $(dpkg -l '*linux-image-[0-9]*' '*linux-headers-[0-9]*' '*linux-image-extra-[0-9]*' | grep -E '^ii' | awk '{print $2}' | grep -v '{{ system.kernel.version }}')"
   - watch:
     - pkg: linux_kernel_package
 
@@ -34,7 +34,7 @@ linux_kernel_package:
     - linux-headers-{{ system.kernel.type|default('generic') }}{% if system.kernel.get('lts', False) %}-lts-{{ system.kernel.lts }}{% endif %}
     {%- endif %}
     {%- if system.kernel.get('extra', False) %}
-    - linux-extra-{{ system.kernel.type|default('generic') }}{% if system.kernel.get('lts', False) %}-lts-{{ system.kernel.lts }}{% endif %}
+    - linux-image-extra-{{ system.kernel.type|default('generic') }}{% if system.kernel.get('lts', False) %}-lts-{{ system.kernel.lts }}{% endif %}
     {%- endif %}
   - refresh: true
 
