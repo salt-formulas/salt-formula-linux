@@ -37,7 +37,7 @@ system_user_home_{{ user.home }}:
 
 {%- if user.get('sudo', False) %}
 
-/etc/sudoers.d/90-salt-user-{{ name }}:
+/etc/sudoers.d/90-salt-user-{{ name|replace('.', '-') }}:
   file.managed:
   - source: salt://linux/files/sudoer
   - template: jinja
@@ -61,7 +61,7 @@ system_user_home_{{ user.home }}:
   file.absent:
   - name: {{ user.home }}
 
-/etc/sudoers.d/90-salt-user-{{ name }}:
+/etc/sudoers.d/90-salt-user-{{ name|replace('.', '-') }}:
   file.absent
 
 {%- endif %}
