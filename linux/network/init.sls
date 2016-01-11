@@ -4,6 +4,9 @@ include:
 {%- if network.host|length > 0 %}
 - linux.network.host
 {%- endif %}
+{%- if network.resolv is defined %}
+- linux.network.resolv
+{%- endif %}
 {%- if network.interface|length > 0 %}
 - linux.network.interface
 {%- endif %}

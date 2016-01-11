@@ -378,6 +378,21 @@ Linux with hosts
             - node2.domain.com
             - service2.domain.com
 
+Setup resolv.conf, nameservers, domain and search domains
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        resolv:
+          dns:
+            - 8.8.4.4
+            - 8.8.8.8
+          domain: my.example.com
+          search:
+            - my.example.com
+            - example.com
+
 Linux storage pillars
 ---------------------
 
