@@ -91,7 +91,12 @@ linux_interface_{{ interface_name }}:
   - name: {{ interface_name }}
   - type: {{ interface.type }}
   {%- if interface.address is defined %}
+  {%- if grains.os_family == 'Debian' %}
   - proto: {{ interface.get('proto', 'static') }}
+  {% endif %}
+  {%- if grains.os_family == 'RedHat' %}
+  - proto: {{ interface.get('proto', 'none') }}
+  {% endif %}
   - ipaddr: {{ interface.address }}
   - netmask: {{ interface.netmask }}
   {%- else %}
