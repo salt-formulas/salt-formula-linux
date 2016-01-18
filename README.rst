@@ -226,7 +226,7 @@ Linux with default static network interfaces, default gateway interface and DNS 
             - 8.8.4.4
             mtu: 1500
 
-Linux with bonded interfaces
+Linux with bonded interfaces and disabled NetworkManager
 
 .. code-block:: yaml
 
@@ -249,6 +249,8 @@ Linux with bonded interfaces
             use_in:
             - interface: ${linux:interface:eth0}
             - interface: ${linux:interface:eth0}
+        network_manager:
+          disable: true
 
 Linux with vlan interface_params
 
