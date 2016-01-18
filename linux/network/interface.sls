@@ -20,10 +20,6 @@ linux_network_bridge_pkgs:
 
 {%- endif %}
 
-{%- if not network.network_manager %}
-
-{# TODO stop/disable/uninstall network manager #}
-
 {%- for interface_name, interface in network.interface.iteritems() %}
 
 {%- if interface.get('managed', True) %}
@@ -215,4 +211,8 @@ linux_network_{{ interface_name }}_routes:
 
 {%- endif %}
 
+{%- if network.network_manager.disable == True %}
+NetworkManager:
+  service.dead:
+  - enable: false
 {%- endif %}
