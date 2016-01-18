@@ -211,7 +211,7 @@ linux_network_{{ interface_name }}_routes:
 
 {%- endif %}
 
-{%- if network.network_manager.disable == True %}
+{%- if network.network_manager.disable is defined and network.network_manager.disable == True %}
 NetworkManager:
   service.dead:
   - enable: false
