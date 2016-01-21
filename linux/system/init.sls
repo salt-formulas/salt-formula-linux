@@ -21,6 +21,9 @@ include:
 {%- if system.group|length > 0 %}
 - linux.system.group
 {%- endif %}
+{%- if system.rc is defined %}
+- linux.system.rc
+{%- endif %}
 {%- if system.job|length > 0 %}
 - linux.system.job
 {%- endif %}
