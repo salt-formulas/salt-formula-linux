@@ -7,7 +7,7 @@
 [[ $- == *i* ]] || return 0
 
 {%- for user, prompt in system.prompt.iteritems() %}
-{% if user != default %}
+{% if user != "default" %}
 if [ "$USERNAME" == "{{ user }}" ]; then
   export PS1="{{ prompt }} "
   return 0
