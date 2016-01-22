@@ -493,6 +493,19 @@ Linux with file swap
             device: /swapfile
             size: 1024
 
+Linux with partition swap
+
+.. code-block:: yaml
+
+    linux:
+      storage:
+        enabled: true
+        swap:
+          partition:
+            enabled: true
+            engine: partition
+            device: /dev/vg0/swap
+
 LVM group `vg1` with one device and `data` volume mounted into `/mnt/data`
 
 .. code-block:: yaml
