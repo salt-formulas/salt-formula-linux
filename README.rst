@@ -217,6 +217,24 @@ rc.local example
            # By default this script does nothing.
            exit 0
 
+Prompt
+~~~~~~
+
+Setting prompt is implemented by creating ``/etc/profile.d/prompt.sh``. Every
+user can have different prompt.
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        prompt:
+          root: \\n\\[\\033[0;37m\\]\\D{%y/%m/%d %H:%M:%S} $(hostname -f)\\[\\e[0m\\]\\n\\[\\e[1;31m\\][\\u@\\h:\\w]\\[\\e[0m\\]
+          default: \\n\\D{%y/%m/%d %H:%M:%S} $(hostname -f)\\n[\\u@\\h:\\w]
+
+On Debian systems to set prompt system-wide it's necessary to remove setting
+PS1 in ``/etc/bash.bashrc`` and ``~/.bashrc`` (which comes from
+``/etc/skel/.bashrc``). This formula will do this automatically, but will not
+touch existing user's ``~/.bashrc`` files.
 
 Linux network
 -------------

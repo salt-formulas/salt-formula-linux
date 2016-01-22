@@ -45,3 +45,6 @@ include:
 {%- if system.limit|length > 0 %}
 - linux.system.limit
 {%- endif %}
+{%- if system.prompt is defined %}
+- linux.system.prompt
+{%- endif %}
