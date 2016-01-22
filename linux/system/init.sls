@@ -48,3 +48,6 @@ include:
 {%- if system.limit|length > 0 %}
 - linux.system.limit
 {%- endif %}
+{%- if system.motd|length > 0 %}
+- linux.system.motd
+{%- endif %}
