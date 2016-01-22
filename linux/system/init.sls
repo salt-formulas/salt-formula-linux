@@ -15,6 +15,9 @@ include:
 {%- if system.locale is defined %}
 - linux.system.locale
 {%- endif %}
+{%- if system.prompt is defined %}
+- linux.system.prompt
+{%- endif %}
 {%- if system.user|length > 0 %}
 - linux.system.user
 {%- endif %}
@@ -44,7 +47,4 @@ include:
 {%- endif %}
 {%- if system.limit|length > 0 %}
 - linux.system.limit
-{%- endif %}
-{%- if system.prompt is defined %}
-- linux.system.prompt
 {%- endif %}

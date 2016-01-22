@@ -234,7 +234,7 @@ user can have different prompt.
 On Debian systems to set prompt system-wide it's necessary to remove setting
 PS1 in ``/etc/bash.bashrc`` and ``~/.bashrc`` (which comes from
 ``/etc/skel/.bashrc``). This formula will do this automatically, but will not
-touch existing user's ``~/.bashrc`` files.
+touch existing user's ``~/.bashrc`` files except root.
 
 Linux network
 -------------

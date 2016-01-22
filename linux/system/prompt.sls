@@ -16,4 +16,9 @@
     - pattern: ".*PS1=.*"
     - repl: "# Prompt is set by /etc/profile.d/prompt.sh"
 
+/root/.bashrc:
+  file.replace:
+    - pattern: ".*PS1=.*"
+    - repl: "# Prompt is set by /etc/profile.d/prompt.sh"
+
 {%- endif %}
