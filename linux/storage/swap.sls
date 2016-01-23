@@ -15,7 +15,7 @@ linux_create_swap_partition_{{ swap.device }}:
 linux_set_swap_partition_{{ swap.device }}:
   cmd.run:
   - name: 'swapon {{ swap.device }}'
-  - unless: grep $(readlink -f /dev/vg0/swap) /proc/swaps
+  - unless: grep $(readlink -f {{ swap.device }}) /proc/swaps
   - require:
     - cmd: linux_create_swap_partition_{{ swap.device }}
 
