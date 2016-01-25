@@ -10,6 +10,7 @@
 linux_create_swap_partition_{{ swap.device }}:
   cmd.run:
   - name: 'mkswap {{ swap.device }}'
+  - onlyif: "test `file -L -s {{ swap.device }} | grep 'swap file' >/dev/null;echo $?` -ne 0"
   - creates: {{ swap.device }}
 
 linux_set_swap_partition_{{ swap.device }}:
