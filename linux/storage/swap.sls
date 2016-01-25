@@ -5,7 +5,28 @@
 
 {%- if swap.enabled %}
 
-{%- if swap.engine == 'file' %}
+{%- if swap.engine == 'partition' %}
+
+linux_create_swap_partition_{{ swap.device }}:
+  cmd.run:
+  - name: 'mkswap {{ swap.device }}'
+  - onlyif: "test `file -L -s {{ swap.device }} | grep 'swap file' >/dev/null;echo $?` -ne 0"
+  - creates: {{ swap.device }}
+
+linux_set_swap_partition_{{ swap.device }}:
+  cmd.run:
+  - name: 'swapon {{ swap.device }}'
+  - unless: grep $(readlink -f {{ swap.device }}) /proc/swaps
+  - require:
+    - cmd: linux_create_swap_partition_{{ swap.device }}
+
+{{ swap.device }}:
+  mount.swap:
+  - persist: True
+  - require:
+    - cmd: linux_set_swap_partition_{{ swap.device }}
+
+{%- elif swap.engine == 'file' %}
 
 linux_create_swap_file_{{ swap.device }}:
   cmd.run:
