@@ -16,8 +16,8 @@ apparmor_service:
 
 apparmor_service_disable:
   service.dead:
-    name: apparmor
-    enable: false
+  - name: apparmor
+  - enable: false
 
 apparmor_teardown:
   cmd.wait:
