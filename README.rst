@@ -131,6 +131,11 @@ Enable autologin on tty1 (may work only for Ubuntu 14.04):
         console:
           tty1:
             autologin: root
+          # Enable serial console
+          ttyS0:
+            autologin: root
+            rate: 115200
+            term: xterm
 
 To disable set autologin to `false`.
 

@@ -10,7 +10,11 @@ linux:
       enabled: false
     console:
       tty0:
-        autologin: true
+        autologin: root
+      ttyS0:
+        autologin: root
+        rate: 115200
+        term: xterm
     prompt:
       default: "test01.local$"
     motd:
