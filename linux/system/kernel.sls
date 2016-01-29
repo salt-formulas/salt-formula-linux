@@ -24,25 +24,11 @@ linux_kernel_old_absent:
   - watch:
     - pkg: linux_kernel_package
 
-{%- else %}
-
-linux_kernel_package:
-  pkg.latest:
-  - names:
-    - linux-image-{{ system.kernel.type|default('generic') }}{% if system.kernel.get('lts', False) %}-lts-{{ system.kernel.lts }}{% endif %}
-    {%- if system.kernel.get('headers', False) %}
-    - linux-headers-{{ system.kernel.type|default('generic') }}{% if system.kernel.get('lts', False) %}-lts-{{ system.kernel.lts }}{% endif %}
-    {%- endif %}
-    {%- if system.kernel.get('extra', False) %}
-    - linux-image-extra-{{ system.kernel.type|default('generic') }}{% if system.kernel.get('lts', False) %}-lts-{{ system.kernel.lts }}{% endif %}
-    {%- endif %}
-  - refresh: true
-
 {%- endif %}
 
-{%- for sysclt_name, sysctl_value in sytem.kernel.get('sysctl', {}).iteritems() %}
+{%- for sysclt_name, sysctl_value in system.kernel.get('sysctl', {}).iteritems() %}
 
-linux_kernel_{{ sysclt_name }}
+linux_kernel_{{ sysclt_name }}:
   sysctl.present:
   - name: {{ sysclt_name }}
   - value: {{ sysctl_value }}
