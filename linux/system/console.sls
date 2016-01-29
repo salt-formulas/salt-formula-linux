@@ -5,17 +5,23 @@
 
 {%- for tty_name, console in system.console.iteritems() %}
 
-{%- if console.autologin %}
-autologin_{{ tty_name }}_enable:
-  cmd.run:
-  - name: "sed -i 's|/sbin/getty|/sbin/getty --autologin {{ console.autologin }}|g' /etc/init/{{ tty_name }}.conf"
-  - unless: "grep 'autologin' /etc/init/{{ tty_name }}.conf"
-{%- else %}
-autologin_{{ tty_name }}_disable:
-  cmd.run:
-  - name: "sed -i 's| \-\-autologin [a-zA-Z0-9]*||g' /etc/init/{{ tty_name }}.conf"
-  - onlyif: "grep 'autologin' /etc/init/{{ tty_name }}.conf"
+{%- if grains['init'] == 'upstart' %}
+{{ tty_name }}_service_file:
+  file.managed:
+    - name: /etc/init/{{ tty_name }}.conf
+    - source: salt://linux/files/tty.upstart
+    - template: jinja
+    - defaults:
+        name: {{ tty_name }}
+        tty: {{ console }}
 {%- endif %}
+
+{{ tty_name }}_service:
+  service.running:
+    - enable: true
+    - name: {{ tty_name }}
+    - watch:
+      - file: {{ tty_name }}_service_file
 
 {%- endfor %}
 
