@@ -161,6 +161,18 @@ not present. Also install extra modules and headers for this kernel:
           headers: true
           version: 4.2.0-22
 
+Systcl kernel parameters
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          sysctl:
+            net.ipv4.tcp_keepalive_intvl: 3
+            net.ipv4.tcp_keepalive_time: 30
+            net.ipv4.tcp_keepalive_probes: 8
+
 Repositories
 ~~~~~~~~~~~~
 

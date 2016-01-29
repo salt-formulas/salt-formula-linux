@@ -40,6 +40,15 @@ linux_kernel_package:
 
 {%- endif %}
 
+{%- for sysclt_name, sysctl_value in sytem.kernel.get('sysctl', {}).iteritems() %}
+
+linux_kernel_{{ sysclt_name }}
+  sysctl.present:
+  - name: {{ sysclt_name }}
+  - value: {{ sysctl_value }}
+
+{%- endfor %}
+
 {%- endif %}
 
 {%- endif %}
