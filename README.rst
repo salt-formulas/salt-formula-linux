@@ -139,6 +139,20 @@ Enable autologin on tty1 (may work only for Ubuntu 14.04):
 
 To disable set autologin to `false`.
 
+Set ``policy-rc.d`` on Debian-based systems. Action can be any available
+command in ``while true`` loop and ``case`` context.
+Following will disallow dpkg to stop/start services for cassandra package automatically:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        policyrcd:
+          - package: cassandra
+            action: exit 101
+          - package: '*'
+            action: switch
+
 Kernel
 ~~~~~~
 

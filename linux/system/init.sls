@@ -51,3 +51,6 @@ include:
 {%- if system.motd|length > 0 %}
 - linux.system.motd
 {%- endif %}
+{%- if system.get('policyrcd', [])|length > 0 %}
+- linux.system.policyrcd
+{%- endif %}

@@ -64,3 +64,8 @@ linux:
       opencontrail:
         source: "deb http://ppa.launchpad.net/tcpcloud/contrail-2.20/ubuntu trusty main"
         architectures: amd64
+    policyrcd:
+      - package: cassandra
+        action: exit 101
+      - package: '*'
+        action: switch
