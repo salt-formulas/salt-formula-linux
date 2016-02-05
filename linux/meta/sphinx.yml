@@ -1,6 +1,7 @@
 {%- from "linux/map.jinja" import system with context -%}
 {%- from "linux/map.jinja" import network with context -%}
 doc:
+  description: Linux is a high performance, yet completely free, Unix-like operating system that is suitable for use on a wide range of computers and other products.
   name: Linux
   role:
     system:
