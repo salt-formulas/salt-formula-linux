@@ -17,3 +17,9 @@ linux:
             size: 512M
             mount:
               path: /srv
+    disk1:
+      enabled: true
+      device: /dev/dummy
+      path: /srv/dummy
+      file_system: xfs
+      options: "noatime,nobarrier,logbufs=8"
