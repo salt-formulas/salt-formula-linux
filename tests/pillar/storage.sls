@@ -23,3 +23,6 @@ linux:
       path: /srv/dummy
       file_system: xfs
       options: "noatime,nobarrier,logbufs=8"
+      user: nobody
+      group: nogroup
+      mode: 755
