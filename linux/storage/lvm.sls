@@ -11,29 +11,29 @@ linux_lvm_pkgs:
 {%- if vg.get('enabled', True) %}
 
 {%- for dev in vg.devices %}
-lvm_{{ vgname }}_pv_{{ dev }}:
+lvm_{{ vg.get('name', vgname) }}_pv_{{ dev }}:
   lvm.pv_present:
     - name: {{ dev }}
     - require:
       - pkg: linux_lvm_pkgs
     - require_in:
-      - lvm: lvm_vg_{{ vgname }}
+      - lvm: lvm_vg_{{ vg.get('name', vgname) }}
 {%- endfor %}
 
 lvm_vg_{{ vgname }}:
   lvm.vg_present:
-    - name: {{ vgname }}
+    - name: {{ vg.get('name', vgname) }}
     - devices: {{ vg.devices|join(',') }}
 
 {%- for lvname, volume in vg.volume.iteritems() %}
 
-lvm_{{ vgname }}_lv_{{ lvname }}:
+lvm_{{ vg.get('name', vgname) }}_lv_{{ volume.get('name', lvname) }}:
   lvm.lv_present:
-    - name: {{ lvname }}
-    - vgname: {{ vgname }}
+    - name: {{ volume.get('name', lvname) }}
+    - vgname: {{ vg.get('name', vgname) }}
     - size: {{ volume.size }}
     - require:
-      - lvm: lvm_vg_{{ vgname }}
+      - lvm: lvm_vg_{{ vg.get('name', vgname) }}
     {%- if volume.mount is defined %}
     - require_in:
       - mount: {{ volume.mount.path }}

@@ -9,6 +9,7 @@ linux:
         size: 512
     lvm:
       vg0:
+        name: vg0-dummy
         enabled: true
         devices:
           - /dev/vdb
