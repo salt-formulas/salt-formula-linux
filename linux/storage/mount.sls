@@ -1,21 +1,6 @@
 {%- from "linux/map.jinja" import storage with context %}
 {%- if storage.enabled %}
 
-{%- set install_xfs = False %}
-
-{%- for name, mount in storage.mount.iteritems() %}
-  {%- if mount.enabled and mount.file_system == 'xfs' %}
-    {%- set install_xfs = True %}
-  {%- endif %}
-{%- endfor %}
-
-{%- if install_xfs == True %}
-xfs_packages:
-  package.installed:
-    - name: xfsprogs
-{%- endif %}
-
-
 {%- for name, mount in storage.mount.iteritems() %}
 
 {%- if mount.enabled %}
@@ -29,6 +14,7 @@ mkfs_{{ mount.device}}:
   - require_in:
     - mount: {{ mount.path }}
   {%- if mount.file_system == 'xfs' %}
+  {%- set install_xfs = True %}
   - require:
     - pkg: xfs_packages
   {%- endif %}
@@ -60,5 +46,11 @@ mkfs_{{ mount.device}}:
 {%- endif %}
 
 {%- endfor %}
+
+{%- if install_xfs is defined %}
+xfs_packages:
+  pkg.installed:
+    - name: xfsprogs
+{%- endif %}
 
 {%- endif %}
