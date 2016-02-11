@@ -20,7 +20,7 @@ lvm_{{ vg.get('name', vgname) }}_pv_{{ dev }}:
       - lvm: lvm_vg_{{ vg.get('name', vgname) }}
 {%- endfor %}
 
-lvm_vg_{{ vgname }}:
+lvm_vg_{{ vg.get('name', vgname) }}:
   lvm.vg_present:
     - name: {{ vg.get('name', vgname) }}
     - devices: {{ vg.devices|join(',') }}
