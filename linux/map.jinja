@@ -11,6 +11,7 @@
         'package': {},
         'selinux': 'permissive',
         'ca_certs_dir': '/usr/local/share/ca-certificates',
+        'doc_validity_pkgs': ['python-yaml'],
     },
     'Debian': {
         'pkgs': ['python-apt','vim'],
@@ -24,6 +25,7 @@
         'package': {},
         'selinux': 'permissive',
         'ca_certs_dir': '/usr/local/share/ca-certificates',
+        'doc_validity_pkgs': ['python-yaml'],
     },
     'RedHat': {
         'pkgs': ['policycoreutils', 'policycoreutils-python', 'vim-enhanced', 'telnet', 'wget'],
@@ -37,6 +39,7 @@
         'package': {},
         'selinux': 'permissive',
         'ca_certs_dir': '/usr/local/share/ca-certificates',
+        'doc_validity_pkgs': ['PyYAML'],
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:system')) %}
 
