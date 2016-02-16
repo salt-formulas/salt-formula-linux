@@ -91,7 +91,11 @@ linux_interface_{{ interface_name }}:
   - proto: {{ interface.get('proto', 'static') }}
   {% endif %}
   {%- if grains.os_family == 'RedHat' %}
+  {%- if interface.get('proto', 'none') == 'manual' %}
+  - proto: 'none'
+  {%- else %}
   - proto: {{ interface.get('proto', 'none') }}
+  {%- endif %}
   {% endif %}
   - ipaddr: {{ interface.address }}
   - netmask: {{ interface.netmask }}
