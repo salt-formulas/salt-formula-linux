@@ -50,10 +50,4 @@ xfs_packages_{{ mount.device }}:
 
 {%- endfor %}
 
-{%- if install_xfs is defined %}
-xfs_packages:
-  pkg.installed:
-    - name: xfsprogs
-{%- endif %}
-
 {%- endif %}
