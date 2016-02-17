@@ -14,9 +14,12 @@ mkfs_{{ mount.device}}:
   - require_in:
     - mount: {{ mount.path }}
   {%- if mount.file_system == 'xfs' %}
-  {%- set install_xfs = True %}
   - require:
-    - pkg: xfs_packages
+    - pkg: xfs_packages_{{ mount.device }}
+
+xfs_packages_{{ mount.device }}:
+  pkg.installed:
+    - name: xfsprogs
   {%- endif %}
 
 {%- endif %}
@@ -29,7 +32,7 @@ mkfs_{{ mount.device}}:
   - opts: {{ mount.get('opts', 'defaults,noatime') }}
   {%- if mount.file_system == 'xfs' %}
   - require:
-    - pkg: xfs_packages
+    - pkg: xfs_packages_{{ mount.device }}
   {%- endif %}
 
 {%- if mount.user is defined %}
