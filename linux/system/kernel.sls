@@ -26,11 +26,11 @@ linux_kernel_old_absent:
 
 {%- endif %}
 
-{%- for sysclt_name, sysctl_value in system.kernel.get('sysctl', {}).iteritems() %}
+{%- for sysctl_name, sysctl_value in system.kernel.get('sysctl', {}).iteritems() %}
 
-linux_kernel_{{ sysclt_name }}:
+linux_kernel_{{ sysctl_name }}:
   sysctl.present:
-  - name: {{ sysclt_name }}
+  - name: {{ sysctl_name }}
   - value: {{ sysctl_value }}
 
 {%- endfor %}
