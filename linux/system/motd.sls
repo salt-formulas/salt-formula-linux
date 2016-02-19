@@ -6,7 +6,7 @@
 {#- update-motd is not available in RedHat, so support only static motd #}
 /etc/motd:
   file.managed:
-    - contents_pillar: pillar:linux:system:motd
+    - contents_pillar: linux:system:motd
 
 {%- else %}
 
