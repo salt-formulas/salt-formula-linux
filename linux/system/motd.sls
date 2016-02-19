@@ -39,6 +39,6 @@ motd_{{ motd_index }}_{{ name }}:
 
 {%- endfor %}
 
-{%- endfor %}
+{%- endif %}
 
 {%- endif %}
