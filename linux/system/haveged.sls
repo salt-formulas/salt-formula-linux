@@ -2,17 +2,17 @@
 
 {%- if system.haveged.enabled %}
 
-haveged_pkgs:
+linux_haveged_pkgs:
   pkg.installed:
   - name: haveged
   - watch_in:
-    - service: haveged_service
+    - service: linux_haveged_service
 
-haveged_service:
+linux_haveged_service:
   service.running:
   - name: haveged
   - enable: true
   - require:
-    - pkg: haveged_packages
+    - pkg: linux_haveged_pkgs
 
 {%- endif %}
