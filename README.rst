@@ -293,6 +293,21 @@ day. Setting custom motd will cleanup existing ones.
               printf "This is [company name] network.\n"
               printf "Unauthorized access strictly prohibited.\n"
 
+RHEL / CentOS
+~~~~~~~~~~~~~
+
+Unfortunately ``update-motd`` is currently not available for RHEL so there's
+no native support for dynamic motd.
+You can still set static one, only pillar structure differs:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        motd: |
+          This is [company name] network.
+          Unauthorized access strictly prohibited.
+
 Linux network
 -------------
 

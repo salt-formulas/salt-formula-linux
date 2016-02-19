@@ -1,6 +1,15 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
+{%- if grains.os_family == 'RedHat' %}
+
+{#- update-motd is not available in RedHat, so support only static motd #}
+/etc/motd:
+  file.managed:
+    - contents_pillar: pillar:linux:system:motd
+
+{%- else %}
+
 package_update_motd:
   pkg.installed:
     - name: update-motd
@@ -26,6 +35,8 @@ motd_{{ motd_index }}_{{ name }}:
     - defaults:
         index: {{ motd_index }}
         motd_name: {{ name }}
+{%- endfor %}
+
 {%- endfor %}
 
 {%- endfor %}
