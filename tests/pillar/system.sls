@@ -8,6 +8,8 @@ linux:
     environment: prd
     apparmor:
       enabled: false
+    haveged:
+      enabled: true
     console:
       tty0:
         autologin: root

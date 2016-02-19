@@ -294,7 +294,7 @@ day. Setting custom motd will cleanup existing ones.
               printf "Unauthorized access strictly prohibited.\n"
 
 RHEL / CentOS
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^
 
 Unfortunately ``update-motd`` is currently not available for RHEL so there's
 no native support for dynamic motd.
@@ -307,6 +307,19 @@ You can still set static one, only pillar structure differs:
         motd: |
           This is [company name] network.
           Unauthorized access strictly prohibited.
+
+Haveged
+~~~~~~~
+
+If you are running headless server and are low on entropy, it may be a good
+idea to setup Haveged.
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        haveged:
+          enabled: true
 
 Linux network
 -------------

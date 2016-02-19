@@ -54,3 +54,6 @@ include:
 {%- if system.get('policyrcd', [])|length > 0 %}
 - linux.system.policyrcd
 {%- endif %}
+{%- if system.haveged is defined %}
+- linux.system.haveged
+{%- endif %}
