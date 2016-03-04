@@ -15,7 +15,7 @@ parameters:
       cluster: default
     network:
       enabled: true
-      hostname: ${linux:system:name}
+      hostname: ${linux:system:name}.${linux:system:domain}
       fqdn: ${linux:system:name}.${linux:system:domain}
     storage:
       enabled: true
