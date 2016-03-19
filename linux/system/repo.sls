@@ -70,9 +70,16 @@ linux_repo_{{ name }}:
 linux_repo_{{ name }}:
   pkgrepo.managed:
   - name: {{ name }}
-  - humanname: {{ name }}
+  - humanname: {{ repo.get('humanname', name) }}
+  {%- if repo.mirrorlist is defined %}
+  - mirrorlist: {{ repo.mirrorlist }}
+  {%- else %}
   - baseurl: {{ repo.source }}
+  {%- endif %}
   - gpgcheck: {% if repo.get('gpgcheck', False) %}1{% else %}0{% endif %}
+  {%- if repo.gpgkey is defined %}
+  - gpgkey: {{ repo.gpgkey }}
+  {%- endif %}
 
 {%- endif %}
 
