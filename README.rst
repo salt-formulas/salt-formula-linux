@@ -267,6 +267,19 @@ PS1 in ``/etc/bash.bashrc`` and ``~/.bashrc`` (which comes from
 ``/etc/skel/.bashrc``). This formula will do this automatically, but will not
 touch existing user's ``~/.bashrc`` files except root.
 
+Bash
+~~~~
+
+Fix bash configuration to preserve history across sessions (like ZSH does by
+default).
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        bash:
+          preserve_history: true
+
 Message of the day
 ~~~~~~~~~~~~~~~~~~
 

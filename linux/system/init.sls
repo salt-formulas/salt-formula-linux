@@ -18,6 +18,9 @@ include:
 {%- if system.prompt is defined %}
 - linux.system.prompt
 {%- endif %}
+{%- if system.bash is defined %}
+- linux.system.bash
+{%- endif %}
 {%- if system.user|length > 0 %}
 - linux.system.user
 {%- endif %}
