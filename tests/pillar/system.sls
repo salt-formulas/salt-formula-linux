@@ -75,5 +75,5 @@ linux:
       en_US.UTF-8:
         enabled: true
         default: true
-      cs_CZ.UTF-8:
+      "cs_CZ.UTF-8 UTF-8":
         enabled: true
