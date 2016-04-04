@@ -71,3 +71,9 @@ linux:
         action: exit 101
       - package: '*'
         action: switch
+    locale:
+      en_US.UTF-8:
+        enabled: true
+        default: true
+      cs_CZ.UTF-8:
+        enabled: true

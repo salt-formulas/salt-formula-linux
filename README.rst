@@ -153,6 +153,18 @@ Following will disallow dpkg to stop/start services for cassandra package automa
           - package: '*'
             action: switch
 
+Set system locales:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        locale:
+          en_US.UTF-8:
+            default: true
+          cs_CZ.UTF-8:
+            enabled: true
+
 Kernel
 ~~~~~~
 

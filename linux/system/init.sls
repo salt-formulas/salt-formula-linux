@@ -12,7 +12,7 @@ include:
 {%- if system.kernel is defined %}
 - linux.system.kernel
 {%- endif %}
-{%- if system.locale is defined %}
+{%- if system.locale|length > 0 %}
 - linux.system.locale
 {%- endif %}
 {%- if system.prompt is defined %}
