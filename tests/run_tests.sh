@@ -80,7 +80,7 @@ EOF
 
 fetch_dependency() {
     dep_name="$(echo $1|cut -d : -f 1)"
-    dep_source="$(echo $1|cut -d : -f 2)"
+    dep_source="$(echo $1|cut -d : -f 2-)"
     dep_root="${DEPSDIR}/$(basename $dep_source .git)"
     dep_metadata="${dep_root}/metadata.yml"
 
