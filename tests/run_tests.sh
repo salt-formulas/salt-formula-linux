@@ -89,7 +89,7 @@ fetch_dependency() {
 
     log_info "Fetching dependency $dep_name"
     [ ! -d ${DEPSDIR} ] && mkdir -p ${DEPSDIR}
-    git clone $1 ${DEPSDIR}/$(basename $1 .git)
+    git clone $dep_source ${DEPSDIR}/$(basename $dep_source .git)
     ln -s ${dep_root}/${dep_name} ${SALT_FILE_DIR}/${dep_name}
 
     METADATA="${dep_metadata}" install_dependencies
