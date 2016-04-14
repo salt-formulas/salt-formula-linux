@@ -5,7 +5,7 @@
 
 {%- for tty_name, console in system.console.iteritems() %}
 
-{%- if grains['init'] == 'upstart' %}
+{%- if grains.get('init', None) == 'upstart' %}
 {{ tty_name }}_service_file:
   file.managed:
     - name: /etc/init/{{ tty_name }}.conf

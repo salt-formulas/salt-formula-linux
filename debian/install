@@ -1,2 +1,0 @@
-linux/*             /usr/share/salt-formulas/env/linux/
-metadata/service/*      /usr/share/salt-formulas/reclass/service/linux/
