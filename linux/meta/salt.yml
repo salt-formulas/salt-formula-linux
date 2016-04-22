@@ -1,0 +1,8 @@
+orchestrate:
+  system:
+    priority: 30
+  network:
+    priority: 40
+  storage:
+    priority: 50
+
