@@ -1,0 +1,13 @@
+applications:
+- linux
+classes:
+- service.linux.support
+parameters:
+  linux:
+    system:
+      enabled: true
+      cluster: default
+    network:
+      enabled: false
+    storage:
+      enabled: false

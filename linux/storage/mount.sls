@@ -5,7 +5,7 @@
 
 {%- if mount.enabled %}
 
-{%- if not mount.file_system in ['nfs', 'nfs4'] %}
+{%- if not mount.file_system in ['nfs', 'nfs4', 'cifs'] %}
 
 mkfs_{{ mount.device}}:
   cmd.run:
