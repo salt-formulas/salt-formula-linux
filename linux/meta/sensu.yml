@@ -6,7 +6,7 @@ check:
     subscribers:
     - local-linux-system
   local_linux_system_total_procs:
-    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -w 1500 -c 3000"
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -w 5000 -c 10000"
     interval: 60
     occurrences: 5
     subscribers:
