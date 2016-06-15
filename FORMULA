@@ -1,0 +1,8 @@
+name: linux
+os: Arch, Debian, RedHat
+os_family: Arch, Debian, RedHat
+version: 201606
+release: 1
+summary: Linux salt formula
+description: Configure Linux operating system.
+top_level_dir: linux
