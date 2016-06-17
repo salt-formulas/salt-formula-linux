@@ -7,4 +7,9 @@
   - mode: 644
   - template: jinja
 
+linux_resolvconf_disable:
+  cmd.run:
+    - name: resolvconf --disable-updates
+    - onlyif: resolvconf --updates-are-enabled
+
 {%- endif %}
