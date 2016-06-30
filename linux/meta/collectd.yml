@@ -11,6 +11,9 @@ plugin:
   linux_system_load:
     plugin: load
     interval: 60
+  linux_system_contextswitch:
+    plugin: contextswitch
+    interval: 60
   linux_system_memory:
     plugin: memory
     interval: 60
