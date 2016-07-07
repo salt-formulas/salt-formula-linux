@@ -10,6 +10,10 @@ linux_packages:
 linux_extra_package_{{ name }}:
   {%- if package.version == 'latest' %}
   pkg.latest:
+  {%- elif package.version == 'purged' %}
+  pkg.purged:
+  {%- elif package.version == 'removed' %}
+  pkg.removed:
   {%- else %}
   pkg.installed:
   - version: {{ package.version }}
@@ -22,7 +26,7 @@ linux_extra_package_{{ name }}:
   - hold: {{ package.hold }}
   {%- endif %}
   {%- if package.verify is defined %}
-  - skip_verify: {% if package.verify %}false{% else %}true{% endif %}
+  - skip_verify: {{ true if package.verify else false }}
   {%- endif %}
 {%- endfor %}
 
