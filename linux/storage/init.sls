@@ -10,7 +10,7 @@ include:
 {%- if storage.lvm|length > 0 %}
 - linux.storage.lvm
 {%- endif %}
-{%- if storage.multipath %}
+{%- if storage.multipath.enabled %}
 - linux.storage.multipath
 {%- endif %}
 {%- endif %}
