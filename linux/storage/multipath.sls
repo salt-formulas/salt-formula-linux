@@ -1,48 +1,24 @@
 {%- from "linux/map.jinja" import storage with context %}
-{%- if storage.enabled %}
+{%- if storage.enabled and storage.multipath.enabled %}
 
-{%- if grains.os_family == 'Debian' %}
-
-linux_multipath_pkgs:
+linux_storage_multipath_packages:
   pkg.installed:
-  - names: {{ storage.multipath_pkgs }}
+  - names: {{ storage.multipath.pkgs }}
 
-{%- if storage.multipath.backend not in ['fujitsu'] %}
-
-linux_multipath_boot_pkg:
-  pkg.installed:
-  - name: multipath-tools-boot
-
-{%- endif %}
-
-{%- if storage.multipath.backend == 'HDS' %}
-
-/etc/multipath.conf:
+linux_storage_multipath_config:
   file.managed:
-  - source: salt://linux/files/multipath.conf.hds
-  - template: jinja
-  - require:
-    - pkg: linux_multipath_pkgs
-
-{%- else %}
-
-/etc/multipath.conf:
-  file.managed:
+  - name: /etc/multipath.conf
   - source: salt://linux/files/multipath.conf
   - template: jinja
   - require:
-    - pkg: linux_multipath_pkgs
+    - pkg: linux_storage_multipath_packages
 
-{%- endif %}
-
-multipath_service:
+linux_storage_multipath_service:
   service.running:
-  - enable: True
-  - name: multipath-tools
+  - enable: true
+  - name: {{ storage.multipath.service }}
   - watch:
-    - file: /etc/multipath.conf
+    - file: linux_storage_multipath_config
   - sig: multipathd
-
-{%- endif %}
 
 {%- endif %}

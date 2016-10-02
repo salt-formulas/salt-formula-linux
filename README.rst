@@ -612,6 +612,82 @@ LVM group `vg1` with one device and `data` volume mounted into `/mnt/data`
                   size: 40G
                   mount: ${linux:storage:mount:data}
 
+
+Multipath with Fujitsu Eternus DXL
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        storage:
+          multipath:
+            enabled: true
+            blacklist_devices:
+            - /dev/sda
+            - /dev/sdb
+            backends:
+            - fujitsu_eternus_dxl
+
+Multipath with Hitachi VSP 1000
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        storage:
+          multipath:
+            enabled: true
+            blacklist_devices:
+            - /dev/sda
+            - /dev/sdb
+            backends:
+            - hitachi_vsp1000
+
+Multipath with IBM Storwize
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        storage:
+          multipath:
+            enabled: true
+            blacklist_devices:
+            - /dev/sda
+            - /dev/sdb
+            backends:
+            - ibm_storwize
+
+Multipath with multiple backends
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        storage:
+          multipath:
+            enabled: true
+            blacklist_devices:
+            - /dev/sda
+            - /dev/sdb
+            - /dev/sdc
+            - /dev/sdd
+            backends:
+            - ibm_storwize
+            - fujitsu_eternus_dxl
+            - hitachi_vsp1000
+
+Disabled multipath (the default setup)
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        storage:
+          multipath:
+            enabled: false
+
+
 Usage
 =====
 

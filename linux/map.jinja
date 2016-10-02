@@ -117,20 +117,31 @@
         'mount': {},
         'swap': {},
         'lvm': {},
-        'multipath': False,
+        'multipath': {
+             'enabled': False,
+             'pkgs': ['multipath-tools', 'multipath-tools-boot'],
+             'service': ''
+         },
     },
     'Debian': {
         'mount': {},
         'swap': {},
         'lvm': {},
-        'multipath': False,
-        'multipath_pkgs': ['multipath-tools'],
+        'multipath': {
+             'enabled': False,
+             'pkgs': ['multipath-tools', 'multipath-tools-boot'],
+             'service': 'multipath-tools'
+         },
         'lvm_pkgs': ['lvm2'],
     },
     'RedHat': {
         'mount': {},
         'swap': {},
         'lvm': {},
-        'multipath': False,
+        'multipath': {
+             'enabled': False,
+             'pkgs': [],
+             'service': 'multipath'
+         },
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:storage')) %}
