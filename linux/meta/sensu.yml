@@ -1,6 +1,6 @@
 check:
   local_linux_system_zombie_procs:
-    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -w 2 -c 7 -s Z"
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -w 3 -c 7 -s Z"
     interval: 60
     occurrences: 3
     subscribers:
