@@ -1,33 +1,33 @@
 plugin:
   linux_network_interface:
     plugin: interface
-    interval: 60
+    execution: local
   linux_system_cpu:
     plugin: cpu
-    interval: 60
+    execution: local
   linux_system_entropy:
     plugin: entropy
-    interval: 60
+    execution: local
   linux_system_load:
     plugin: load
-    interval: 60
+    execution: local
   linux_system_contextswitch:
     plugin: contextswitch
-    interval: 60
+    execution: local
   linux_system_memory:
     plugin: memory
-    interval: 60
+    execution: local
   linux_system_uptime:
     plugin: uptime
-    interval: 60
+    execution: local
   linux_system_users:
     plugin: users
-    interval: 60
+    execution: local
   linux_storage_df:
     plugin: df
-    interval: 60
+    execution: local
     template: linux/files/collectd_df.conf
-    ignore_selected: true
+    ignore_selected: True
     fs_types:
     - rootfs
     - sysfs
@@ -39,9 +39,9 @@ plugin:
     - cgroup
   linux_storage_disk:
     plugin: disk
-    interval: 60
+    execution: local
     template: linux/files/collectd_disk.conf
-    ignore_selected: true
+    ignore_selected: True
   linux_storage_swap:
     plugin: swap
-    interval: 60
+    execution: local
