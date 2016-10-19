@@ -1,6 +1,6 @@
 log_collector:
   decoder:
-    linux_syslog:
+    system:
       engine: sandbox
       module_file: /usr/share/lma_collector/decoders/generic_syslog.lua
       module_dir: /usr/share/lma_collector_modules;/usr/share/heka/lua_modules
