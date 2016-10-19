@@ -52,6 +52,7 @@ metric_collector:
         afd_logical_name: 'cpu'
         activate_alerting: true
         enable_notification: false
+        hostname: '{{ grains.fqdn.split('.')[0] }}'
     linux_swap_utilization:
       engine: sandbox
       module_file: /usr/share/lma_collector/filters/afd.lua
@@ -66,3 +67,4 @@ metric_collector:
         afd_logical_name: 'swap'
         activate_alerting: true
         enable_notification: false
+        hostname: '{{ grains.fqdn.split('.')[0] }}'
