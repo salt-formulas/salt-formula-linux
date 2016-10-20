@@ -26,6 +26,7 @@ log_collector:
       config:
         grace_interval: 10
         patterns: "/error%s.+([sv]d[a-z][a-z]?)%d?/ /([sv]d[a-z][a-z]?)%d?.+%serror/"
+        hostname: '{{ grains.host }}'
     linux_logs_counter:
       engine: sandbox
       module_file: /usr/share/lma_collector/filters/logs_counter.lua
@@ -36,5 +37,6 @@ log_collector:
       config:
         interval: 60
         grace_interval: 30
+        hostname: '{{ grains.host }}'
 metric_collector:
   filter: {}
