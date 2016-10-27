@@ -8,9 +8,9 @@ log_collector:
       config:
         syslog_pattern: '<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
         fallback_syslog_pattern: '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
-{%- if system.timezone is defined %}
+        {%- if system.timezone is defined %}
         tz: "{{ system.timezone }}"
-{%- endif %}
+        {%- endif %}
   input:
     linux_log_stream:
       engine: logstreamer
@@ -43,4 +43,36 @@ log_collector:
         grace_interval: 30
         hostname: '{{ grains.host }}'
 metric_collector:
-  filter: {}
+  trigger:
+    linux_system_cpu_critical:
+      description: 'The CPU usage is too high.'
+      severity: critical
+      rules:
+      - metric: cpu_wait
+        relational_operator: '>='
+        threshold: 35
+        window: 120
+        periods: 0
+        function: avg
+      - metric: cpu_idle
+        relational_operator: <=
+        threshold: 5
+        window: 120
+        function: avg
+    linux_system_cpu_warning:
+      description: 'The CPU wait times are high.'
+      severity: critical
+      rules:
+      - metric: cpu_wait
+        relational_operator: '>='
+        threshold: 15
+        window: 120
+        periods: 0
+        function: avg
+  alarm:
+    linux_system_cpu:
+      notifications: False
+      alerting: True
+      triggers:
+      - linux_system_cpu_warning
+      - linux_system_cpu_critical
