@@ -1,4 +1,3 @@
-{%- from "linux/map.jinja" import system with context %}
 log_collector:
   decoder:
     system:
@@ -8,9 +7,6 @@ log_collector:
       config:
         syslog_pattern: '<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
         fallback_syslog_pattern: '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
-        {%- if system.timezone is defined %}
-        tz: "{{ system.timezone }}"
-        {%- endif %}
   input:
     linux_log_stream:
       engine: logstreamer
