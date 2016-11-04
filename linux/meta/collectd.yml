@@ -1,6 +1,12 @@
 local_plugin:
-  linux_network_interface:
-    plugin: interface
+  linux_network_netlink:
+    plugin: netlink
+    template: linux/files/collectd_netlink.conf
+    ignore_selected: false
+    interfaces:
+    {%- for interface_name in salt['netlink.ls']() %}
+    - {{ interface_name }}
+    {%- endfor %}
   linux_system_cpu:
     plugin: cpu
   linux_system_entropy:
