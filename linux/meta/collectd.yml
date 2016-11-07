@@ -4,7 +4,7 @@ local_plugin:
     template: linux/files/collectd_netlink.conf
     ignore_selected: false
     interfaces:
-    {%- for interface_name in salt['netlink.ls']() %}
+    {%- for interface_name in salt['linux_netlink.ls']() %}
     - {{ interface_name }}
     {%- endfor %}
   linux_system_cpu:
