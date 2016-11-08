@@ -4,9 +4,9 @@ log_collector:
       engine: sandbox
       module_file: /usr/share/lma_collector/decoders/generic_syslog.lua
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      adjust_timezone: true
       config:
-        syslog_pattern: '<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
-        fallback_syslog_pattern: '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
+        syslog_pattern: '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
   input:
     linux_log_stream:
       engine: logstreamer
