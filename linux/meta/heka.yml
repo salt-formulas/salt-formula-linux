@@ -56,8 +56,7 @@ metric_collector:
         function: avg
   alarm:
     linux_system_cpu:
-      notifications: False
-      alerting: True
+      alerting: enabled
       triggers:
       - linux_system_cpu_warning
       - linux_system_cpu_critical
