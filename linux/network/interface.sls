@@ -88,6 +88,7 @@ linux_interface_{{ interface_name }}:
   - type: {{ interface.type }}
   {%- if interface.address is defined %}
   {%- if grains.os_family == 'Debian' %}
+  - unless: grep -q "iface {{ interface_name }} " /etc/network/interfaces
   - proto: {{ interface.get('proto', 'static') }}
   {% endif %}
   {%- if grains.os_family == 'RedHat' %}
