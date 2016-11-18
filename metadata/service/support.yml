@@ -9,3 +9,5 @@ parameters:
         enabled: true
       sphinx:
         enabled: true
+      grafana:
+        enabled: true
