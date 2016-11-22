@@ -1,19 +1,68 @@
-input:
-  linux_rsyslog_syslog:
-    engine: logstreamer
-    log_directory: /var/log
-    file_match: syslog\.?(?P<Index>\d+)?(.gz)?
-    priority: ["^Index"]
-    decoder: RsyslogDecoder
-  linux_rsyslog_auth:
-    engine: logstreamer
-    log_directory: /var/log
-    file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
-    priority: ["^Index"]
-    decoder: RsyslogDecoder
-  linux_rsyslog_kern:
-    engine: logstreamer
-    log_directory: /var/log
-    file_match: kern\.log\.?(?P<Index>\d+)?(.gz)?
-    priority: ["^Index"]
-    decoder: RsyslogDecoder
+log_collector:
+  decoder:
+    linux_syslog:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/decoders/generic_syslog.lua
+      module_dir: /usr/share/lma_collector_modules;/usr/share/heka/lua_modules
+      config:
+        syslog_pattern: '<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
+        fallback_syslog_pattern: '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
+  input:
+    linux_log_stream:
+      engine: logstreamer
+      log_directory: "/var/log"
+      file_match: '(?P<Service>daemon\.log|cron\.log|haproxy\.log|kern\.log|auth\.log|syslog|messages|debug)'
+      differentiator: [ 'system.', 'Service' ]
+      decoder: "system_decoder"
+      splitter: "TokenSplitter"
+  filter:
+    linux_hdd_errors:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/hdd_errors_counter.lua
+      module_dir: /usr/share/lma_collector_modules;/usr/share/heka/lua_modules
+      preserve_data: false
+      message_matcher: "Type == 'log' && Logger == 'system.kern'"
+      ticker_interval: 10
+      config:
+        grace_interval: 10
+        patterns: "/error%s.+([sv]d[a-z][a-z]?)%d?/ /([sv]d[a-z][a-z]?)%d?.+%serror/"
+    linux_logs_counter:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/logs_counter.lua
+      module_dir: /usr/share/lma_collector_modules;/usr/share/heka/lua_modules
+      preserve_data: true
+      message_matcher: "Type == 'log' && Logger =~ /^openstack\\\\./"
+      ticker_interval: 1
+      config:
+        interval: 60
+        grace_interval: 30
+metric_collector:
+  filter:
+    linux_cpu_utilization:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/afd.lua
+      module_dir: /usr/share/lma_collector_modules;/usr/share/heka/lua_modules
+      preserve_data: false
+      message_matcher: "(Type == 'metric' || Type == 'heka.sandbox.metric') && (Fields[name] == 'cpu_idle' || Fields[name] == 'cpu_wait')"
+      ticker_interval: 10
+      config:
+        afd_type: 'node'
+        afd_file: 'lma_alarms_controller_cpu'
+        afd_cluster_name: 'controller'
+        afd_logical_name: 'cpu'
+        activate_alerting: true
+        enable_notification: false
+    linux_swap_utilization:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/afd.lua
+      module_dir: /usr/share/lma_collector_modules;/usr/share/heka/lua_modules
+      preserve_data: false
+      message_matcher: "(Type == 'metric' || Type == 'heka.sandbox.metric') && (Fields[name] == 'swap_free' || Fields[name] == 'swap_io_in' || Fields[name] == 'swap_io_out' || Fields[name] == 'swap_percent_used')"
+      ticker_interval: 10
+      config:
+        afd_type: 'node'
+        afd_file: 'lma_alarms_controller_swap'
+        afd_cluster_name: 'controller'
+        afd_logical_name: 'swap'
+        activate_alerting: true
+        enable_notification: false
