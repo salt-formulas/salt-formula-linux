@@ -13,9 +13,9 @@
 
 {{ service_config.path }}:
   file.managed:
-    - source: {{ service.config.source }}
-    {%- if service.config.template is defined %}
-    - template: {{ service.config.template }}
+    - source: {{ service_config.source }}
+    {%- if service_config.template is defined %}
+    - template: {{ service_config.template }}
     {%- endif %}
     - makedirs: true
     - defaults:
