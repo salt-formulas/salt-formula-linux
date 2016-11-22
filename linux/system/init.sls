@@ -60,3 +60,4 @@ include:
 {%- if system.haveged is defined %}
 - linux.system.haveged
 {%- endif %}
+- linux.system.rsyslog
