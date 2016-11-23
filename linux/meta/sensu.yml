@@ -27,7 +27,11 @@ check:
     - {{ system.name|replace('.', '-') }}-{{ system.domain|replace('.', '-') }}
 {%- endif %}
   local_linux_storage_disk_usage:
+    {%- if 'nova.compute' in grains['roles'] %}
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_disk -w 20000 -c 10000 -p / -p /var -p /usr -p /tmp -p /var/log"
+    {%- else %}
     command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_disk -w 15% -c 5% -p / -p /var -p /usr -p /tmp -p /var/log"
+    {%- endif %}
     interval: 60
     occurrences: 1
     subscribers:
