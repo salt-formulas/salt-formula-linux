@@ -1,3 +1,4 @@
+{%- from "linux/map.jinja" import system,network,storage with context -%}
 check:
   local_linux_system_zombie_procs:
     command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -w 3 -c 7 -s Z"
@@ -17,12 +18,14 @@ check:
     occurrences: 1
     subscribers:
     - local-linux-system
-  local_linux_storage_swap_usage:
+{%- if storage.swap is defined %}
+  local_linux_storage_swap_usage_{{ system.name|replace('.', '-') }}-{{ system.domain|replace('.', '-') }}:
     command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_swap -a -w 50% -c 20%"
     interval: 60
     occurrences: 1
     subscribers:
-    - local-linux-storage
+    - {{ system.name|replace('.', '-') }}-{{ system.domain|replace('.', '-') }}
+{%- endif %}
   local_linux_storage_disk_usage:
     command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_disk -w 15% -c 5% -p / -p /var -p /usr -p /tmp -p /var/log"
     interval: 60
