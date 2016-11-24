@@ -26,65 +26,64 @@ linux_network_bridge_pkgs:
 
 {%- if grains.os_family in ['RedHat', 'Debian'] %}
 
-{%- if interface.type == 'bridge' and network.bridge == 'openvswitch' %}
+{%- if interface.type == 'ovs_bridge' %}
 
-linux_interface_{{ interface_name }}:
-  network.managed:
-  - enabled: {{ interface.enabled }}
+ovs_bridge_{{ interface_name }}:
+  openvswitch_bridge.present:
   - name: {{ interface_name }}
-  - type: eth
-  {%- if interface.address is defined %}
-  - proto: {{ interface.get('proto', 'static') }}
-  - ipaddr: {{ interface.address }}
-  - netmask: {{ interface.netmask }}
-  {%- else %}
-  - proto: {{ interface.get('proto', 'dhcp') }}
-  {%- endif %}
-  {%- if interface.name_servers is defined %}
-  - dns: {{ interface.name_servers }}
-  {%- endif %}
-  {%- for param in network.interface_params %}
-  {{ set_param(param, interface) }}
-  {%- endfor %}
-  {%- if interface.wireless is defined and grains.os_family == 'Debian' %}
-  {%- if interface.wireless.security == "wpa" %}
-  - wpa-ssid: {{ interface.wireless.essid }}
-  - wpa-psk: {{ interface.wireless.key }}
-  {%- else %}
-  - wireless-ssid: {{ interface.wireless.essid }}
-  - wireless-psk: {{ interface.wireless.key }}
-  {%- endif %}
-  {%- endif %}
-  - require:
-    - pkg: linux_network_bridge_pkgs
-    {%- for network in interface.use_interfaces %}
-    - network: linux_interface_{{ network }}
-    {%- endfor %}
 
-linux_ovs_bridge_{{ interface_name }}:
+{%- elif interface.type == 'ovs_port' %}
+
+{#
+ovs_port_{{ interface_name }}:
+  openvswitch_port.present:
+  - name: {{ interface_name }}
+  - bridge: {{ interface.bridge }}
+  - require:
+    - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}
+#}
+
+linux_interfaces_include:
+  file.prepend:
+  - name: /etc/network/interfaces
+  - text: 'source /etc/network/interfaces.d/*'
+
+ovs_port_{{ interface_name }}:
+  file.managed:
+  - name: /etc/network/interfaces.d/ifcfg-{{ interface_name }}
+  - source: salt://linux/files/ovs_port
+  - defaults:
+      port: {{ interface|yaml }}
+      port_name: {{ interface_name }}
+  - template: jinja
+
+ovs_port_{{ interface_name }}_line1:
+  file.replace:
+  - name: /etc/network/interfaces
+  - pattern: auto {{ interface_name }}
+  - repl: ""
+
+ovs_port_{{ interface_name }}_line2:
+  file.replace:
+  - name: /etc/network/interfaces
+  - pattern: iface {{ interface_name }} inet manual
+  - repl: ""
+
+ovs_port_up_{{ interface_name }}:
   cmd.run:
-  - name: ovs-vsctl add-br {{ interface_name }}
-  - unless: ovs-vsctl show | grep 'Bridge {{ interface_name }}'
+  - name: ifup {{ interface_name }}
   - require:
-    - network: linux_interface_{{ interface_name }}
-
-{%- for port in interface.use_interfaces %}
-
-linux_ovs_bridge_{{ interface_name }}_port_{{ port }}:
-  cmd.run:
-  - name: ovs-vsctl add-port {{ interface_name }} {{ port }}
-  - unless: ovs-vsctl show | grep 'Interface "{{ interface_name }}"'
-  - require:
-    - cmd: linux_ovs_bridge_{{ interface_name }}
-
-{%- endfor %}
+    - file: ovs_port_{{ interface_name }}
+    - file: ovs_port_{{ interface_name }}_line1
+    - file: ovs_port_{{ interface_name }}_line2
+    - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}
 
 {%- else %}
 
 linux_interface_{{ interface_name }}:
   network.managed:
   - enabled: {{ interface.enabled }}
-  - name: {{ interface_name }}
+  - name: {{ interface.get('name', interface_name) }}
   - type: {{ interface.type }}
   {%- if interface.address is defined %}
   {%- if grains.os_family == 'Debian' %}
@@ -125,16 +124,35 @@ linux_interface_{{ interface_name }}:
     {%- for network in interface.use_interfaces %}
     - network: linux_interface_{{ network }}
     {%- endfor %}
-  - ports: {% for network in interface.use_interfaces %}{{ network }} {% endfor %}
+  - ports: {% for network in interface.get('use_interfaces', []) %}{{ network }} {% endfor %}{% for network in interface.get('use_ovs_ports', []) %}{{ network }} {% endfor %}
   - require:
-    {%- for network in interface.use_interfaces %}
+    {%- for network in interface.get('use_interfaces', []) %}
     - network: linux_interface_{{ network }}
+    {%- endfor %}
+    {%- for network in interface.get('use_ovs_ports', []) %}
+    - cmd: ovs_port_up_{{ network }}
     {%- endfor %}
   {%- endif %}
   {%- if interface.type == 'bond' %}
   - slaves: {{ interface.slaves }}
   - mode: {{ interface.mode }}
   {%- endif %}
+
+{%- for network in interface.get('use_ovs_ports', []) %}
+
+remove_interface_{{ network }}_line1:
+  file.replace:
+  - name: /etc/network/interfaces
+  - pattern: auto {{ network }}
+  - repl: ""
+
+remove_interface_{{ network }}_line2:
+  file.replace:
+  - name: /etc/network/interfaces
+  - pattern: iface {{ network }} inet manual
+  - repl: ""
+
+{%- endfor %}
 
 {%- if interface.gateway is defined %}
 
@@ -213,10 +231,21 @@ linux_network_{{ interface_name }}_routes:
 
 {%- endfor %}
 
+{%- if network.bridge != 'none' %}
+
+linux_interfaces_final_include:
+  file.prepend:
+  - name: /etc/network/interfaces
+  - text: 'source /etc/network/interfaces.d/*'
+
+{%- endif %}
+
 {%- endif %}
 
 {%- if network.network_manager.disable is defined and network.network_manager.disable == True %}
+
 NetworkManager:
   service.dead:
   - enable: false
+
 {%- endif %}
