@@ -22,6 +22,8 @@ linux_network_bridge_pkgs:
 
 {%- for interface_name, interface in network.interface.iteritems() %}
 
+{%- set interface_name = interface.get('name', interface_name) %}
+
 {%- if interface.get('managed', True) %}
 
 {%- if grains.os_family in ['RedHat', 'Debian'] %}
@@ -83,7 +85,7 @@ ovs_port_up_{{ interface_name }}:
 linux_interface_{{ interface_name }}:
   network.managed:
   - enabled: {{ interface.enabled }}
-  - name: {{ interface.get('name', interface_name) }}
+  - name: {{ interface_name }}
   - type: {{ interface.type }}
   {%- if interface.address is defined %}
   {%- if grains.os_family == 'Debian' %}
