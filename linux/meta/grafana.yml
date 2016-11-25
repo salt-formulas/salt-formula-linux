@@ -1,0 +1,4 @@
+dashboard:
+  linux:
+    format: json
+    template: linux/files/grafana_dashboards/system_influxdb.json

@@ -1,19 +1,198 @@
-input:
-  linux_rsyslog_syslog:
-    engine: logstreamer
-    log_directory: /var/log
-    file_match: syslog\.?(?P<Index>\d+)?(.gz)?
-    priority: ["^Index"]
-    decoder: RsyslogDecoder
-  linux_rsyslog_auth:
-    engine: logstreamer
-    log_directory: /var/log
-    file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
-    priority: ["^Index"]
-    decoder: RsyslogDecoder
-  linux_rsyslog_kern:
-    engine: logstreamer
-    log_directory: /var/log
-    file_match: kern\.log\.?(?P<Index>\d+)?(.gz)?
-    priority: ["^Index"]
-    decoder: RsyslogDecoder
+log_collector:
+  decoder:
+    system:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/decoders/generic_syslog.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      adjust_timezone: true
+      config:
+        syslog_pattern: '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
+  input:
+    linux_log_stream:
+      engine: logstreamer
+      log_directory: "/var/log"
+      file_match: '(?P<Service>daemon\.log|cron\.log|haproxy\.log|kern\.log|auth\.log|syslog|messages|debug)'
+      differentiator: [ 'system.', 'Service' ]
+      decoder: "system_decoder"
+      splitter: "TokenSplitter"
+  filter:
+    linux_hdd_errors:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/hdd_errors_counter.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      preserve_data: false
+      message_matcher: "Type == 'log' && Logger == 'system.kern'"
+      ticker_interval: 10
+      config:
+        grace_interval: 10
+        patterns: "/error%s.+([sv]d[a-z][a-z]?)%d?/ /([sv]d[a-z][a-z]?)%d?.+%serror/"
+        hostname: '{{ grains.host }}'
+metric_collector:
+  trigger:
+    linux_system_cpu_critical:
+      description: 'The CPU usage is too high.'
+      severity: critical
+      rules:
+      - metric: cpu_wait
+        relational_operator: '>='
+        threshold: 35
+        window: 120
+        periods: 0
+        function: avg
+      - metric: cpu_idle
+        relational_operator: <=
+        threshold: 5
+        window: 120
+        function: avg
+    linux_system_cpu_warning:
+      description: 'The CPU wait times are high.'
+      severity: critical
+      rules:
+      - metric: cpu_wait
+        relational_operator: '>='
+        threshold: 15
+        window: 120
+        periods: 0
+        function: avg
+    linux_system_swap_usage_critical:
+      description: 'There is no more swap free space'
+      severity: critical
+      rules:
+      - metric: swap_free
+        relational_operator: '=='
+        threshold: 0
+        window: 60
+        periods: 0
+        function: max
+    linux_system_swap_activity_warning:
+      description: 'The swap activity is high'
+      severity: warning
+      rules:
+      - metric: swap_io_in
+        relational_operator: '>='
+        threshold: 1048576 # 1 Mb/s
+        window: 120
+        periods: 0
+        function: avg
+      - metric: swap_io_out
+        relational_operator: '>='
+        threshold: 1048576 # 1 Mb/s
+        window: 120
+        periods: 0
+        function: avg
+    linux_system_swap_usage_warning:
+      description: 'The swap free space is low'
+      severity: warning
+      rules:
+      - metric: swap_percent_used
+        relational_operator: '>='
+        threshold: 0.8
+        window: 60
+        periods: 0
+        function: avg
+    linux_system_root_fs_warning:
+      description: "The root filesystem's free space is low"
+      severity: warning
+      rules:
+      - metric: fs_space_percent_free
+        field:
+          fs: '/'
+        relational_operator: '<'
+        threshold: 10
+        window: 60
+        periods: 0
+        function: min
+    linux_system_root_fs_critical:
+      description: "The root filesystem's free space is too low"
+      severity: critical
+      rules:
+      - metric: fs_space_percent_free
+        field:
+          fs: '/'
+        relational_operator: '<'
+        threshold: 5
+        window: 60
+        periods: 0
+        function: min
+    linux_system_network_warning_dropped_rx:
+      description: 'Some received packets have been dropped'
+      severity: warning
+      rules:
+      - metric: if_dropped_rx
+        relational_operator: '>'
+        threshold: 100
+        window: 60
+        periods: 0
+        function: avg
+    linux_system_network_critical_dropped_rx:
+      description: 'Too many received packets have been dropped'
+      severity: critical
+      rules:
+      - metric: if_dropped_rx
+        relational_operator: '>'
+        threshold: 1000
+        window: 60
+        periods: 0
+        function: avg
+    linux_system_network_warning_dropped_tx:
+      description: 'Some transmitted packets have been dropped'
+      severity: warning
+      rules:
+      - metric: if_dropped_tx
+        relational_operator: '>'
+        threshold: 100
+        window: 60
+        periods: 0
+        function: avg
+    linux_system_network_critical_dropped_tx:
+      description: 'Too many transmitted packets have been dropped'
+      severity: critical
+      rules:
+      - metric: if_dropped_tx
+        relational_operator: '>'
+        threshold: 1000
+        function: avg
+        window: 60
+    linux_system_hdd_errors_critical:
+      description: 'Errors on hard drive(s) have been detected'
+      severity: critical
+      no_data_policy: okay
+      rules:
+      - metric: hdd_errors_rate
+        group_by: [device]
+        relational_operator: '>'
+        threshold: 0
+        window: 60
+        periods: 0
+        function: max
+  alarm:
+    linux_system_cpu:
+      alerting: enabled
+      triggers:
+      - linux_system_cpu_warning
+      - linux_system_cpu_critical
+    linux_system_swap:
+      alerting: enabled
+      triggers:
+      - linux_system_swap_usage_critical
+      - linux_system_swap_activity_warning
+      - linux_system_swap_usage_warning
+    linux_system_root_fs:
+      alerting: enabled
+      triggers:
+      - linux_system_root_fs_critical
+      - linux_system_root_fs_warning
+    linux_system_network_rx:
+      alerting: enabled
+      triggers:
+      - linux_system_network_critical_dropped_rx
+      - linux_system_network_warning_dropped_rx
+    linux_system_network_tx:
+      alerting: enabled
+      triggers:
+      - linux_system_network_critical_dropped_tx
+      - linux_system_network_warning_dropped_tx
+    linux_system_hdd_errors:
+      alerting: enabled_with_notification
+      triggers:
+      - linux_system_hdd_errors_critical

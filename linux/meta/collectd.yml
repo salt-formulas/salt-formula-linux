@@ -1,31 +1,28 @@
-plugin:
-  linux_network_interface:
-    plugin: interface
-    execution: local
+local_plugin:
+  linux_network_netlink:
+    plugin: netlink
+    template: linux/files/collectd_netlink.conf
+    ignore_selected: false
+    interfaces:
+    {%- for interface_name in salt['linux_netlink.ls']() %}
+    - {{ interface_name }}
+    {%- endfor %}
   linux_system_cpu:
     plugin: cpu
-    execution: local
   linux_system_entropy:
     plugin: entropy
-    execution: local
   linux_system_load:
     plugin: load
-    execution: local
   linux_system_contextswitch:
     plugin: contextswitch
-    execution: local
   linux_system_memory:
     plugin: memory
-    execution: local
   linux_system_uptime:
     plugin: uptime
-    execution: local
   linux_system_users:
     plugin: users
-    execution: local
   linux_storage_df:
     plugin: df
-    execution: local
     template: linux/files/collectd_df.conf
     ignore_selected: True
     fs_types:
@@ -39,9 +36,7 @@ plugin:
     - cgroup
   linux_storage_disk:
     plugin: disk
-    execution: local
     template: linux/files/collectd_disk.conf
     ignore_selected: True
   linux_storage_swap:
     plugin: swap
-    execution: local

@@ -28,6 +28,8 @@ linux_host_{{ name }}_order_fix:
     - repl: {{ after }}
     - watch:
       - host: linux_host_{{ name }}
+    - onlyif:
+      - grep -q "{{ before }}" /etc/hosts
 
 {%- endif %}
 

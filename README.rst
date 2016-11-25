@@ -558,6 +558,7 @@ Linux with mounted Samba
         enabled: true
         mount:
           samba1:
+          - enabled: true
           - path: /media/myuser/public/
           - device: //192.168.0.1/storage
           - file_system: cifs
@@ -599,6 +600,7 @@ LVM group `vg1` with one device and `data` volume mounted into `/mnt/data`
         storage:
           mount:
             data:
+              enabled: true
               device: /dev/vg1/data
               file_system: ext4
               path: /mnt/data
