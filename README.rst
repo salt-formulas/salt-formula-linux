@@ -689,6 +689,32 @@ Disabled multipath (the default setup)
           multipath:
             enabled: false
 
+External config generation
+--------------------------
+
+You are able to use config support metadata between formulas and only generate
+config files for external use, eg. docker, etc.
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        system:
+          config:
+            pillar:
+              jenkins:
+                master:
+                  home: /srv/volumes/jenkins
+                  approved_scripts:
+                    - method java.net.URL openConnection
+                  credentials:
+                    - type: username_password
+                      scope: global
+                      id: test
+                      desc: Testing credentials
+                      username: test
+                      password: test
+
 
 Usage
 =====

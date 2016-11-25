@@ -1,0 +1,6 @@
+auto {{ port_name }}
+allow-{{ port.bridge }} {{ port_name }}
+iface {{ port_name }} inet manual
+ovs_type OVSIntPort
+mtu {{ port.get('mtu', '1500') }}
+ovs_bridge {{ port.bridge }}

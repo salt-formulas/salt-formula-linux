@@ -60,3 +60,6 @@ include:
 {%- if system.haveged is defined %}
 - linux.system.haveged
 {%- endif %}
+{%- if system.config is defined %}
+- linux.system.config
+{%- endif %}
