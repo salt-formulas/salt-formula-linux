@@ -21,7 +21,7 @@
     - defaults:
         pillar: {{ config.pillar|yaml }}
         grains: {{ config.get('grains', {}) }}
-        {%- for key, value in service_config.get('defaults', {}) %}
+        {%- for key, value in service_config.get('defaults', {}).iteritems() %}
         {{ key }}: {{ value }}
         {%- endfor %}
 
