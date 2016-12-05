@@ -14,6 +14,9 @@
 {{ service_config.path }}:
   file.managed:
     - source: {{ service_config.source }}
+    - user: {{ config.get('user', service_config.get('user', 'root')) }}
+    - group: {{ config.get('group', service_config.get('group', 'root')) }}
+    - mode: {{ config.get('mode', service_config.get('mode', '644')) }}
     {%- if service_config.template is defined %}
     - template: {{ service_config.template }}
     {%- endif %}
