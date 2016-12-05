@@ -545,6 +545,10 @@ Setup resolv.conf, nameservers, domain and search domains
           search:
             - my.example.com
             - example.com
+          options:
+            - ndots:5
+            - timeout:2
+            - attempts:2
 
 Linux storage pillars
 ---------------------
