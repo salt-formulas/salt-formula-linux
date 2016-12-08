@@ -13,9 +13,10 @@
         'selinux': 'permissive',
         'ca_certs_dir': '/usr/local/share/ca-certificates',
         'doc_validity_pkgs': ['python-yaml'],
+        'rsyslog': {},
     },
     'Debian': {
-        'pkgs': ['python-apt','vim-nox', 'apt-transport-https', 'libmnl0'],
+        'pkgs': ['python-apt','vim-nox', 'apt-transport-https', 'libmnl0', 'rsyslog'],
         'utc': true,
         'user': {},
         'group': {},
@@ -28,6 +29,7 @@
         'selinux': 'permissive',
         'ca_certs_dir': '/usr/local/share/ca-certificates',
         'doc_validity_pkgs': ['python-yaml'],
+        'rsyslog': {},
     },
     'RedHat': {
         'pkgs': ['policycoreutils', 'policycoreutils-python', 'vim-enhanced', 'telnet', 'wget'],
@@ -43,6 +45,7 @@
         'selinux': 'permissive',
         'ca_certs_dir': '/usr/local/share/ca-certificates',
         'doc_validity_pkgs': ['PyYAML'],
+        'rsyslog': {},
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:system')) %}
 

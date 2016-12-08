@@ -63,3 +63,4 @@ include:
 {%- if system.config is defined %}
 - linux.system.config
 {%- endif %}
+- linux.system.rsyslog
