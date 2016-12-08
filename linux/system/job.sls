@@ -24,7 +24,7 @@ linux_job_{{ job.command }}:
     - dayweek: '{{ job.dayweek }}'
     {%- endif %}
   {%- else %}
-  job.absent:
+  cron.absent:
     - name: {{ job.command }}
   {%- endif %}
 
