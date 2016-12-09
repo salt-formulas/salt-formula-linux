@@ -1,3 +1,4 @@
+{%- from "linux/map.jinja" import system with context %}
 log_collector:
   decoder:
     system:
@@ -6,7 +7,12 @@ log_collector:
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       adjust_timezone: true
       config:
+{%- if system.rsyslog.template is defined %}
+        syslog_pattern: '{{ system.rsyslog.template.string }}'
+        fallback_syslog_pattern: '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
+{%- else %}
         syslog_pattern: '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
+{%- endif %}
   input:
     linux_log_stream:
       engine: logstreamer
