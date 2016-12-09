@@ -3,9 +3,14 @@
 
 {%- if system.timezone is defined %}
 
+include:
+- linux.system.rsyslog
+
 {{ system.timezone }}:
   timezone.system:
   - utc: {{ system.utc }}
+  - watch_in:
+    - service: rsyslog_service
 
 {%- endif %}
 
