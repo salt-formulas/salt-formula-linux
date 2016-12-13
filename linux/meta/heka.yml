@@ -1,32 +1,3 @@
-log_collector:
-  decoder:
-    system:
-      engine: sandbox
-      module_file: /usr/share/lma_collector/decoders/generic_syslog.lua
-      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
-      adjust_timezone: true
-      config:
-        syslog_pattern: '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%\n'
-  input:
-    linux_log_stream:
-      engine: logstreamer
-      log_directory: "/var/log"
-      file_match: '(?P<Service>daemon\.log|cron\.log|haproxy\.log|kern\.log|auth\.log|syslog|messages|debug)'
-      differentiator: [ 'system.', 'Service' ]
-      decoder: "system_decoder"
-      splitter: "TokenSplitter"
-  filter:
-    linux_hdd_errors:
-      engine: sandbox
-      module_file: /usr/share/lma_collector/filters/hdd_errors_counter.lua
-      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
-      preserve_data: false
-      message_matcher: "Type == 'log' && Logger == 'system.kern'"
-      ticker_interval: 10
-      config:
-        grace_interval: 10
-        patterns: "/error%s.+([sv]d[a-z][a-z]?)%d?/ /([sv]d[a-z][a-z]?)%d?.+%serror/"
-        hostname: '{{ grains.host }}'
 metric_collector:
   trigger:
     linux_system_cpu_critical:
