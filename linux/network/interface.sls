@@ -29,11 +29,19 @@ linux_network_bridge_pkgs:
 {%- if grains.os_family in ['RedHat', 'Debian'] %}
 
 {%- if interface.type == 'ovs_bridge' %}
-
+{#
 ovs_bridge_{{ interface_name }}:
   openvswitch_bridge.present:
   - name: {{ interface_name }}
-
+#}
+ovs_bridge_{{ interface_name }}:
+  file.managed:
+    - name: /etc/network/interfaces.d/ifcfg-{{ interface_name }}
+    - source: salt://linux/files/ovs_bridge
+    - defaults:
+      bridge: {{ interface|yaml }}
+      bridge_name: {{ interface_name }}
+    - template: jinja
 {%- elif interface.type == 'ovs_port' %}
 
 {#
@@ -45,7 +53,7 @@ ovs_port_{{ interface_name }}:
     - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}
 #}
 
-linux_interfaces_include:
+linux_interfaces_include_{{ interface_name }}:
   file.prepend:
   - name: /etc/network/interfaces
   - text: 'source /etc/network/interfaces.d/*'
@@ -59,18 +67,7 @@ ovs_port_{{ interface_name }}:
       port_name: {{ interface_name }}
   - template: jinja
 
-ovs_port_{{ interface_name }}_line1:
-  file.replace:
-  - name: /etc/network/interfaces
-  - pattern: auto {{ interface_name }}
-  - repl: ""
-
-ovs_port_{{ interface_name }}_line2:
-  file.replace:
-  - name: /etc/network/interfaces
-  - pattern: iface {{ interface_name }} inet manual
-  - repl: ""
-
+{#
 ovs_port_up_{{ interface_name }}:
   cmd.run:
   - name: ifup {{ interface_name }}
@@ -79,7 +76,7 @@ ovs_port_up_{{ interface_name }}:
     - file: ovs_port_{{ interface_name }}_line1
     - file: ovs_port_{{ interface_name }}_line2
     - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}
-
+#}
 {%- else %}
 
 linux_interface_{{ interface_name }}:
@@ -106,6 +103,9 @@ linux_interface_{{ interface_name }}:
   {%- endif %}
   {%- if interface.name_servers is defined %}
   - dns: {{ interface.name_servers }}
+  {%- endif %}
+  {%- if interface.bond_master is defined %}
+  - master: {{ interface.bond_master }}
   {%- endif %}
   {%- if interface.wireless is defined and grains.os_family == 'Debian' %}
   {%- if interface.wireless.security == "wpa" %}
@@ -229,6 +229,28 @@ linux_network_{{ interface_name }}_routes:
       netmask: {{ route.netmask }}
       gateway: {{ route.gateway }}
     {%- endfor %}
+
+{%- endif %}
+
+{%- endfor %}
+
+{%- for interface_name, interface in network.interface.iteritems() %}
+
+{%- set interface_name = interface.get('name', interface_name) %}
+
+{%- if interface.type == 'ovs_port' or interface.type == 'ovs_bridge' %}
+
+ovs_port_{{ interface_name }}_line1:
+  file.replace:
+  - name: /etc/network/interfaces
+  - pattern: auto {{ interface_name }}
+  - repl: ""
+
+ovs_port_{{ interface_name }}_line2:
+  file.replace:
+  - name: /etc/network/interfaces
+  - pattern: iface {{ interface_name }} inet {{ interface.proto }}
+  - repl: ""
 
 {%- endif %}
 
