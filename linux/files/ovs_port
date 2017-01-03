@@ -8,6 +8,9 @@ ovs_bridge {{ port.bridge }}
 address {{ port.address }}
 netmask {{ port.netmask }}
 {%- endif %}
+{%- if port.gateway is defined %}
+gateway {{ port.gateway }}
+{%- endif %}
 {%- if port.ovs_options is defined %}
 ovs_options {{ port.ovs_options }}
 {%- endif %}
