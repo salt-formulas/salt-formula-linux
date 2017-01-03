@@ -34,18 +34,46 @@ ovs_bridge_{{ interface_name }}:
   openvswitch_bridge.present:
   - name: {{ interface_name }}
 
+{# add linux network interface into OVS bridge #}
+{%- for int_name, int in network.interface.iteritems() %}
+
+{%- set int_name = int.get('name', int_name) %}
+
+{%- if int.ovs_bridge is defined %}
+
+add_int_to_ovs_bridge_{{ interface_name }}:
+  cmd.run:
+    - unless: ovs-vsctl show | grep {{ int_name }}
+    - name: ovs-vsctl add-port {{ interface_name }} {{ int_name }}
+
+{%- endif %}
+
+{%- endfor %}
+
 {%- elif interface.type == 'ovs_port' %}
 
-{#
+{%- if interface.get('port_type','internal') == 'patch' %}
+
 ovs_port_{{ interface_name }}:
   openvswitch_port.present:
   - name: {{ interface_name }}
   - bridge: {{ interface.bridge }}
   - require:
     - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}
-#}
 
-linux_interfaces_include:
+ovs_port_set_type_{{ interface_name }}:
+  cmd.run:
+  - name: ovs-vsctl set interface {{ interface_name }} type=patch
+  - unless: ovs-vsctl show | grep -A 1 'Interface {{ interface_name }}' | grep patch
+
+ovs_port_set_peer_{{ interface_name }}:
+  cmd.run:
+  - name: ovs-vsctl set interface {{ interface_name }} options:peer={{ interface.peer }}
+  - unless: ovs-vsctl show | grep -A 2 'Interface floating-to-prv' | grep {{ interface.peer }}
+
+{%- else %}
+
+linux_interfaces_include_{{ interface_name }}:
   file.prepend:
   - name: /etc/network/interfaces
   - text: 'source /etc/network/interfaces.d/*'
@@ -68,7 +96,7 @@ ovs_port_{{ interface_name }}_line1:
 ovs_port_{{ interface_name }}_line2:
   file.replace:
   - name: /etc/network/interfaces
-  - pattern: iface {{ interface_name }} inet manual
+  - pattern: 'iface {{ interface_name }} inet .*'
   - repl: ""
 
 ovs_port_up_{{ interface_name }}:
@@ -79,6 +107,8 @@ ovs_port_up_{{ interface_name }}:
     - file: ovs_port_{{ interface_name }}_line1
     - file: ovs_port_{{ interface_name }}_line2
     - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}
+
+{%- endif %}
 
 {%- else %}
 
