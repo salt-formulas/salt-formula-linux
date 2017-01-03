@@ -1,15 +1,15 @@
 allow-{{ port.bridge }} {{ port_name }}
 iface {{ port_name }} inet {{ port.get('proto', 'manual') }}
-ovs_type OVSIntPort
-mtu {{ port.get('mtu', '1500') }}
-ovs_bridge {{ port.bridge }}
+  ovs_type OVSIntPort
+  mtu {{ port.get('mtu', '1500') }}
+  ovs_bridge {{ port.bridge }}
 {%- if port.get('proto', 'manual') == 'static' %}
-address {{ port.address }}
-netmask {{ port.netmask }}
+  address {{ port.address }}
+  netmask {{ port.netmask }}
 {%- endif %}
 {%- if port.gateway is defined %}
-gateway {{ port.gateway }}
+  gateway {{ port.gateway }}
 {%- endif %}
 {%- if port.ovs_options is defined %}
-ovs_options {{ port.ovs_options }}
+  ovs_options {{ port.ovs_options }}
 {%- endif %}
