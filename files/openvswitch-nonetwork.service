@@ -1,0 +1,24 @@
+[Unit]
+Description=Open vSwitch Internal Unit
+PartOf=openvswitch-switch.service
+
+#https://bugs.launchpad.net/ubuntu/+source/openvswitch/+bug/1448254
+
+# Without this all sorts of looping dependencies occur doh!
+DefaultDependencies=no
+
+#precedants pulled from isup@ service requirements
+After=apparmor.service local-fs.target systemd-tmpfiles-setup.service
+
+#subsequent to this service we need the network to start
+Wants=network-pre.target openvswitch-switch.service
+Before=network-pre.target openvswitch-switch.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=-/etc/default/openvswitch-switch
+ExecStart=/usr/share/openvswitch/scripts/ovs-ctl start \
+          --system-id=random $OVS_CTL_OPTS
+ExecStop=/usr/share/openvswitch/scripts/ovs-ctl stop
+
