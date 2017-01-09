@@ -124,9 +124,7 @@
 {% set storage = salt['grains.filter_by']({
     'Arch': {
         'mount': {},
-        'swap': {
-             'enabled': True,
-         },
+        'swap': {},
         'lvm': {},
         'multipath': {
              'enabled': False,
@@ -136,9 +134,7 @@
     },
     'Debian': {
         'mount': {},
-        'swap': {
-             'enabled': True,
-         },
+        'swap': {},
         'lvm': {},
         'multipath': {
              'enabled': False,
@@ -149,9 +145,7 @@
     },
     'RedHat': {
         'mount': {},
-        'swap': {
-             'enabled': True,
-         },
+        'swap': {},
         'lvm': {},
         'multipath': {
              'enabled': False,
