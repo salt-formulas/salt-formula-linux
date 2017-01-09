@@ -6,6 +6,9 @@ include:
 {%- if system.pkgs|length > 0 %}
 - linux.system.package
 {%- endif %}
+{%- if system.cpu is defined %}
+- linux.system.cpu
+{%- endif %}
 {%- if system.timezone is defined %}
 - linux.system.timezone
 {%- endif %}
