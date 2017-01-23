@@ -22,4 +22,16 @@ linux:
         enabled: true
         type: vlan
         use_interfaces:
-        - interface: ${linux:interface:eth0}
+          - interface: ${linux:interface:eth0}
+    host:
+     localhost:
+       address: 127.0.1.1
+       names:
+         - localhost.localdomain
+         - localhost
+     removed:
+       enabled: false
+       address: 127.0.1.6
+       names:
+         - removed.domain
+         - removed
