@@ -529,12 +529,25 @@ Linux with proxy
 
 Linux with hosts
 
+Parameter purge_hosts will enforce whole /etc/hosts file, removing entries
+that are not defined in model except defaults for both IPv4 and IPv6 localhost
+and hostname + fqdn.
+It's good to use this option if you want to ensure /etc/hosts is always in a
+clean state however it's not enabled by default for safety.
+
 .. code-block:: yaml
 
     linux:
       network:
         ...
+        purge_hosts: true
         host:
+          # No need to define this one if purge_hosts is true
+          hostname:
+            address: 127.0.1.1
+            names:
+            - ${linux:network:fqdn}
+            - ${linux:network:hostname}
           node1:
             address: 192.168.10.200
             names:
@@ -545,6 +558,7 @@ Linux with hosts
             names:
             - node2.domain.com
             - service2.domain.com
+
 
 Setup resolv.conf, nameservers, domain and search domains
 
