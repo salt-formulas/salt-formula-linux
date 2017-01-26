@@ -1,0 +1,12 @@
+description "Setup {{ device_name }} device"
+
+start on filesystem
+task
+
+pre-start script
+  if /sbin/losetup {{ device_name }}; then
+    stop ; exit 0
+  fi
+end script
+
+exec losetup {{ device_name }} {{ file }}
