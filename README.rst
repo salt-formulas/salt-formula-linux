@@ -708,6 +708,17 @@ Disabled multipath (the default setup)
           multipath:
             enabled: false
 
+Linux with local loopback device
+
+.. code-block:: yaml
+
+    linux:
+      storage:
+        loopback:
+          disk1:
+            file: /srv/disk1
+            size: 50G
+
 External config generation
 --------------------------
 

@@ -1,0 +1,14 @@
+[Unit]
+Description=Setup {{ device_name }} device
+DefaultDependencies=no
+After=systemd-udev-settle.service
+Before=lvm2-activation-early.service
+Wants=systemd-udev-settle.service
+
+[Service]
+{# The command is prefixed with '-' to consider it a success if the loopback device is already setup #}
+ExecStart=-/sbin/losetup {{ device_name }} {{ file }}
+Type=oneshot
+
+[Install]
+WantedBy=local-fs.target
