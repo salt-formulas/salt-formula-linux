@@ -1,6 +1,16 @@
 {%- from "linux/map.jinja" import network with context %}
 {%- if network.enabled %}
 
+{%- if network.get('purge_hosts', false) %}
+
+linux_hosts:
+  file.managed:
+    - name: /etc/hosts
+    - source: salt://linux/files/hosts
+    - template: jinja
+
+{%- else %}
+
 {%- for name, host in network.host.iteritems() %}
 
 {%- if host.names is defined %}
@@ -36,5 +46,7 @@ linux_host_{{ name }}_order_fix:
 {%- endif %}
 
 {%- endfor %}
+
+{%- endif %}
 
 {%- endif %}
