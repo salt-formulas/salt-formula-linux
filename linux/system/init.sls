@@ -12,6 +12,9 @@ include:
 {%- if system.kernel is defined %}
 - linux.system.kernel
 {%- endif %}
+{%- if system.cpu is defined %}
+- linux.system.cpu
+{%- endif %}
 {%- if system.locale|length > 0 %}
 - linux.system.locale
 {%- endif %}

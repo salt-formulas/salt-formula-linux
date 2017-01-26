@@ -204,6 +204,21 @@ Systcl kernel parameters
             net.ipv4.tcp_keepalive_time: 30
             net.ipv4.tcp_keepalive_probes: 8
 
+
+CPU
+~~~
+
+Disable ondemand cpu mode service:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        cpu:
+          governor: performance
+
+
+
 Repositories
 ~~~~~~~~~~~~
 
