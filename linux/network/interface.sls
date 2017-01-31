@@ -39,7 +39,7 @@ ovs_bridge_{{ interface_name }}:
 
 {%- set int_name = int.get('name', int_name) %}
 
-{%- if int.ovs_bridge is defined %}
+{%- if int.ovs_bridge is defined and interface_name == int.ovs_bridge %}
 
 add_int_to_ovs_bridge_{{ interface_name }}:
   cmd.run:
