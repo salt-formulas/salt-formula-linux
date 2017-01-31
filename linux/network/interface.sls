@@ -41,7 +41,7 @@ ovs_bridge_{{ interface_name }}:
 
 {%- if int.ovs_bridge is defined and interface_name == int.ovs_bridge %}
 
-add_int_to_ovs_bridge_{{ interface_name }}:
+add_int_{{ int_name }}_to_ovs_bridge_{{ interface_name }}:
   cmd.run:
     - unless: ovs-vsctl show | grep {{ int_name }}
     - name: ovs-vsctl add-port {{ interface_name }} {{ int_name }}
