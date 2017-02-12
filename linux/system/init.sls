@@ -11,6 +11,9 @@ include:
 {%- endif %}
 {%- if system.kernel is defined %}
 - linux.system.kernel
+{%- if system.kernel.hugepages is defined %}
+- linux.system.hugepages
+{%- endif %}
 {%- endif %}
 {%- if system.cpu is defined %}
 - linux.system.cpu

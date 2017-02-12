@@ -19,6 +19,13 @@ linux:
         term: xterm
     prompt:
       default: "test01.local$"
+    kernel:
+      hugepages:
+        large:
+          default: true
+          size: 1G
+          count: 210
+          mount_point: /mnt/hugepages_1GB
     motd:
       - warning: |
           #!/bin/sh

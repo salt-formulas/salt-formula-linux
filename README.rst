@@ -217,6 +217,30 @@ Disable ondemand cpu mode service:
         cpu:
           governor: performance
 
+Huge Pages
+~~~~~~~~~~~~
+
+Huge Pages give a performance boost to applications that intensively deal
+with memory allocation/deallocation by decreasing memory fragmentation.
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          hugepages:
+            small:
+              size: 2M
+              count: 107520
+              mount_point: /mnt/hugepages_2MB
+              mount: false/true # default false
+            large:
+              default: true # default automatically mounted
+              size: 1G
+              count: 210
+              mount_point: /mnt/hugepages_1GB
+
+Note: not recommended to use both pagesizes in concurrently.
 
 
 Repositories
