@@ -14,6 +14,9 @@ include:
 {%- if system.kernel.hugepages is defined %}
 - linux.system.hugepages
 {%- endif %}
+{%- if system.kernel.sriov is defined %}
+- linux.system.sriov
+{%- endif %}
 {%- endif %}
 {%- if system.cpu is defined %}
 - linux.system.cpu

@@ -242,6 +242,25 @@ with memory allocation/deallocation by decreasing memory fragmentation.
 
 Note: not recommended to use both pagesizes in concurrently.
 
+Intel SR-IOV
+~~~~~~~~~~~~
+
+PCI-SIG Single Root I/O Virtualization and Sharing (SR-IOV) specification defines a standardized mechanism to virtualize PCIe devices. The mechanism can virtualize a single PCIe Ethernet controller to appear as multiple PCIe devices.
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          sriov: True
+          unsafe_interrupts: False # Default is false. for older platforms and AMD we need to add interrupt remapping workaround
+        rc:
+          local: |
+            #!/bin/sh -e
+            # Enable 7 VF on eth1
+            echo 7 > /sys/class/net/eth1/device/sriov_numvfs; sleep 2; ifup -a
+            exit 0
+
 
 Repositories
 ~~~~~~~~~~~~
