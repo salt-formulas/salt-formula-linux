@@ -19,6 +19,7 @@ linux_hostname_file:
 linux_enforce_hostname:
   cmd.wait:
   - name: hostname {{ network.hostname }}
+  - unless: test "$(hostname)" = "{{ network.hostname }}"
 
 {#
 linux_hostname_hosts:
