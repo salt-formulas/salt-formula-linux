@@ -13,9 +13,9 @@
 linux_network_bridge_pkgs:
   pkg.installed:
   {%- if network.bridge == 'openvswitch' %}
-  - names: {{ network.ovs_pkgs }}
+  - pkgs: {{ network.ovs_pkgs }}
   {%- else %}
-  - names: {{ network.bridge_pkgs }}
+  - pkgs: {{ network.bridge_pkgs }}
   {%- endif %}
 
 {%- endif %}
@@ -212,7 +212,7 @@ linux_system_network:
 
 linux_network_packages:
   pkg.installed:
-  - names: {{ network.pkgs }}
+  - pkgs: {{ network.pkgs }}
 
 /etc/netctl/network_{{ interface.wireless.essid }}:
   file.managed:

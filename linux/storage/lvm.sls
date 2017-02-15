@@ -4,7 +4,7 @@
 
 linux_lvm_pkgs:
   pkg.installed:
-  - names: {{ storage.lvm_pkgs }}
+  - pkgs: {{ storage.lvm_pkgs }}
 
 {%- for vgname, vg in storage.lvm.iteritems() %}
 
