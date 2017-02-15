@@ -7,7 +7,7 @@
 
 linux_kernel_package:
   pkg.installed:
-  - names:
+  - pkgs:
     - linux-image-{{ system.kernel.version }}-{{ system.kernel.type|default('generic') }}
     {%- if system.kernel.get('headers', False) %}
     - linux-headers-{{ system.kernel.version }}-{{ system.kernel.type|default('generic') }}

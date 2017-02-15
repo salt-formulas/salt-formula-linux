@@ -3,7 +3,7 @@
 
 linux_packages:
   pkg.installed:
-  - names: {{ system.pkgs }}
+  - pkgs: {{ system.pkgs }}
 
 {%- for name, package in system.package.iteritems() %}
 

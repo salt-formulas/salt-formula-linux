@@ -3,7 +3,7 @@
 
 linux_storage_multipath_packages:
   pkg.installed:
-  - names: {{ storage.multipath.pkgs }}
+  - pkgs: {{ storage.multipath.pkgs }}
 
 linux_storage_multipath_config:
   file.managed:
