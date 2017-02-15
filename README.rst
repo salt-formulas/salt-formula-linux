@@ -179,6 +179,18 @@ Install always up to date LTS kernel and headers from Ubuntu trusty:
           lts: trusty
           headers: true
 
+Load kernel modules and add them to `/etc/modules`:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          modules:
+            - nf_conntrack
+            - tp_smapi
+            - 8021q
+
 Install specific kernel version and ensure all other kernel packages are
 not present. Also install extra modules and headers for this kernel:
 

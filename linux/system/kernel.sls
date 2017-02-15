@@ -26,6 +26,16 @@ linux_kernel_old_absent:
 
 {%- endif %}
 
+
+{%- for module in system.kernel.get('modules', []) %}
+
+linux_kernel_module_{{ module }}:
+  kmod.present:
+    - name: {{ module }}
+    - persist: true
+
+{%- endfor %}
+
 {%- for sysctl_name, sysctl_value in system.kernel.get('sysctl', {}).iteritems() %}
 
 linux_kernel_{{ sysctl_name }}:
