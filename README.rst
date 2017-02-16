@@ -91,6 +91,21 @@ Linux with package from certail repo, version with no GPG verification
             repo: 'custom-repo'
             verify: false
 
+Linux with autoupdates (automatically install security package updates)
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        autoupdates:
+          enabled: true
+          mail: root@localhost
+          mail_only_on_error: true
+          remove_unused_dependencies: false
+          automatic_reboot: true
+          automatic_reboot_time: "02:00"
+
 Linux with cron jobs
 
 .. code-block:: yaml
