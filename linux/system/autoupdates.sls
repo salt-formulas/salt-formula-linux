@@ -3,7 +3,7 @@
 
 {%- if system.autoupdates is defined %}
 
-{%- if system.autoupdates.pkgs > 0 %}
+{%- if system.autoupdates.pkgs %}
 linux_autoupdates_packages:
   pkg.installed:
   - pkgs: {{ system.autoupdates.pkgs }}
