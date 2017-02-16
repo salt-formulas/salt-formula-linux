@@ -3,6 +3,21 @@
 
 {%- if system.kernel is defined %}
 
+{%- if system.kernel.isolcpu is defined %}
+
+include:
+  - linux.system.grub
+
+/etc/default/grub.d/90-isolcpu.cfg:
+  file.managed:
+    - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT isolcpu={{ system.kernel.isolcpu }}"'
+    - require:
+      - file: grub_d_directory
+    - watch_in:
+      - cmd: grub_update
+
+{%- endif %}
+
 {%- if system.kernel.version is defined %}
 
 linux_kernel_package:

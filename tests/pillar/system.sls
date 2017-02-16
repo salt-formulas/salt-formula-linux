@@ -20,6 +20,8 @@ linux:
     prompt:
       default: "test01.local$"
     kernel:
+      sriov: True
+      isolcpu: 1,2,3,4
       hugepages:
         large:
           default: true

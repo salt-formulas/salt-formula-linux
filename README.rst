@@ -288,6 +288,20 @@ PCI-SIG Single Root I/O Virtualization and Sharing (SR-IOV) specification define
             echo 7 > /sys/class/net/eth1/device/sriov_numvfs; sleep 2; ifup -a
             exit 0
 
+Isolate CPU options
+~~~~~~~~~~~~~~~~~~~
+
+Remove the specified CPUs, as defined by the cpu_number values, from the general kernel
+SMP balancing and scheduler algroithms. The only way to move a process onto or off an
+"isolated" CPU is via the CPU affinity syscalls. cpu_number begins at 0, so the
+maximum value is 1 less than the number of CPUs on the system.
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          isolcpu: 1,2,3,4,5,6,7 # isolate first cpu 0
 
 Repositories
 ~~~~~~~~~~~~
