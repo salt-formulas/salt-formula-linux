@@ -8,15 +8,19 @@ linux_packages:
 {%- for name, package in system.package.iteritems() %}
 
 linux_extra_package_{{ name }}:
-  {%- if package.version == 'latest' %}
+  {%- if package.version is defined %}
+    {%- if package.version == 'latest' %}
   pkg.latest:
-  {%- elif package.version == 'purged' %}
+    {%- elif package.version == 'purged' %}
   pkg.purged:
-  {%- elif package.version == 'removed' %}
+    {%- elif package.version == 'removed' %}
   pkg.removed:
-  {%- else %}
+    {%- else %}
   pkg.installed:
   - version: {{ package.version }}
+    {%- endif %}
+  {%- else %}
+  pkg.installed:
   {%- endif %}
   - name: {{ name }}
   {%- if package.repo is defined %}
