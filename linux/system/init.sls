@@ -6,7 +6,7 @@ include:
 {%- if system.pkgs|length > 0 %}
 - linux.system.package
 {%- endif %}
-{%- if system.autoupdates is defined %}
+{%- if pillar.linux.system.autoupdates is defined %}
 - linux.system.autoupdates
 {%- endif %}
 {%- if system.timezone is defined %}

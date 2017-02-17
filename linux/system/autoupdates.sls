@@ -1,7 +1,7 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
-{%- if system.autoupdates is defined %}
+{%- if system.autoupdates.get('enabled', True) %}
 
 {%- if system.autoupdates.pkgs %}
 linux_autoupdates_packages:

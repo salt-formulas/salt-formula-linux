@@ -1,6 +1,6 @@
-{%- set autoupdates = salt['pillar.get']('linux:system:autoupdates') %}
+{%- from "linux/map.jinja" import system with context -%}
 
-{%- if autoupdates.enabled %}
+{%- if system.autoupdates.enabled %}
 APT::Periodic::Enable "1";
 APT::Periodic::Update-Package-Lists "1";
 APT::Periodic::Unattended-Upgrade "1";
@@ -8,22 +8,22 @@ APT::Periodic::Unattended-Upgrade "1";
 APT::Periodic::Unattended-Upgrade "0";
 {%- endif %}
 
-{%- if autoupdates.mail is defined %}
-Unattended-Upgrade::Mail "{{ autoupdates.mail }}";
+{%- if system.autoupdates.mail is defined %}
+Unattended-Upgrade::Mail "{{ system.autoupdates.mail }}";
 {%- endif %}
 
-{%- if autoupdates.mail_only_on_error is defined %}
-Unattended-Upgrade::MailOnlyOnError "{{ "true" if autoupdates.mail_only_on_error else "false"}}";
+{%- if system.autoupdates.mail_only_on_error is defined %}
+Unattended-Upgrade::MailOnlyOnError "{{ "true" if system.autoupdates.mail_only_on_error else "false"}}";
 {%- endif %}
 
-{%- if autoupdates.remove_unused_dependencies is defined %}
-Unattended-Upgrade::Remove-Unused-Dependencies "{{ "true" if autoupdates.remove_unused_dependencies else "false"}}";
+{%- if system.autoupdates.remove_unused_dependencies is defined %}
+Unattended-Upgrade::Remove-Unused-Dependencies "{{ "true" if system.autoupdates.remove_unused_dependencies else "false"}}";
 {%- endif %}
 
-{%- if autoupdates.automatic_reboot is defined %}
-Unattended-Upgrade::Automatic-Reboot "{{ "true" if autoupdates.automatic_reboot else "false"}}";
+{%- if system.autoupdates.automatic_reboot is defined %}
+Unattended-Upgrade::Automatic-Reboot "{{ "true" if system.autoupdates.automatic_reboot else "false"}}";
 {%- endif %}
 
-{%- if autoupdates.automatic_reboot_time is defined %}
-Unattended-Upgrade::Automatic-Reboot-Time "{{ autoupdates.automatic_reboot_time }}";
+{%- if system.autoupdates.automatic_reboot_time is defined %}
+Unattended-Upgrade::Automatic-Reboot-Time "{{ system.autoupdates.automatic_reboot_time }}";
 {%- endif %}
