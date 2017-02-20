@@ -24,7 +24,7 @@ hugepages_mount_{{ hugepages_type }}:
     - device: Hugetlbfs-kvm
     - fstype: hugetlbfs
     - mkmnt: true
-    - opts: mode=775,pagesize={{ hugepages.size }}
+    - opts: mode=777,pagesize={{ hugepages.size }}
 
 {%- endif %}
 
