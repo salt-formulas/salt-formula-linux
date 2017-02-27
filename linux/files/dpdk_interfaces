@@ -1,0 +1,6 @@
+{%- from "linux/map.jinja" import network with context %}
+{%- for interface_name, interface in network.interface.iteritems() %}
+{%- if 'dpdk' in interface.type and interface.pci is defined %}
+pci {{ interface.pci }} {{ interface.driver }}
+{%- endif %}
+{%- endfor %}

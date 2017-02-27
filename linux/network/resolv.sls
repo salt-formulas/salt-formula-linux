@@ -9,7 +9,7 @@
 
 linux_resolvconf_disable:
   cmd.run:
-    - name: resolvconf --disable-updates
-    - onlyif: resolvconf --updates-are-enabled
+  - name: resolvconf --disable-updates
+  - onlyif: resolvconf --updates-are-enabled
 
 {%- endif %}

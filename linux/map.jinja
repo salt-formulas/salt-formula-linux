@@ -11,7 +11,7 @@
         'repo': {},
         'package': {},
         'autoupdates': {
-             'pkgs': []
+          'pkgs': []
          },
         'selinux': 'permissive',
         'ca_certs_dir': '/usr/local/share/ca-certificates',
@@ -106,6 +106,7 @@
         'hostname_file': '/etc/hostname',
         'bridge_pkgs': ['bridge-utils'],
         'ovs_pkgs': ['openvswitch-switch', 'bridge-utils'],
+        'dpdk_pkgs': ['dpdk', 'dpdk-dev', 'dpdk-dkms', 'dpdk-igb-uio-dkms', 'dpdk-rte-kni-dkms'],
         'network_manager': False,
         'interface': {},
         'interface_params': interface_params,

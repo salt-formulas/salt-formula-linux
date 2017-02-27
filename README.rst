@@ -652,19 +652,92 @@ Setup resolv.conf, nameservers, domain and search domains
       network:
         resolv:
           dns:
-            - 8.8.4.4
-            - 8.8.8.8
+          - 8.8.4.4
+          - 8.8.8.8
           domain: my.example.com
           search:
-            - my.example.com
-            - example.com
+          - my.example.com
+          - example.com
           options:
-            - ndots:5
-            - timeout:2
-            - attempts:2
+          - ndots: 5
+          - timeout: 2
+          - attempts: 2
 
-Linux storage pillars
----------------------
+DPDK OVS interfaces
+--------------------
+
+**DPDK OVS NIC**
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        bridge: openvswitch
+        dpdk:
+          enabled: true
+          driver: uio/vfio-pci
+        openvswitch:
+          pmd_cpu_mask: "0x6"
+          dpdk_socket_mem: "1024,1024"
+          dpdk_lcore_mask: "0x400"
+          memory_channels: 2
+        interface:
+          dpkd0:
+            name: ${_param:dpdk_nic}
+            pci: 0000:06:00.0
+            driver: igb_uio/vfio
+            enabled: true
+            type: dpdk_ovs_port
+            n_rxq: 2
+            bridge: br-prv
+          br-prv:
+            enabled: true
+            type: dpdk_ovs_bridge
+
+**DPDK OVS Bond**
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        bridge: openvswitch
+        dpdk:
+          enabled: true
+          driver: uio/vfio-pci
+        openvswitch:
+          pmd_cpu_mask: "0x6"
+          dpdk_socket_mem: "1024,1024"
+          dpdk_lcore_mask: "0x400"
+          memory_channels: 2
+        interface:
+          dpdk_second_nic:
+            name: ${_param:primary_second_nic}
+            pci: 0000:06:00.0
+            driver: igb_uio/vfio
+            bond: dpdkbond0
+            enabled: true
+            type: dpdk_ovs_port
+            n_rxq: 2
+          dpdk_first_nic:
+            name: ${_param:primary_first_nic}
+            pci: 0000:05:00.0
+            driver: igb_uio/vfio
+            bond: dpdkbond0
+            enabled: true
+            type: dpdk_ovs_port
+            n_rxq: 2
+          dpdkbond0:
+            enabled: true
+            bridge: br-prv
+            type: dpdk_ovs_bond
+            mode: active-backup
+          br-prv:
+            enabled: true
+            type: dpdk_ovs_bridge
+
+
+Linux storage
+-------------
 
 Linux with mounted Samba
 
@@ -681,7 +754,7 @@ Linux with mounted Samba
           - file_system: cifs
           - options: guest,uid=myuser,iocharset=utf8,file_mode=0777,dir_mode=0777,noperm
 
-Linux with file swap
+File swap configuration
 
 .. code-block:: yaml
 
@@ -695,7 +768,7 @@ Linux with file swap
             device: /swapfile
             size: 1024
 
-Linux with partition swap
+Partition swap configuration
 
 .. code-block:: yaml
 
