@@ -133,6 +133,9 @@ linux_interface_{{ interface_name }}:
   {%- else %}
   - proto: {{ interface.get('proto', 'dhcp') }}
   {%- endif %}
+  {%- if interface.type == 'slave' %}
+  - master: {{ interface.master }}
+  {%- endif %}
   {%- if interface.name_servers is defined %}
   - dns: {{ interface.name_servers }}
   {%- endif %}
