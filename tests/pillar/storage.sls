@@ -3,7 +3,7 @@ linux:
     enabled: true
     swap:
       file:
-        enabled: false
+        enabled: true
         engine: file
         device: /tmp/loop_dev2
         size: 5
@@ -35,8 +35,8 @@ linux:
         volume:
           lv01:
             size: 5M
-            #mount:
-              #path: /mnt
+            mount:
+              path: /mnt
     disk1:
       enabled: true
       device: /dev/loop_dev4
