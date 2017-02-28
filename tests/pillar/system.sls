@@ -2,32 +2,32 @@ linux:
   system:
     enabled: true
     cluster: default
-    name: test01
-    timezone: Europe/Prague
+    name: linux
+    #timezone: Europe/Prague
     domain: local
     environment: prd
     apparmor:
       enabled: false
     haveged:
       enabled: true
-    console:
-      tty0:
-        autologin: root
-      ttyS0:
-        autologin: root
-        rate: 115200
-        term: xterm
+    #console:
+    #  tty0:
+    #    autologin: root
+    #  ttyS0:
+    #    autologin: root
+    #    rate: 115200
+    #    term: xterm
     prompt:
-      default: "test01.local$"
+      default: "linux.ci.local$"
     kernel:
-      sriov: True
+      #sriov: True
       isolcpu: 1,2,3,4
-      hugepages:
-        large:
-          default: true
-          size: 1G
-          count: 210
-          mount_point: /mnt/hugepages_1GB
+      #hugepages:
+      #    large:
+      #    default: true
+      #    size: 1G
+      #    count: 210
+      #    mount_point: /mnt/hugepages_1GB
     motd:
       - warning: |
           #!/bin/sh
@@ -75,11 +75,11 @@ linux:
       opencontrail:
         source: "deb http://ppa.launchpad.net/tcpcloud/contrail-2.20/ubuntu trusty main"
         architectures: amd64
-    policyrcd:
-      - package: cassandra
-        action: exit 101
-      - package: '*'
-        action: switch
+    #policyrcd:
+      #- package: cassandra
+        #action: exit 101
+      #- package: '*'
+        #action: switch
     locale:
       en_US.UTF-8:
         enabled: true

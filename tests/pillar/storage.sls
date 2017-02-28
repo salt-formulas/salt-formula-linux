@@ -3,25 +3,44 @@ linux:
     enabled: true
     swap:
       file:
-        enabled: true
+        enabled: false
         engine: file
-        device: /swapfile
-        size: 512
+        device: /tmp/loop_dev2
+        size: 5
+    mount:
+      # NOTE: simple dummy loop devices, use for test purposes only
+      dev0:
+        enabled: false
+        device: /tmp/loop_dev0
+        path: /tmp/node/dev0
+        file_system: xfs
+        opts: noatime,nobarrier,logbufs=8,nobootwait,nobarrier
+        user: root
+        group: root
+        mode: 755
+      dev1:
+        enabled: true
+        device: /tmp/loop_dev1
+        path: /mnt
+        file_system: ext4
+        #opts: noatime,nobarrier,logbufs=8,nobootwait,nobarrier
+        user: root
+        group: root
     lvm:
       vg0:
         name: vg0-dummy
         enabled: true
         devices:
-          - /dev/vdb
+          - /tmp/loop_dev3
         volume:
           lv01:
-            size: 512M
-            mount:
-              path: /srv
+            size: 5M
+            #mount:
+              #path: /mnt
     disk1:
       enabled: true
-      device: /dev/dummy
-      path: /srv/dummy
+      device: /dev/loop_dev4
+      path: /tmp/dummy
       file_system: xfs
       options: "noatime,nobarrier,logbufs=8"
       user: nobody
