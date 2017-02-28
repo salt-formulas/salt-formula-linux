@@ -1,4 +1,3 @@
-
 =====
 Linux
 =====
@@ -53,6 +52,70 @@ Linux with system users, sowe with password set
             full_name: 'Password'
             home: '/home/jsmith'
             password: userpassword
+
+Sudo options, with reclass:
+
+.. code-block:: yaml
+  _param:
+    # Note: This is not 100% safe when ALL keyword is used, user still may modify configs and hide his actions.
+    #       Best practice is to specify full list of commands user is allowed to run.
+    sudo_restricted_su:
+    - /bin/vi /etc/sudoers.d/91-salt-groups
+    - /bin/vim /etc/sudoers.d/91-salt-groups
+    - /bin/nano /etc/sudoers.d/91-salt-groups
+    - /bin/emacs /etc/sudoers.d/91-salt-groups
+    - /bin/vi /etc/sudoers
+    - /bin/vim /etc/sudoers
+    - /bin/nano /etc/sudoers
+    - /bin/emacs /etc/sudoers
+    - /bin/su - root
+    - /bin/su -
+    - /bin/su
+    - /usr/sbin/visudo
+    sudo_shells:
+    - /bin/sh
+    - /bin/ksh
+    - /bin/bash
+    - /bin/rbash
+    - /bin/dash
+    - /bin/zsh
+    - /bin/csh
+    - /bin/fish
+    - /bin/tcsh
+    - /usr/bin/login
+    - /usr/bin/su
+    - /usr/su
+    sudo_salt_safe:
+    - /usr/bin/salt state*
+    - /usr/bin/salt service*
+    - /usr/bin/salt pillar*
+    - /usr/bin/salt grains*
+    - /usr/bin/salt saltutil*
+    - /usr/bin/salt-call state*
+    - /usr/bin/salt-call service*
+    - /usr/bin/salt-call pillar*
+    - /usr/bin/salt-call grains*
+    - /usr/bin/salt-call saltutil*
+    sudo_salt_trusted:
+    - /usr/bin/salt*
+  linux:
+    system:
+      group:
+        support-team:
+          enabled: true
+          name: support-team
+          sudo:
+            enabled: true
+            aliases:
+                SUPPORT_SHELLS: ${_param:sudo_shells}
+                SUPPORT_RESTRICTED: ${_param:sudo_restricted_su}
+            commands:
+                - ALL
+                - '!SUPPORT_SHELLS'
+                - '!SUPPORT_RESTRICTED'
+            hosts: ALL
+            user: ALL
+            nopasswd: false
 
 Linux with package, latest version
 
