@@ -1,0 +1,66 @@
+---
+driver:
+  name: docker
+  hostname: linux.ci.local
+  use_sudo: sudo
+
+provisioner:
+  name: salt_solo
+  salt_install: bootstrap
+  salt_bootstrap_url: https://bootstrap.saltstack.com
+  salt_version: latest
+  require_chef: false
+  log_level: error
+  init_environment: |
+    sudo mkdir -p /tmp/node
+    sudo dd if=/dev/zero of=/tmp/loop_dev0 bs=1024 count=$((30*1024));
+    sudo dd if=/dev/zero of=/tmp/loop_dev1 bs=1024 count=$((30*1024));
+    sudo dd if=/dev/zero of=/tmp/loop_dev2 bs=1024 count=$((30*1024));
+    sudo dd if=/dev/zero of=/tmp/loop_dev3 bs=1024 count=$((30*1024));
+    sudo dd if=/dev/zero of=/tmp/loop_dev4 bs=1024 count=$((30*1024));
+    sudo mkfs.ext4 /tmp/loop_dev1
+    sudo mkswap /tmp/loop_dev2
+    sudo chown root /tmp/loop_dev*;
+    sudo chmod 0600 /tmp/loop_dev*;
+  formula: linux
+  grains:
+    noservices: true
+  state_top:
+    base:
+      "*":
+        - linux
+  pillars:
+    top.sls:
+      base:
+        "*":
+          - linux
+
+verifier:
+  name: inspec
+  sudo: true
+
+platforms:
+  - name: <%=ENV['PLATFORM'] || 'ubuntu-xenial'%>
+    driver_config:
+      image: <%=ENV['PLATFORM'] || 'trevorj/salty-whales:xenial'%>
+      platform: ubuntu
+
+
+suites:
+
+  - name: network
+    provisioner:
+      pillars-from-files:
+        linux.sls: tests/pillar/network.sls
+
+  #- name: storage
+    #provisioner:
+      #pillars-from-files:
+        #linux.sls: tests/pillar/storage.sls
+
+  - name: system
+    provisioner:
+      pillars-from-files:
+        linux.sls: tests/pillar/system.sls
+
+# vim: ft=yaml sw=2 ts=2 sts=2 tw=125
