@@ -16,9 +16,10 @@
         'selinux': 'permissive',
         'ca_certs_dir': '/usr/local/share/ca-certificates',
         'doc_validity_pkgs': ['python-yaml'],
+        'oscodename': grains.get('oscodename'),
     },
     'Debian': {
-        'pkgs': ['python-apt','vim-nox', 'apt-transport-https', 'libmnl0'],
+        'pkgs': ['python-apt', 'vim-nox', 'apt-transport-https', 'libmnl0'],
         'utc': true,
         'user': {},
         'group': {},

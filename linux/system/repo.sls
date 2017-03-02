@@ -7,6 +7,10 @@
 
 {%- if grains.os_family == 'Debian' %}
 
+linux_system_packages:
+  pkg.installed:
+    - pkgs: {{ system.pkgs }}
+
 {%- if repo.pin is defined %}
 
 linux_repo_{{ name }}_pin:
