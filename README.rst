@@ -1,4 +1,3 @@
-
 =====
 Linux
 =====
@@ -31,7 +30,7 @@ Basic Linux box
         timezone: 'Europe/Prague'
         utc: true
 
-Linux with system users, sowe with password set
+Linux with system users, some with password set
 
 .. code-block:: yaml
 
@@ -53,6 +52,115 @@ Linux with system users, sowe with password set
             full_name: 'Password'
             home: '/home/jsmith'
             password: userpassword
+
+Configure sudo for users and groups under ``/etc/sudoers.d/``.
+This ways ``linux.system.sudo`` pillar map to actual sudo attributes:
+
+.. code-block:: jinja
+   # simplified template:
+   Cmds_Alias {{ alias }}={{ commands }}
+   {{ user }}   {{ hosts }}=({{ runas }}) NOPASSWD: {{ commands }}
+   %{{ group }} {{ hosts }}=({{ runas }}) NOPASSWD: {{ commands }}
+
+   # when rendered:
+   saltuser1 ALL=(ALL) NOPASSWD: ALL
+
+
+.. code-block:: yaml
+  linux:
+    system:
+      sudo:
+        enabled: true
+        alias:
+          host:
+            LOCAL:
+            - localhost
+            PRODUCTION:
+            - db1
+            - db2
+          runas:
+            DBA:
+            - postgres
+            - mysql
+            SALT:
+            - root
+          command:
+            # Note: This is not 100% safe when ALL keyword is used, user still may modify configs and hide his actions.
+            #       Best practice is to specify full list of commands user is allowed to run.
+            SUPPORT_RESTRICTED:
+            - /bin/vi /etc/sudoers*
+            - /bin/vim /etc/sudoers*
+            - /bin/nano /etc/sudoers*
+            - /bin/emacs /etc/sudoers*
+            - /bin/su - root
+            - /bin/su -
+            - /bin/su
+            - /usr/sbin/visudo
+            SUPPORT_SHELLS:
+            - /bin/sh
+            - /bin/ksh
+            - /bin/bash
+            - /bin/rbash
+            - /bin/dash
+            - /bin/zsh
+            - /bin/csh
+            - /bin/fish
+            - /bin/tcsh
+            - /usr/bin/login
+            - /usr/bin/su
+            - /usr/su
+            ALL_SALT_SAFE:
+            - /usr/bin/salt state*
+            - /usr/bin/salt service*
+            - /usr/bin/salt pillar*
+            - /usr/bin/salt grains*
+            - /usr/bin/salt saltutil*
+            - /usr/bin/salt-call state*
+            - /usr/bin/salt-call service*
+            - /usr/bin/salt-call pillar*
+            - /usr/bin/salt-call grains*
+            - /usr/bin/salt-call saltutil*
+            SALT_TRUSTED:
+            - /usr/bin/salt*
+        users:
+          # saltuser1 with default values: saltuser1 ALL=(ALL) NOPASSWD: ALL
+          saltuser1: {}
+          saltuser2:
+            hosts:
+            - LOCAL
+          # User Alias DBA
+          DBA:
+            hosts:
+            - ALL
+            commands:
+            - ALL_SALT_SAFE
+        groups:
+          db-ops:
+            hosts:
+            - ALL
+            - '!PRODUCTION'
+            runas:
+            - DBA
+            commands:
+            - /bin/cat *
+            - /bin/less *
+            - /bin/ls *
+          salt-ops:
+            hosts:
+            - 'ALL'
+            runas:
+            - SALT
+            commands:
+            - SUPPORT_SHELLS
+          salt-ops-2nd:
+            name: salt-ops
+            nopasswd: false
+            runas:
+            - DBA
+            commands:
+            - ALL
+            - '!SUPPORT_SHELLS'
+            - '!SUPPORT_RESTRICTED'
 
 Linux with package, latest version
 

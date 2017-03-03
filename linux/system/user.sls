@@ -48,6 +48,7 @@ system_user_home_{{ user.home }}:
     user_name: {{ name }}
   - require:
     - user: system_user_{{ name }}
+  - check_cmd: /usr/sbin/visudo -c -f
 
 {%- endif %}
 
