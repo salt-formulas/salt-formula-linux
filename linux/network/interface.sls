@@ -201,7 +201,7 @@ linux_system_network:
   {%- endif %}
   - nozeroconf: True
   - nisdomain: {{ system.domain }}
-  - require_reboot: False
+  - require_reboot: True
 
 {%- endif %}
 
