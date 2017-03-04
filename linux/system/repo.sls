@@ -58,6 +58,8 @@ linux_repo_{{ name }}:
   {%- if repo.key_url is defined %}
   - key_url: {{ repo.key_url }}
   {%- endif %}
+  - require:
+    - pkg: linux_packages
 
 {%- endif %}
 
@@ -80,6 +82,8 @@ linux_repo_{{ name }}:
   {%- if repo.gpgkey is defined %}
   - gpgkey: {{ repo.gpgkey }}
   {%- endif %}
+  - require:
+    - pkg: linux_packages
 
 {%- endif %}
 
@@ -99,6 +103,8 @@ default_repo_list:
     - mode: 0644
     - defaults:
         default_repos: {{ default_repos }}
+    - require:
+      - pkg: linux_packages
 
 {%- endif %}
 
