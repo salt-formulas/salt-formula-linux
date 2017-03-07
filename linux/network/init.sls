@@ -7,6 +7,9 @@ include:
 {%- if network.resolv is defined %}
 - linux.network.resolv
 {%- endif %}
+{%- if network.dpdk is defined %}
+- linux.network.dpdk
+{%- endif %}
 {%- if network.interface|length > 0 %}
 - linux.network.interface
 {%- endif %}

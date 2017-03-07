@@ -24,7 +24,8 @@ linux_network_bridge_pkgs:
 
 {%- set interface_name = interface.get('name', interface_name) %}
 
-{%- if interface.get('managed', True) %}
+{# it is not used for any interface with type preffix dpdk,eg. dpdk_ovs_port #}
+{%- if interface.get('managed', True) and not 'dpdk' in interface.type %}
 
 {%- if grains.os_family in ['RedHat', 'Debian'] %}
 
