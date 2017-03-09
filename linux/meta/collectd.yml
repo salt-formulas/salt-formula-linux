@@ -40,3 +40,5 @@ local_plugin:
     ignore_selected: True
   linux_storage_swap:
     plugin: swap
+    template: linux/files/collectd_swap.conf
+    report_bytes: True
