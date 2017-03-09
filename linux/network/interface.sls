@@ -224,6 +224,23 @@ linux_interface_ipflush_onchange_{{ interface_name }}:
 
 {%- endif %}
 
+{%- if salt['grains.get']('saltversion') < '2017.7' %}
+# TODO(ddmitriev): Remove this 'if .. endif' block completely when
+# switched to salt version 2017.7 that has the same functionality.
+{%- if interface.type == 'bond' and interface.enabled == True %}
+linux_bond_interface_{{ interface_name }}:
+  cmd.run:
+  - name: ifenslave {{ interface_name }} {{ interface.slaves }}
+  - require:
+    - network: linux_interface_{{ interface_name }}
+  - onchanges:
+    - network: linux_interface_{{ interface_name }}
+    {%- for network in  interface.slaves.split() %}
+    - network: linux_interface_{{ network }}
+    {%- endfor %}
+{%- endif %}
+{%- endif %}
+
 {%- for network in interface.get('use_ovs_ports', []) %}
 
 remove_interface_{{ network }}_line1:
