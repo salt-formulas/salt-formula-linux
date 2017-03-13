@@ -798,6 +798,7 @@ DPDK OVS interfaces
             type: dpdk_ovs_port
             n_rxq: 2
             bridge: br-prv
+            mtu: 9000
           br-prv:
             enabled: true
             type: dpdk_ovs_bridge
@@ -826,6 +827,7 @@ DPDK OVS interfaces
             enabled: true
             type: dpdk_ovs_port
             n_rxq: 2
+            mtu: 9000
           dpdk_first_nic:
             name: ${_param:primary_first_nic}
             pci: 0000:05:00.0
@@ -834,6 +836,7 @@ DPDK OVS interfaces
             enabled: true
             type: dpdk_ovs_port
             n_rxq: 2
+            mtu: 9000
           dpdkbond0:
             enabled: true
             bridge: br-prv
@@ -843,6 +846,22 @@ DPDK OVS interfaces
             enabled: true
             type: dpdk_ovs_bridge
 
+**DPDK OVS bridge for VXLAN**
+
+If VXLAN is used as tenant segmentation then ip address must be set on br-prv
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        ...
+        interface:
+          br-prv:
+            enabled: true
+            type: dpdk_ovs_bridge
+            address: 192.168.50.0
+            netmask: 255.255.255.0
+            mtu: 9000
 
 Linux storage
 -------------

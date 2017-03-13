@@ -109,6 +109,35 @@ linux_network_dpdk_bridge_interface_{{ interface_name }}:
     - name: "ovs-vsctl add-br {{ interface_name }} -- set bridge {{ interface_name }} datapath_type=netdev"
     - unless: "ovs-vsctl show | grep {{ interface_name }}"
 
+    {# OVS dpdk needs ip address for vxlan termination on bridge br-prv #}
+    {%- if interface.address is defined %}
+
+{# create override for openvswitch dependency for dpdk br-prv #}
+/etc/systemd/system/ifup@{{ interface_name }}.service.d/override.conf:
+  file.managed:
+    - require:
+      - cmd: linux_network_dpdk_bridge_interface_{{ interface_name }}
+    - contents: |
+        [Unit]
+        Requires=openvswitch-switch.service
+        After=openvswitch-switch.service
+
+{# enforce ip address and mtu for ovs dpdk br-prv #}
+/etc/network/interfaces.d/ifcfg-{{ interface_name }}:
+  file.managed:
+    - contents: |
+        auto {{ interface_name }}
+        iface {{ interface_name }} inet static
+        address {{ interface.address }}
+        netmask {{ interface.netmask }}
+        {%- if interface.mtu is defined %}
+        mtu {{ interface.mtu }}
+        {%- endif %}
+    - require:
+      - file: /etc/systemd/system/ifup@{{ interface_name }}.service.d/override.conf
+
+    {%- endif %}
+
   {%- elif interface.type == 'dpdk_ovs_port' and interface.bridge is defined %}
 
 linux_network_dpdk_bridge_port_interface_{{ interface_name }}:
@@ -118,14 +147,28 @@ linux_network_dpdk_bridge_port_interface_{{ interface_name }}:
     - require:
       - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
 
-  {# Multiqueue n_rxq setup on interfaces #}
-  {%- elif interface.type == 'dpdk_ovs_port' and interface.n_rxq is defined %}
+  {# Multiqueue n_rxq and mtu setup on interfaces #}
+  {%- elif interface.type == 'dpdk_ovs_port' and (interface.n_rxq is defined or interface.mtu is defined) %}
+
+  {%- if interface.n_rxq is defined %}
 
 linux_network_dpdk_bridge_port_interface_n_rxq_{{ interface_name }}:
   cmd.run:
     - name: "ovs-vsctl set Interface {{ interface_name }} options:n_rxq={{ interface.n_rxq }} "
     - unless: |
         ovs-vsctl get Interface {{ interface_name }} options | grep 'n_rxq="{{ interface.n_rxq }}"'
+
+  {%- endif %}
+
+  {%- if interface.mtu is defined %}
+
+{# MTU ovs dpdk setup on interfaces #}
+linux_network_dpdk_bridge_port_interface_mtu_{{ interface_name }}:
+  cmd.run:
+    - name: "ovs-vsctl set Interface {{ interface_name }} mtu_request={{ interface.mtu }} "
+    - unless: "ovs-vsctl get Interface {{ interface_name }} mtu_request | grep {{ interface.mtu }}"
+
+  {%- endif %}
 
   {%- endif %}
 
