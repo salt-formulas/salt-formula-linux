@@ -36,7 +36,20 @@ linux:
           lv01:
             size: 5M
             mount:
-              path: /mnt
+              device: /dev/vg0/lv01
+              path: /mnt/lv01
+          lv02:
+            size: 5M
+            mount:
+              device: /dev/vg0/lv02
+              path: /mnt/lv02
+              file_system: ext4
+          lv03:
+            size: 5M
+            mount:
+              device: /dev/vg0/lv03
+              path: /mnt/lv03
+              file_system: xfs
     disk1:
       enabled: true
       device: /dev/loop_dev4

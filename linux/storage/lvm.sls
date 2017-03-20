@@ -38,7 +38,7 @@ lvm_{{ vg.get('name', vgname) }}_lv_{{ volume.get('name', lvname) }}:
     - require_in:
       - mount: {{ volume.mount.path }}
     {%- if not volume.mount.get('file_system', None) in ['nfs', 'nfs4', 'cifs', 'tmpfs', None] %}
-      - mkfs_{{ volume.mount.device}}:
+      - cmd: mkfs_{{ volume.mount.device}}
     {%- endif %}
     {%- endif %}
 
