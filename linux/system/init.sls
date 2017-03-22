@@ -1,5 +1,11 @@
 {%- from "linux/map.jinja" import system with context %}
 include:
+{%- if system.env|length > 0 %}
+- linux.system.env
+{%- endif %}
+{%- if system.profile|length > 0 %}
+- linux.system.profile
+{%- endif %}
 {%- if system.repo|length > 0 %}
 - linux.system.repo
 {%- endif %}

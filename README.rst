@@ -445,6 +445,68 @@ Also pin it's packages with priority 900.
                priority: 900
                package: '*'
 
+
+Package manager proxy setup globally:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        repo:
+          apt-mk:
+            source: "deb http://apt-mk.mirantis.com/ stable main salt"
+        ...
+        proxy:
+          pkg:
+            enabled: true
+            ftp:   ftp://ftp-proxy-for-apt.host.local:2121
+          ...
+          # NOTE: Global defaults for any other componet that configure proxy on the system.
+          #       If your environment has just one simple proxy, set it by linux:system:proxy.
+          #
+          # fall back system defaults if linux:system:proxy:pkg has no protocol specific entries
+          # as for https and http
+          ftp:   ftp://proxy.host.local:2121
+          http:  http://proxy.host.local:3142
+          https: https://proxy.host.local:3143
+
+Package manager proxy setup per repository:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        repo:
+          debian:
+            source: "deb http://apt-mk.mirantis.com/ stable main salt"
+        ...
+        repo:
+          apt-mk:
+            source: "deb http://apt-mk.mirantis.com/ stable main salt"
+            proxy:
+              enabled: true
+              host:  apt-mk.mirantis.com
+              http:  http://maas-01:8080
+              https: http://maas-01:8080
+        ...
+        # fall back defaults if linux:system:repo:apt-mk:proxy has no protocol specific entries
+        proxy:
+          pkg:
+            ftp:   ftp://proxy.host.local:2121
+            #http:  http://proxy.host.local:3142
+            #https: https://proxy.host.local:3143
+          ... 
+        # fall back system defaults if linux:system:proxy:pkg has no protocol specific entries
+          ftp:   ftp://proxy.host.local:2121
+          http:  http://proxy.host.local:3142
+          https: https://proxy.host.local:3143
+
+
+RC
+~~
+
 rc.local example
 
 .. code-block:: yaml
@@ -466,6 +528,7 @@ rc.local example
            #
            # By default this script does nothing.
            exit 0
+
 
 Prompt
 ~~~~~~
@@ -708,16 +771,73 @@ OpenVswitch Bridges
             use_interfaces:
             - eth1
 
-Linux with proxy
+
+Linux /etc/environment proxies:
+``/etc/environment`` is for static system wide variable assignment after boot. Variable expansion is frequently not supported.
 
 .. code-block:: yaml
 
     linux:
-      network:
+      system:
         ...
+        env:
+          enabled: true
+          proxy:
+            enabled: true
+            ...
+            # override global defaults:
+            ftp:   none
+            http:  http://proxy.host.local:8080
+            # https: http://proxy.host.local:8080
+            noproxy:
+              - 192.168.0.80
+              - 192.168.1.80
+              - .domain.com
+              - .local
+        ...
+        # NOTE: Global defaults for any other componet that configure proxy on the system.
+        #       If your environment has just one simple proxy, set it by linux:system:proxy.
+        #
+        # fall back system defaults if linux:system:env:proxy has no protocol specific entries
+        # as for example "https" above.
         proxy:
-          host: proxy.domain.com
-          port: 3128
+          ftp:   ftp://proxy.host.local:2121
+          http:  http://proxy.host.local:3142
+          https: https://proxy.host.local:3143
+          noproxy:
+            - .domain.com
+            - .local
+
+Linux /etc/profile.d proxies:
+The profile.d scripts are being sourced during .sh execution and support variable expansion in opposite to /etc/environment
+global settings in ``/etc/environment``.
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        profile:
+          enabled: true
+          proxy:
+            enabled: true
+            ftp:   none
+            http:  http://proxy.host.local:8080
+            https: http://proxy.host.local:8080
+            noproxy:
+              - 192.168.0.80
+              - 192.168.1.80
+              - .domain.com
+              - .local
+        ...
+        # fall back system defaults if linux:system:profile:proxy has no protocol specific entries
+        proxy:
+          ftp:   ftp://proxy.host.local:2121
+          http:  http://proxy.host.local:3142
+          https: https://proxy.host.local:3143
+          noproxy:
+            - .domain.com
+            - .local
 
 Linux with hosts
 

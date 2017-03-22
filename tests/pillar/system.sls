@@ -92,6 +92,33 @@ linux:
       opencontrail:
         source: "deb http://ppa.launchpad.net/tcpcloud/contrail-2.20/ubuntu trusty main"
         architectures: amd64
+        proxy:
+          enabled: true
+          host: ppa.launchapd.net
+          https: https://127.0.5.1:443
+          #http: http://127.0.5.2:8080
+      opencontrail-dummy:
+        source: "deb http://ppa.dummy.net/tcpcloud/contrail-2.20/ubuntu trusty main"
+        architectures: amd64
+        proxy:
+          enabled: true
+          # host is missing
+          https: https://127.0.5.1:443
+          http: http://127.0.5.2:8080
+          ftp: ftp://127.0.5.3
+      apt-mk-salt:
+        source: "deb http://apt-mk.mirantis.com/stable trusty salt"
+        architectures: amd64
+        proxy:
+          enabled: true
+      apt-mk-salt-nightly:
+        source: "deb http://apt-mk.mirantis.com/nightly trusty salt"
+        architectures: amd64
+        proxy:
+          enabled: false
+      apt-mk-extra-nightly:
+        source: "deb http://apt-mk.mirantis.com/nightly trusty extra"
+        architectures: amd64
     locale:
       en_US.UTF-8:
         enabled: true
@@ -200,3 +227,39 @@ linux:
         sudogroup3:
           commands:
             - ALL
+    env:
+      enabled: true
+      proxy:
+        enabled: true
+        https: https://127.0.4.1:443
+        http: http://127.0.4.2:80
+        #ftp: ftp://127.0.4.3:2121
+        noproxy:
+          - 192.168.0.1
+          - 192.168.0.2
+          - .local
+    profile:
+      enabled: true
+      proxy:
+        enabled: true
+        #https: https://127.0.3.1:443
+        #http: http://127.0.3.2:8080
+        ftp: ftp://127.0.3.3:2121
+        #noproxy:
+        # - 192.168.0.1
+        # - 192.168.0.2
+        # - .local
+    # system fallback defaults
+    proxy:
+      pkg:
+        enabled: true
+        https: https://127.0.2.1:4443
+        #http: http://127.0.2.2
+        ftp: none
+      https: https://127.0.1.1:443
+      #http: http://127.0.1.2
+      ftp: ftp://127.0.1.3
+      noproxy:
+        - host1
+        - host2
+        - .local
