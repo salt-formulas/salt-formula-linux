@@ -58,6 +58,9 @@ linux_repo_{{ name }}:
   {%- if repo.key_url is defined %}
   - key_url: {{ repo.key_url }}
   {%- endif %}
+  - consolidate: {{ repo.get('consolidate', False) }}
+  - clean_file: {{ repo.get('clean_file', False) }}
+  - refresh_db: {{ repo.get('refresh_db', True) }}
   - require:
     - pkg: linux_packages
 
