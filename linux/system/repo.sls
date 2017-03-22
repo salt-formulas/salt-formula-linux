@@ -88,6 +88,7 @@ linux_repo_{{ name }}:
   - architectures: {{ repo.architectures }}
   {%- endif %}
   - file: /etc/apt/sources.list.d/{{ name }}.list
+  - clean_file: {{ repo.clean|default(True) }}
   {%- if repo.key_id is defined %}
   - keyid: {{ repo.key_id }}
   {%- endif %}
