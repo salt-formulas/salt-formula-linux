@@ -77,11 +77,15 @@ ovs_port_set_peer_{{ interface_name }}:
 linux_interfaces_include_{{ interface_name }}:
   file.prepend:
   - name: /etc/network/interfaces
-  - text: 'source /etc/network/interfaces.d/*'
+  - text: |
+      source /etc/network/interfaces.d/*
+      # Workaround for Upstream-Bug: https://github.com/saltstack/salt/issues/40262
+      source /etc/network/interfaces.u/*
 
 ovs_port_{{ interface_name }}:
   file.managed:
-  - name: /etc/network/interfaces.d/ifcfg-{{ interface_name }}
+  - name: /etc/network/interfaces.u/ifcfg-{{ interface_name }}
+  - makedirs: True
   - source: salt://linux/files/ovs_port
   - defaults:
       port: {{ interface|yaml }}
@@ -272,7 +276,10 @@ linux_network_{{ interface_name }}_routes:
 linux_interfaces_final_include:
   file.prepend:
   - name: /etc/network/interfaces
-  - text: 'source /etc/network/interfaces.d/*'
+  - text: |
+      source /etc/network/interfaces.d/*
+      # Workaround for Upstream-Bug: https://github.com/saltstack/salt/issues/40262
+      source /etc/network/interfaces.u/*
 
 {%- endif %}
 
