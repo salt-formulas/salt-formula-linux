@@ -1,0 +1,9 @@
+{%- if ftp and ftp.lower() != 'none' %}
+Acquire::ftp::proxy{%- if external_host %}::{{ external_host }}{% endif %} "{{ ftp }}";
+{%- endif %}
+{%- if http and http.lower() != 'none' %}
+Acquire::http::proxy{%- if external_host %}::{{ external_host }}{% endif %} "{{ http }}";
+{%- endif %}
+{%- if https and https.lower() != 'none' %}
+Acquire::https::proxy{%- if external_host %}::{{ external_host }}{% endif %} "{{ https }}";
+{%- endif -%}
