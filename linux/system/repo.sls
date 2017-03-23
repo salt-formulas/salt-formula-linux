@@ -1,11 +1,49 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
+# global proxy setup
+{%- if system.proxy.get('pkg', {}).get('enabled', False) %}
+
+{%- if grains.os_family == 'Debian' %}
+
+/etc/apt/apt.conf.d/95proxies:
+  file.managed:
+  - template: jinja
+  - source: salt://linux/files/95proxies.apt.conf
+  - defaults:
+      external_host: False
+      https: {{ system.proxy.get('pkg', {}).get('https', None) | default(system.proxy.get('https', None), true) }}
+      http: {{ system.proxy.get('pkg', {}).get('http', None) | default(system.proxy.get('http', None), true) }}
+      ftp: {{ system.proxy.get('pkg', {}).get('ftp', None) | default(system.proxy.get('ftp', None), true) }}
+
+{%- else %}
+/etc/apt/apt.conf.d/95proxies:
+  file.absent
+{%- endif %}
+{%- endif %}
+
 {% set default_repos = {} %}
 
 {%- for name, repo in system.repo.iteritems() %}
 
 {%- if grains.os_family == 'Debian' %}
+
+# per repository proxy setup
+{%- if repo.get('proxy', {}).get('enabled', False) %}
+{%- set external_host = repo.proxy.get('host', None) or repo.source.split('/')[2] %}
+/etc/apt/apt.conf.d/95proxies_{{ name }}:
+  file.managed:
+  - template: jinja
+  - source: salt://linux/files/95proxies.apt.conf
+  - defaults:
+      external_host: {{ external_host }}
+      https: {{ repo.proxy.get('https', None) or system.proxy.get('pkg', {}).get('https', None) | default(system.proxy.get('https', None), True) }}
+      http: {{ repo.proxy.get('http', None) or system.proxy.get('pkg', {}).get('http', None) | default(system.proxy.get('http', None), True) }}
+      ftp: {{ repo.proxy.get('ftp', None) or system.proxy.get('pkg', {}).get('ftp', None) | default(system.proxy.get('ftp', None), True) }}
+{%- else %}
+/etc/apt/apt.conf.d/95proxies_{{ name }}:
+  file.absent
+{%- endif %}
 
 {%- if repo.pin is defined %}
 
@@ -63,12 +101,22 @@ linux_repo_{{ name }}:
   - refresh_db: {{ repo.get('refresh_db', True) }}
   - require:
     - pkg: linux_packages
+  {%- if repo.get('proxy', {}).get('enabled', False) %}
+    - file: /etc/apt/apt.conf.d/95proxies_{{ name }}
+  {%- endif %}
+  {%- if system.proxy.get('pkg', {}).get('enabled', False) %}
+    - file: /etc/apt/apt.conf.d/95proxies
+  {%- endif %}
 
 {%- endif %}
 
 {%- endif %}
 
 {%- if grains.os_family == "RedHat" %}
+
+{%- if repo.get('proxy', {}).get('enabled', False) %}
+# PLACEHOLDER
+{%- endif %}
 
 {%- if not repo.get('default', False) %}
 
