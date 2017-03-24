@@ -17,7 +17,7 @@ metric_collector:
         function: avg
     linux_system_cpu_warning:
       description: 'The CPU wait times are high.'
-      severity: critical
+      severity: warning
       rules:
       - metric: cpu_wait
         relational_operator: '>='
