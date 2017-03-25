@@ -445,6 +445,69 @@ Also pin it's packages with priority 900.
                priority: 900
                package: '*'
 
+
+Package manager proxy setup globally:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        repo:
+          apt-mk:
+            source: "deb http://apt-mk.mirantis.com/ stable main salt"
+        ...
+        proxy:
+          pkg:
+            enabled: true
+            ftp:   ftp://ftp-proxy-for-apt.host.local:2121
+          ...
+          # NOTE: Global defaults for any other componet that configure proxy on the system.
+          #       If your environment has just one simple proxy, set it on linux:system:proxy.
+          #
+          # fall back system defaults if linux:system:proxy:pkg has no protocol specific entries
+          # as for https and http
+          ftp:   ftp://proxy.host.local:2121
+          http:  http://proxy.host.local:3142
+          https: https://proxy.host.local:3143
+
+Package manager proxy setup per repository:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        repo:
+          debian:
+            source: "deb http://apt-mk.mirantis.com/ stable main salt"
+        ...
+          apt-mk:
+            source: "deb http://apt-mk.mirantis.com/ stable main salt"
+            # per repository proxy
+            proxy:
+              enabled: true
+              http:  http://maas-01:8080
+              https: http://maas-01:8080
+        ...
+        proxy:
+          # package manager fallback defaults 
+          # used if linux:system:repo:apt-mk:proxy has no protocol specific entries
+          pkg:
+            enabled: true
+            ftp:   ftp://proxy.host.local:2121
+            #http:  http://proxy.host.local:3142
+            #https: https://proxy.host.local:3143
+          ... 
+          # global system fallback system defaults
+          ftp:   ftp://proxy.host.local:2121
+          http:  http://proxy.host.local:3142
+          https: https://proxy.host.local:3143
+
+
+RC
+~~
+
 rc.local example
 
 .. code-block:: yaml
@@ -466,6 +529,7 @@ rc.local example
            #
            # By default this script does nothing.
            exit 0
+
 
 Prompt
 ~~~~~~
@@ -708,18 +772,70 @@ OpenVswitch Bridges
             use_interfaces:
             - eth1
 
-Linux with proxy
+Configure global environment variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Linux /etc/environment:
+``/etc/environment`` is for static system wide variable assignment after boot. Variable expansion is frequently not supported.
 
 .. code-block:: yaml
 
     linux:
-      network:
+      system:
+        env:
+          BOB_VARIABLE: Alice
+          ...
+          BOB_PATH:
+            - /srv/alice/bin
+            - /srv/bob/bin
+          ...
+          ftp_proxy:   none
+          http_proxy:  http://global-http-proxy.host.local:8080
+          https_proxy: ${linux:system:proxy:https}
+          no_proxy:
+            - 192.168.0.80
+            - 192.168.1.80
+            - .domain.com
+            - .local
         ...
+        # NOTE: global defaults proxy configuration.
         proxy:
-          host: proxy.domain.com
-          port: 3128
+          ftp:   ftp://proxy.host.local:2121
+          http:  http://proxy.host.local:3142
+          https: https://proxy.host.local:3143
+          noproxy:
+            - .domain.com
+            - .local
+
+Configure profile.d scripts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Linux /etc/profile.d:
+The profile.d scripts are being sourced during .sh execution and support variable expansion in opposite to /etc/environment
+global settings in ``/etc/environment``.
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        profile:
+          locales: |
+            export LANG=C
+            export LC_ALL=C
+          ...
+          vi_flavors.sh: |
+            export PAGER=view
+            export EDITOR=vim
+            alias vi=vim
+          shell_locales.sh: |
+            export LANG=en_US
+            export LC_ALL=en_US.UTF-8
+          shell_proxies.sh: |
+            export FTP_PROXY=ftp://127.0.3.3:2121
+            export NO_PROXY='.local'
 
 Linux with hosts
+~~~~~~~~~~~~~~~~
 
 Parameter purge_hosts will enforce whole /etc/hosts file, removing entries
 that are not defined in model except defaults for both IPv4 and IPv6 localhost
@@ -753,6 +869,7 @@ clean state however it's not enabled by default for safety.
 
 
 Setup resolv.conf, nameservers, domain and search domains
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: yaml
 
