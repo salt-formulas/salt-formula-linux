@@ -292,3 +292,13 @@ NetworkManager:
   - enable: false
 
 {%- endif %}
+
+{%- if network.tap_custom_txqueuelen is defined %}
+
+/etc/udev/rules.d/60-net-txqueue.rules:
+  file.managed:
+  - source: salt://linux/files/60-net-txqueue.rules
+  - mode: 755
+  - template: jinja
+
+{%- endif %}

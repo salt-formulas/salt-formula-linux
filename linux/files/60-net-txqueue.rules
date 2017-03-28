@@ -1,0 +1,1 @@
+KERNEL==”tap[0-9a-z\-]*", RUN+="/sbin/ip link set %k txqueuelen {{ network.tap_custom_txqueuelen }}"

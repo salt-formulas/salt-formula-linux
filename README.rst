@@ -888,6 +888,14 @@ Setup resolv.conf, nameservers, domain and search domains
           - timeout: 2
           - attempts: 2
 
+**setting custom TX queue length for tap interfaces**
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        tap_custom_txqueuelen: 10000
+
 DPDK OVS interfaces
 --------------------
 
