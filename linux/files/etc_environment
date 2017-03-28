@@ -11,22 +11,22 @@
 {%- endfor %}
 
 {%- if ftp_proxy and ftp_proxy.lower() != 'none' %}
-ftp_proxy="{{ ftp_proxy }}";
-FTP_PROXY="{{ ftp_proxy }}";
+ftp_proxy="{{ ftp_proxy }}"
+FTP_PROXY="{{ ftp_proxy }}"
 {%- endif %}
 
 {%- if http_proxy and http_proxy.lower() != 'none' %}
-http_proxy="{{ http_proxy }}";
-HTTP_PROXY="{{ http_proxy }}";
+http_proxy="{{ http_proxy }}"
+HTTP_PROXY="{{ http_proxy }}"
 {%- endif %}
 
 {%- if https_proxy and https_proxy.lower() != 'none' %}
-https_proxy="{{ https_proxy }}";
-HTTPS_PROXY="{{ https_proxy }}";
+https_proxy="{{ https_proxy }}"
+HTTPS_PROXY="{{ https_proxy }}"
 {%- endif %}
 
 {%- if no_proxy %}
-no_proxy="{{ no_proxy|join(',') }}";
-NO_PROXY="{{ no_proxy|join(',') }}";
+no_proxy="{{ no_proxy|join(',') }}"
+NO_PROXY="{{ no_proxy|join(',') }}"
 {%- endif %}
 
