@@ -4,7 +4,8 @@
 /etc/profile.d:
   file.directory:
   - user: root
-  - mode: 750
+  - group: root
+  - mode: 755
   - makedirs: true
 
 profile.d_clean:
