@@ -1,13 +1,6 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
-/etc/profile.d:
-  file.directory:
-  - user: root
-  - group: root
-  - mode: 755
-  - makedirs: true
-
 profile.d_clean:
   file.directory:
   - name: /etc/profile.d
@@ -20,7 +13,6 @@ profile.d_clean:
 profile.d_script_{{ name  }}:
     file.managed:
     - name: /etc/profile.d/salt_profile_{{ name }}{%if name.split('.')|length == 1 %}.sh{% endif %}
-    - mode: 755
     - source:
       - salt://linux/files/etc_profile_{{ name }}
       - salt://linux/files/etc_profile
