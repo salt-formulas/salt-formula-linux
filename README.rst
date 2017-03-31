@@ -1006,6 +1006,22 @@ Linux with mounted Samba
           - file_system: cifs
           - options: guest,uid=myuser,iocharset=utf8,file_mode=0777,dir_mode=0777,noperm
 
+NFS mount
+
+.. code-block:: yaml
+
+  linux:
+    storage:
+      enabled: true
+      mount:
+        nfs_glance:
+          enabled: true
+          path: /var/lib/glance/images
+          device: 172.16.10.110:/var/nfs/glance
+          file_system: nfs
+          opts: rw,sync
+
+
 File swap configuration
 
 .. code-block:: yaml
