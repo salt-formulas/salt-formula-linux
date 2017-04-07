@@ -24,6 +24,12 @@ xfs_packages_{{ mount.device }}:
 
 {%- endif %}
 
+{%- if mount.file_system == 'nfs' %}
+linux_storage_nfs_packages:
+  pkg.installed:
+  - pkgs: {{ storage.nfs.pkgs }}
+{%- endif %}
+
 {{ mount.path }}:
   mount.mounted:
   - device: {{ mount.device }}
