@@ -265,3 +265,13 @@ linux:
         - host1
         - host2
         - .local
+
+    # pillars for netconsole setup
+    netconsole:
+      enabled: true
+      port: 514
+      loglevel: debug
+      target:
+        192.168.0.1:
+          mac: "ff:ff:ff:ff:ff:ff"
+          interface: bond0

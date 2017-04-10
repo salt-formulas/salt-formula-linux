@@ -1,0 +1,136 @@
+#!/bin/sh
+SYSFS_NETCONSOLE="/sys/kernel/config/netconsole"
+NETCONSOLE_CONF="/etc/default/netconsole.conf"
+NETCONSOLE_PORT="514"
+
+netconsole_remove() {
+	for sysfsnc in "${SYSFS_NETCONSOLE}/${interface:-}-"*
+	do
+		if [ -e "${sysfsnc}" ]
+		then
+			logger -t netconsole "remove ${sysfsnc}"
+			rmdir "${sysfsnc}"
+		fi
+	done
+}
+
+netconsole_remote_mac()
+{
+	neigh()
+	{
+		ip -4 -o neigh show to "${remote_ip}" dev "${interface}" | cut -d\  -f3
+	}
+	remote_mac="$(neigh)"
+	if [ -n "${remote_mac:-}" ] && [ "${remote_mac:-}" != "INCOMPLETE" ] 
+	then
+		if [ "${remote_mac:-}" != "FAILED" ] 
+		then
+			echo "${remote_mac:-}"
+			return 0
+		fi
+	else
+		if ping -n -q -c 1 -w 1 -I "${interface}" "${remote_ip}" >/dev/null && remote_mac="$(neigh)" && [ -n "${remote_mac:-}" ]
+		then
+			echo "${remote_mac:-}"
+			return 0
+		fi
+	fi
+	return 1
+}
+
+netconsole_add() {
+	netconsole() {
+		iface="${1:-}"
+		remote_ip="${2:-}"
+		remote_mac="${3:-}"
+
+		if [ "${iface:-}" = "${interface:-}" ] && [ -n "${remote_ip:-}" ]
+		then
+			logger -t netconsole "from ${new_ip_address:-}@${interface:-}"
+		else
+			return 1
+		fi
+		if [ -n "${remote_mac}" ] || remote_mac="$(netconsole_remote_mac)"
+		then
+			logger -t netconsole "to ${remote_ip} ${remote_mac}"
+		else
+			return 1
+		fi
+
+		sysfsnc="${SYSFS_NETCONSOLE}/${interface}-${remote_ip}"
+
+		if [ -e "${sysfsnc}" ] && [ -z "${old_ip_address:-}" ]
+		then
+		    old_ip_address="$(cat "${sysfsnc}/local_ip")"
+		fi
+
+		if [ "${old_ip_address:-}" != "${new_ip_address:-}" ] || ! [ -e "${sysfsnc}" ]
+		then
+			logger -t netconsole "setup netconsole"
+		else
+			return 1
+		fi
+
+		mkdir -p "${sysfsnc}"
+		if [ "$(cat "${sysfsnc}/enabled")" != "0" ]
+		then
+			echo "0" > "${sysfsnc}/enabled"
+		fi
+
+        if [ -n "${new_ip_address:-}" ]
+        then
+		    echo "${new_ip_address}" > "${sysfsnc}/local_ip"
+		fi
+		echo "${interface}" > "${sysfsnc}/dev_name"
+		echo "${remote_mac}" > "${sysfsnc}/remote_mac"
+		echo "${remote_ip}" > "${sysfsnc}/remote_ip"
+		echo "${PORT:-${NETCONSOLE_PORT}}" > "${sysfsnc}/remote_port"
+		echo "1" > "${sysfsnc}/enabled"
+		return 0
+	}
+
+	if [ -f "${NETCONSOLE_CONF}" ]
+	then
+		modprobe netconsole
+		mountpoint -q /sys/kernel/config || mount none -t configfs /sys/kernel/config
+
+		if [ -e "${SYSFS_NETCONSOLE}" ]
+		then
+			(
+				set -x
+				set +e
+				. "${NETCONSOLE_CONF}"
+			) ||:
+		fi
+	fi
+}
+
+netconsole_setup() {
+	case ${reason:-} in
+		BOUND|RENEW|REBIND|REBOOT)
+			netconsole_add
+			;;
+		EXPIRE|FAIL|RELEASE|STOP)
+			netconsole_remove
+			;;
+		PREINIT) : ;;
+		*)
+			if [ "${ADDRFAM:-}" = "inet" ] && [ "${METHOD:-}" = "static" ]
+			then
+				export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+				interface="${IFACE:-}"
+				new_ip_address="${IF_ADDRESS:-}"
+				case ${MODE:-} in
+					start)
+						netconsole_add
+						;;
+					stop)
+						netconsole_remove
+						;;
+					*) : ;;
+				esac
+			fi
+	esac
+}
+
+netconsole_setup

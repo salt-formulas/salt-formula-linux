@@ -1184,6 +1184,32 @@ config files for external use, eg. docker, etc.
                       username: test
                       password: test
 
+Netconsole Remote Kernel Logging
+--------------------------------
+
+Netconsole logger could be configured for configfs-enabled kernels
+(`CONFIG_NETCONSOLE_DYNAMIC` should be enabled). Configuration applies both in
+runtime (if network is already configured), and on-boot after interface
+initialization. Notes:
+
+ * receiver could be located only in same L3 domain
+   (or you need to configure gateway MAC manually)
+ * receiver's MAC is detected only on configuration time
+ * using broadcast MAC is not recommended
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        system:
+          netconsole:
+            enabled: true
+            port: 514 (optional)
+            loglevel: debug (optional)
+            target:
+              192.168.0.1:
+                interface: bond0
+                mac: "ff:ff:ff:ff:ff:ff" (optional)
 
 Usage
 =====
