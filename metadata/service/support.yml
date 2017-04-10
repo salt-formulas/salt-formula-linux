@@ -1,6 +1,8 @@
 parameters:
   linux:
     _support:
+      telegraf:
+        enabled: true
       collectd:
         enabled: true
       heka:

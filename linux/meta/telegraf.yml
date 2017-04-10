@@ -1,0 +1,8 @@
+agent:
+  input:
+    cpu:
+      percpu: true
+      totalcpu: true
+    disk:
+    mem:
+    system:
