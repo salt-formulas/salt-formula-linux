@@ -1,6 +1,9 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
+include:
+- linux.system.package
+
 # global proxy setup
 {%- if system.proxy.get('pkg', {}).get('enabled', False) %}
 {%- if grains.os_family == 'Debian' %}
