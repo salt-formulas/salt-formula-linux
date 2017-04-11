@@ -1,6 +1,8 @@
 parameters:
   linux:
     _support:
+      prometheus:
+        enabled: true
       telegraf:
         enabled: true
       collectd:

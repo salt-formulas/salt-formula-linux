@@ -1,0 +1,44 @@
+{% raw %}
+server:
+  alert:
+    AvgCPUUsageIdle:
+      if: 'avg_over_time(cpu_usage_idle{cpu="cpu-total"}[5m]) < 10'
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'Avarage CPU usage (idle) for node {{ $labels.host }} is low'
+        description: 'Avarage CPU usage (idle) for node {{ $labels.host }} is low {{ $value }}'
+    PredictLinearDiskFree:
+      if: 'predict_linear(disk_free[1h], 8*3600) < 0'
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'Disk space ({{ $labels.path }}) is filling on {{ $labels.host }}'
+        description: 'Disk space ({{ $labels.path }}) will be full in 8h on {{ $labels.host }}'
+    PredictLinearDiskInodesFree:
+      if: 'predict_linear(disk_inodes_free[1h], 8*3600) < 0'
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'Disk inodes ({{ $labels.path }}) are filling on {{ $labels.host }}'
+        description: 'Disk inodes ({{ $labels.path }}) will be full in 8h on {{ $labels.host }}'
+    AvgMemAvailablePercent:
+      if: 'avg_over_time(mem_available_percent[5m]) < 10'
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'Free memory is low on {{ $labels.host }}'
+        description: 'Free memory percent for node {{ $labels.host }} is low {{ $value }}'
+    SystemLoad5:
+      if: 'system_load5 / system_n_cpus > 3'
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'High system load (5m) on {{ $labels.host }}'
+        description: 'High system load (5m) on node {{ $labels.host }}'
+{% endraw %}
