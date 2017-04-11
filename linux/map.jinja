@@ -110,6 +110,7 @@
            'host': 'none',
         },
         'host': {},
+        'dhclient_cfg_path': '/etc/dhcp/dhclient.conf',
     },
     'Debian': {
         'hostname_file': '/etc/hostname',
@@ -124,6 +125,7 @@
            'host': 'none'
         },
         'host': {},
+        'dhclient_cfg_path': '/etc/dhcp/dhclient.conf',
     },
     'RedHat': {
         'bridge_pkgs': ['bridge-utils'],
@@ -137,6 +139,7 @@
            'host': 'none'
         },
         'host': {},
+        'dhclient_cfg_path': '/etc/dhcp/dhclient.conf',
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:network')) %}
 
