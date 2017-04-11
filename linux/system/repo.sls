@@ -104,8 +104,9 @@ linux_repo_{{ name }}:
   - consolidate: {{ repo.get('consolidate', False) }}
   - clean_file: {{ repo.get('clean_file', False) }}
   - refresh_db: {{ repo.get('refresh_db', True) }}
+  {%- if repo.get('proxy', {}).get('enabled') or system.proxy.get('pkg', {}).get('enabled') %}
   - require:
-    - pkg: linux_packages
+  {%- endif %}
   {%- if repo.get('proxy', {}).get('enabled', False) %}
     - file: /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
   {%- endif %}
@@ -139,8 +140,6 @@ linux_repo_{{ name }}:
   {%- if repo.gpgkey is defined %}
   - gpgkey: {{ repo.gpgkey }}
   {%- endif %}
-  - require:
-    - pkg: linux_packages
 
 {%- endif %}
 
@@ -160,8 +159,6 @@ default_repo_list:
     - mode: 0644
     - defaults:
         default_repos: {{ default_repos }}
-    - require:
-      - pkg: linux_packages
 
 {%- endif %}
 
