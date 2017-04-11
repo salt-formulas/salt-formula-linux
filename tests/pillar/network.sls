@@ -24,3 +24,67 @@ linux:
         #type: vlan
         #use_interfaces:
         #- interface: ${linux:interface:eth0}
+    dhclient:
+      enabled: true
+      backoff_cutoff: 15
+      initial_interval: 10
+      reboot: 10
+      retry: 60
+      select_timeout: 0
+      timeout: 120
+      send:
+        - option: host-name
+          declaration: "= gethostname()"
+      supersede:
+        - option: host-name
+          declaration: linux
+        - option: domain-name
+          declaration: ci.local
+        #- option: arp-cache-timeout
+        #  declaration: 20
+      prepend:
+        - option: domain-name-servers
+          declaration:
+            - 8.8.8.8
+            - 8.8.4.4
+        - option: domain-search
+          declaration:
+            - example.com
+            - eng.example.com
+      # ip or subnet to reject dhcp offer from
+      reject:
+        - 10.0.2.0/24
+      request:
+        - subnet-mask
+        - broadcast-address
+        - time-offset
+        - routers
+        - domain-name
+        - domain-name-servers
+        - domain-search
+        - host-name
+        - dhcp6.name-servers
+        - dhcp6.domain-search
+        - dhcp6.fqdn
+        - dhcp6.sntp-servers
+        - netbios-name-servers
+        - netbios-scope
+        - interface-mtu
+        - rfc3442-classless-static-routes
+        - ntp-servers
+      require:
+        - subnet-mask
+        - domain-name-servers
+      # if per interface configuration required add below
+      # interface:
+      #   ens2:
+      #     initial_interval: 11
+      #     request:
+      #       - subnet-mask
+      #       - broadcast-address
+      #     reject:
+      #       - 10.0.3.0/24
+      #   ens3:
+      #     initial_interval: 12
+      #     reject:
+      #       - 10.0.4.0/24
