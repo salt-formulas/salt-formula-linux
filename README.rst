@@ -1,6 +1,6 @@
-=====
-Linux
-=====
+============
+Linux Fomula
+============
 
 Linux Operating Systems.
 
@@ -10,10 +10,11 @@ Linux Operating Systems.
 * Fedora
 * Arch
 
-Sample pillars
+Sample Pillars
 ==============
 
-Linux system
+
+Linux System
 ------------
 
 Basic Linux box
@@ -57,6 +58,7 @@ Configure sudo for users and groups under ``/etc/sudoers.d/``.
 This ways ``linux.system.sudo`` pillar map to actual sudo attributes:
 
 .. code-block:: jinja
+
    # simplified template:
    Cmds_Alias {{ alias }}={{ commands }}
    {{ user }}   {{ hosts }}=({{ runas }}) NOPASSWD: {{ commands }}
@@ -65,8 +67,8 @@ This ways ``linux.system.sudo`` pillar map to actual sudo attributes:
    # when rendered:
    saltuser1 ALL=(ALL) NOPASSWD: ALL
 
-
 .. code-block:: yaml
+
   linux:
     system:
       sudo:
