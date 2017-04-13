@@ -1,8 +1,9 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
-include:
-- linux.system.package
+linux_repo_prereq_pkgs:
+  pkg.installed:
+  - pkgs: {{ system.pkgs }}
 
 # global proxy setup
 {%- if system.proxy.get('pkg', {}).get('enabled', False) %}
@@ -105,7 +106,7 @@ linux_repo_{{ name }}:
   - clean_file: {{ repo.get('clean_file', False) }}
   - refresh_db: {{ repo.get('refresh_db', True) }}
   - require:
-    - pkg: linux_packages
+    - pkg: linux_repo_prereq_pkgs
   {%- if repo.get('proxy', {}).get('enabled', False) %}
     - file: /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
   {%- endif %}
@@ -140,7 +141,7 @@ linux_repo_{{ name }}:
   - gpgkey: {{ repo.gpgkey }}
   {%- endif %}
   - require:
-    - pkg: linux_packages
+    - pkg: linux_repo_prereq_pkgs
 
 {%- endif %}
 
@@ -161,7 +162,7 @@ default_repo_list:
     - defaults:
         default_repos: {{ default_repos }}
     - require:
-      - pkg: linux_packages
+      - pkg: linux_repo_prereq_pkgs
 
 {%- endif %}
 
