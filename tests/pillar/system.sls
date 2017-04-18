@@ -6,6 +6,7 @@ linux:
     domain: local
     environment: prd
     hostname: system.pillar.local
+    purge_repos: true
     apparmor:
       enabled: false
     haveged:

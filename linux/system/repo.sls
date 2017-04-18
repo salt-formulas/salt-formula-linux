@@ -28,6 +28,15 @@ include:
 
 {% set default_repos = {} %}
 
+{%- if system.purge_repos|default(False) %}
+
+purge_sources_list_d_repos:
+   file.directory:
+   - name: /etc/apt/sources.list.d/           
+   - clean: True
+
+{%- endif %}
+
 {%- for name, repo in system.repo.iteritems() %}
 
 {%- if grains.os_family == 'Debian' %}
@@ -112,6 +121,9 @@ linux_repo_{{ name }}:
   {%- if system.proxy.get('pkg', {}).get('enabled', False) %}
     - file: /etc/apt/apt.conf.d/99proxies-salt
   {%- endif %}
+  {%- if system.purge_repos|default(False) %}
+    - file: purge_sources_list_d_repos
+  {%- endif %}
 
 {%- endif %}
 
@@ -158,6 +170,9 @@ default_repo_list:
     - user: root
     - group: root
     - mode: 0644
+{%- if system.purge_repos %}
+    - replace: True
+{%- endif %}
     - defaults:
         default_repos: {{ default_repos }}
     - require:
