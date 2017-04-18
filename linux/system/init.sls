@@ -80,3 +80,6 @@ include:
 {%- if system.sudo is defined %}
 - linux.system.sudo
 {%- endif %}
+{%- if system.netconsole is defined %}
+- linux.system.netconsole
+{%- endif %}
