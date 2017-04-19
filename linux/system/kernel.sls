@@ -10,7 +10,7 @@ include:
 
 /etc/default/grub.d/90-isolcpu.cfg:
   file.managed:
-    - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT isolcpu={{ system.kernel.isolcpu }}"'
+    - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT isolcpus={{ system.kernel.isolcpu }}"'
     - require:
       - file: grub_d_directory
     - watch_in:
