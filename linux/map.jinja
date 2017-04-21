@@ -185,3 +185,29 @@
          },
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:storage')) %}
+
+
+{% set monitoring = salt['grains.filter_by']({
+    'default': {
+        'zombie': {
+              'warn': 3,
+              'crit': 7,
+        },
+        'procs': {
+              'warn': 5000,
+              'crit': 10000,
+        },
+        'load': {
+              'warn': '6,4,2',
+              'crit': '12,8,4',
+        },
+        'swap': {
+              'warn': '50%',
+              'crit': '20%',
+        },
+        'disk': {
+              'warn': '15%',
+              'crit': '5%',
+        },
+    },
+}, grain='os_family', merge=salt['pillar.get']('linux:monitoring')) %}

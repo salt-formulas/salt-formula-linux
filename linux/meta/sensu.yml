@@ -1,33 +1,33 @@
-{%- from "linux/map.jinja" import system,network,storage with context -%}
+{%- from "linux/map.jinja" import system,network,storage,monitoring with context -%}
 check:
   local_linux_system_zombie_procs:
-    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -w 3 -c 7 -s Z"
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -w {{ monitoring.zombie.warn }} -c {{ monitoring.zombie.crit }} -s Z"
     interval: 60
     occurrences: 3
     subscribers:
     - local-linux-system
   local_linux_system_total_procs:
-    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -w 5000 -c 10000"
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -w {{ monitoring.procs.warn }} -c {{ monitoring.procs.crit }}"
     interval: 60
     occurrences: 5
     subscribers:
     - local-linux-system
   local_linux_system_load:
-    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_load -r -w 6,4,2 -c 12,8,4"
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_load -r -w {{ monitoring.load.warn }} -c {{ monitoring.load.crit }}"
     interval: 60
     occurrences: 1
     subscribers:
     - local-linux-system
 {%- if storage.swap is defined %}
   local_linux_storage_swap_usage_{{ system.name|replace('.', '-') }}-{{ system.domain|replace('.', '-') }}:
-    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_swap -a -w 50% -c 20%"
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_swap -a -w {{ monitoring.swap.warn }} -c {{ monitoring.swap.crit }}"
     interval: 60
     occurrences: 1
     subscribers:
     - {{ system.name|replace('.', '-') }}-{{ system.domain|replace('.', '-') }}
 {%- endif %}
   local_linux_storage_disk_usage:
-    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_disk -w 15% -c 5% -p / -p /var -p /usr -p /tmp -p /var/log"
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_disk -w {{ monitoring.disk.warn }} -c {{ monitoring.disk.crit }} -p / -p /var -p /usr -p /tmp -p /var/log"
     interval: 60
     occurrences: 1
     subscribers:
