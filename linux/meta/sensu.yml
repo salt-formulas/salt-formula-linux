@@ -27,7 +27,7 @@ check:
     - {{ system.name|replace('.', '-') }}-{{ system.domain|replace('.', '-') }}
 {%- endif %}
   local_linux_storage_disk_usage:
-    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_disk -w 15% -c 5% -p / -p /var -p /usr -p /tmp -p /var/log"
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_disk -w" {{ monitoring.disk.get('warn', '15%') }} " -c " {{ monitoring.disk.get('critical', '5%') }}  " -p / -p /var -p /usr -p /tmp -p /var/log"
     interval: 60
     occurrences: 1
     subscribers:
