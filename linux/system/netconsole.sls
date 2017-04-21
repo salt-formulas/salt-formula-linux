@@ -10,11 +10,13 @@
   file.managed:
     - source: salt://linux/files/netconsole
     - mode: 755
+    - makedirs: True
 
 /etc/network/if-down.d/netconsole:
   file.managed:
     - source: salt://linux/files/netconsole
     - mode: 755
+    - makedirs: True
 
 /etc/default/netconsole.conf:
   file.managed:
