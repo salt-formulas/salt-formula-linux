@@ -2,6 +2,11 @@ sudo: required
 services:
   - docker
 
+addons:
+  apt:
+    packages:
+    - apt-transport-https
+
 install:
   - pip install PyYAML
   - pip install virtualenv
