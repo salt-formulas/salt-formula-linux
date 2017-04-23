@@ -10,6 +10,9 @@ include:
 {%- if network.dpdk is defined %}
 - linux.network.dpdk
 {%- endif %}
+{%- if network.dhclient_config is defined %}
+- linux.network.dhclient
+{%- endif %}
 {%- if network.interface|length > 0 %}
 - linux.network.interface
 {%- endif %}
