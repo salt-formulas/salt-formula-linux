@@ -1,10 +1,6 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
-linux_packages:
-  pkg.installed:
-  - pkgs: {{ system.pkgs }}
-
 {%- set pkgs_groups = {
   'latest': [],
   'purged': [],
