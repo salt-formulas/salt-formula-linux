@@ -4,5 +4,6 @@ agent:
       percpu: true
       totalcpu: true
     disk:
+    diskio:
     mem:
     system:
