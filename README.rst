@@ -507,6 +507,15 @@ Package manager proxy setup per repository:
           https: https://proxy.host.local:3143
 
 
+Remove all repositories:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        purge_repos: true
+
+
 RC
 ~~
 
