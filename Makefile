@@ -65,7 +65,7 @@ release-minor: check-changes
 	[ ! -f debian/changelog ] || dch -v $(VERSION_MAJOR).$(NEW_MINOR_VERSION) -m --force-distribution -D `dpkg-parsechangelog -S Distribution` "New version"
 	make genchangelog-$(VERSION_MAJOR).$(NEW_MINOR_VERSION)
 	(git add -u; git commit -m "Version $(VERSION_MAJOR).$(NEW_MINOR_VERSION)")
-	git tag -s -m $(NEW_MAJOR_VERSION) $(VERSION_MAJOR).$(NEW_MINOR_VERSION)
+	git tag -s -m $(VERSION_MAJOR).$(NEW_MINOR_VERSION) $(VERSION_MAJOR).$(NEW_MINOR_VERSION)
 
 check-changes:
 	@git log --pretty=oneline --decorate $(VERSION)..HEAD | grep -Eqc '.*' || (echo "No new changes since version $(VERSION)"; exit 1)
