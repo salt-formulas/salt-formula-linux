@@ -2,10 +2,109 @@
 Changelog
 =========
 
+Version 2017.4.1
+=============================
+
+commit df84869f9c5d46e450a27eefafe952d560c9acb2 (HEAD -> master)
+Author: Filip Pytloun <filip@pytloun.cz>
+
+    Fix makefile
+
+commit 09820f1bbbe2ad32b82a4a44f2370be8508aa605
+Author: Filip Pytloun <filip@pytloun.cz>
+
+    Version 2017.4
+
+commit 34a29b491de30bd541bee2726794874127942be6
+Author: Jiri Broulik <jiribroulik@gmail.com>
+
+    README fix for purging repos
+
+commit 1e47abe149328eb7c5c5585979bb63849d0246af
+Author: Damian Szeluga <damian.szeluga@gmail.com>
+
+    Add option to parametrize checks
+
+commit 0792a9bcf338738c11def7e078ab6f2f7cc17c14
+Author: Jiri Broulik <jiribroulik@gmail.com>
+
+    mkdirs in netconsole fix
+
+commit f05e7d4eefeca9b7ed2a986656b4d1ba3f429b89
+Author: Tatyana Leontovich <tleontovich@mirantis.com>
+
+    Fix mistake in kernel.sls
+
+commit 25839cca97f12ffba38b8ca63bff3f83330f9cb8
+Author: Jiri Broulik <jiribroulik@gmail.com>
+
+    purging repos
+
+commit 361d69943b777aaaff12f7c70ae68f07ac633240
+Merge: 9ed3403 ccf2884
+Author: Filip Pytloun <fpytloun@mirantis.com>
+
+    Merge "netconsole remote kernel logger"
+
+commit ccf28849b017296fb9a5f6b48b1809660786ef4e
+Author: Vladimir Eremin <veremin@mirantis.com>
+
+    netconsole remote kernel logger
+
+commit 459da2bc650d38a219c218d3374d6547f37f4db6 (origin/pr/preinstall-apt-https-tranpsort2)
+Author: Petr Michalec <epcim@apealive.net>
+
+    avoid install system pkgs before repo configured
+
+commit 6969322bee652d0991a7f2e65325b01f279beaad (origin/pr/preinstall-apt-https-tranpsort)
+Author: Petr Michalec <epcim@apealive.net>
+
+    preinstall apt https transport
+
+commit 9ed340364a2f430442903a96a17930c14f7991e7
+Author: Marek Celoud <mceloud@mirantis.com>
+
+    add package include into repo state
+
+commit 6357299ee2d2019ec5ed1ec7646f55647254cf5a
+Author: Aleš Komárek <github@newt.cz>
+
+    Update README.rst
+
+commit 0bd8565876a43d17ed1b4306c1af59ac8516c02b
+Author: Bartosz Kupidura <bkupidura@mirantis.com>
+
+    Add support for prometheus
+
+commit df9b40d973dc821c13b5798e53c0613d3a23d599
+Author: Bartosz Kupidura <bkupidura@mirantis.com>
+
+    Add telegraf support
+
+commit b845058fe5cf6d50c86a18ceb35c6c1fdb926c85
+Author: Jiri Broulik <jiribroulik@gmail.com>
+
+    nfs filesystem mount fix
+
+commit b017f93ade687a25a1af61d6fbec31f4c14254df
+Author: Jiri Broulik <jiribroulik@gmail.com>
+
+    nfs storage mount
+
+commit f0d157b0a946e76219d0f380cf8858aa0cda5876
+Author: Martin Polreich <polreichmartin@gmail.com>
+
+    Update .travis.yml and notififcations
+
 Version 2017.4
 =============================
 
-commit 75f97238183857a2fb9a1bd698d218b7028fffd2 (HEAD -> master, origin/master, origin/HEAD)
+commit d1126613407a6c2ca2e409b55fc73532d5c0288b (tag: 2017.4)
+Author: Filip Pytloun <filip@pytloun.cz>
+
+    Version 2017.4
+
+commit 75f97238183857a2fb9a1bd698d218b7028fffd2
 Author: Filip Pytloun <filip@pytloun.cz>
 
     Fix profile.d permissions again
