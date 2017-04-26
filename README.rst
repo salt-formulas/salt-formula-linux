@@ -493,14 +493,14 @@ Package manager proxy setup per repository:
               https: http://maas-01:8080
         ...
         proxy:
-          # package manager fallback defaults 
+          # package manager fallback defaults
           # used if linux:system:repo:apt-mk:proxy has no protocol specific entries
           pkg:
             enabled: true
             ftp:   ftp://proxy.host.local:2121
             #http:  http://proxy.host.local:3142
             #https: https://proxy.host.local:3143
-          ... 
+          ...
           # global system fallback system defaults
           ftp:   ftp://proxy.host.local:2121
           http:  http://proxy.host.local:3142
@@ -782,6 +782,82 @@ OpenVswitch Bridges
             netmask: 255.255.255.0
             use_interfaces:
             - eth1
+
+DHCP client configuration
+
+None of the keys is mandatory, include only those you really need. For full list
+of available options under send, supersede, prepend, append refer to dhcp-options(5)
+
+.. code-block:: yaml
+
+     linux:
+       network:
+         dhclient:
+           enabled: true
+           backoff_cutoff: 15
+           initial_interval: 10
+           reboot: 10
+           retry: 60
+           select_timeout: 0
+           timeout: 120
+           send:
+             - option: host-name
+               declaration: "= gethostname()"
+           supersede:
+             - option: host-name
+               declaration: "spaceship"
+             - option: domain-name
+               declaration: "domain.home"
+             #- option: arp-cache-timeout
+             #  declaration: 20
+           prepend:
+             - option: domain-name-servers
+               declaration:
+                 - 8.8.8.8
+                 - 8.8.4.4
+             - option: domain-search
+               declaration:
+                 - example.com
+                 - eng.example.com
+           #append:
+             #- option: domain-name-servers
+             #  declaration: 127.0.0.1
+           # ip or subnet to reject dhcp offer from
+           reject:
+             - 192.33.137.209
+             - 10.0.2.0/24
+           request:
+             - subnet-mask
+             - broadcast-address
+             - time-offset
+             - routers
+             - domain-name
+             - domain-name-servers
+             - domain-search
+             - host-name
+             - dhcp6.name-servers
+             - dhcp6.domain-search
+             - dhcp6.fqdn
+             - dhcp6.sntp-servers
+             - netbios-name-servers
+             - netbios-scope
+             - interface-mtu
+             - rfc3442-classless-static-routes
+             - ntp-servers
+           require:
+             - subnet-mask
+             - domain-name-servers
+           # if per interface configuration required add below
+           interface:
+             ens2:
+               initial_interval: 11
+               reject:
+                 - 192.33.137.210
+             ens3:
+               initial_interval: 12
+               reject:
+                 - 192.33.137.211
+
 
 Configure global environment variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
