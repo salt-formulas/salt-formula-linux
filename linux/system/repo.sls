@@ -191,6 +191,12 @@ default_repo_list:
     - require:
       - pkg: linux_repo_prereq_pkgs
 
+refresh_default_repo:
+  module.wait:
+    - name: pkg.refresh_db
+    - watch:
+      - file: default_repo_list
+
 {%- endif %}
 
 {%- endif %}
