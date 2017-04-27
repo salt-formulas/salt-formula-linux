@@ -81,7 +81,15 @@ linux_repo_{{ name }}_pin:
 
 {%- do default_repos.update({name: repo}) %}
 
-{%- if repo.key_url|default(False) %}
+{%- if repo.get('key') %}
+
+linux_repo_{{ name }}_key:
+  cmd.wait:
+    - name: "echo '{{ repo.key }}' | apt-key add -"
+    - watch:
+      - file: default_repo_list
+
+{%- elif repo.key_url|default(False) %}
 
 linux_repo_{{ name }}_key:
   cmd.wait:
