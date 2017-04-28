@@ -101,7 +101,60 @@ linux:
           #http: http://127.0.5.2:8080
       apt-mk-salt:
         source: "deb http://apt-mk.mirantis.com/xenial stable salt"
-        key_url: http://apt-mk.mirantis.com/public.gpg
+        #key_url: http://apt-mk.mirantis.com/public.gpg
+        key: |
+          -----BEGIN PGP PUBLIC KEY BLOCK-----
+          Version: GnuPG v1
+
+          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
+          jtcwJrHue5Xn8UPSLkE=
+          =SWiA
+          -----END PGP PUBLIC KEY BLOCK-----
         architectures: amd64
         proxy:
           enabled: true
