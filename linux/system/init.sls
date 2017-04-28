@@ -59,9 +59,6 @@ include:
 {%- if system.console is defined %}
 - linux.system.console
 {%- endif %}
-{%- if system.doc is defined %}
-- linux.system.doc
-{%- endif %}
 {%- if system.limit|length > 0 %}
 - linux.system.limit
 {%- endif %}

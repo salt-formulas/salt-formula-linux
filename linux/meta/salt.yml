@@ -1,3 +1,4 @@
+{%- from "linux/map.jinja" import system with context -%}
 orchestrate:
   system:
     priority: 30
@@ -5,4 +6,15 @@ orchestrate:
     priority: 40
   storage:
     priority: 50
-
+grain:
+  sphinx:
+    {%- set service_grains = {'sphinx': {'doc': {}}} %}
+    {%- for service_name, service in pillar.items() %}
+      {%- if service.get('_support', {}).get('sphinx', {}).get('enabled', False) %}
+        {%- set grains_fragment_file = service_name+'/meta/sphinx.yml' %}
+        {%- macro load_grains_file() %}{% include grains_fragment_file %}{% endmacro %}
+        {%- set grains_yaml = load_grains_file()|load_yaml %}
+        {%- do service_grains.sphinx.doc.update({ service_name: grains_yaml.doc }) %}
+      {%- endif %}
+    {%- endfor %}
+    {{ service_grains|yaml(False)|indent(4) }}
