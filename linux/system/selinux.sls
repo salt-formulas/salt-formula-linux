@@ -2,7 +2,7 @@
 {%- if system.enabled %}
 
 include:
-- linux.system.package
+- linux.system.repo
 
 {%- if grains.os_family == 'RedHat' %}
 
@@ -21,7 +21,7 @@ selinux_config:
   selinux.mode:
   - name: {{ system.get('selinux', 'permissive') }}
   - require:
-    - pkg: linux_packages
+    - pkg: linux_repo_prereq_pkgs
 
 {%- endif %}
 
