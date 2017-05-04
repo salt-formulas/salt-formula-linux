@@ -103,6 +103,9 @@ linux_repo_{{ name }}_key:
 
 linux_repo_{{ name }}:
   pkgrepo.managed:
+  {%- if repo.ppa is defined %}
+  - ppa: {{ ppa }}
+  {%- else %}
   - human_name: {{ name }}
   - name: {{ repo.source }}
   {%- if repo.architectures is defined %}
@@ -132,6 +135,7 @@ linux_repo_{{ name }}:
   {%- endif %}
   {%- if system.purge_repos|default(False) %}
     - file: purge_sources_list_d_repos
+  {%- endif %}
   {%- endif %}
 
 {%- endif %}
