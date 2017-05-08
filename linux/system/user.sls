@@ -50,6 +50,11 @@ system_user_home_{{ user.home }}:
     - user: system_user_{{ name }}
   - check_cmd: /usr/sbin/visudo -c -f
 
+{%- else %}
+
+/etc/sudoers.d/90-salt-user-{{ name|replace('.', '-') }}:
+  file.absent
+  
 {%- endif %}
 
 {%- else %}
