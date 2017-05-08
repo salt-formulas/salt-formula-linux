@@ -35,11 +35,11 @@ include:
 {%- if system.bash is defined %}
 - linux.system.bash
 {%- endif %}
-{%- if system.user|length > 0 %}
-- linux.system.user
-{%- endif %}
 {%- if system.group|length > 0 %}
 - linux.system.group
+{%- endif %}
+{%- if system.user|length > 0 %}
+- linux.system.user
 {%- endif %}
 {%- if system.rc is defined %}
 - linux.system.rc
