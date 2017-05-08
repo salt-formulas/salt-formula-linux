@@ -73,7 +73,7 @@ This ways ``linux.system.sudo`` pillar map to actual sudo attributes:
     system:
       sudo:
         enabled: true
-        alias:
+        aliases:
           host:
             LOCAL:
             - localhost
