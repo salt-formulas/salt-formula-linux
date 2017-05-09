@@ -59,7 +59,7 @@ linux:
         full_name: Salt Sudo User2
         home: /home/saltuser2
     group:
-      test:
+      testgroup:
         enabled: true
         name: test
         gid: 9999
