@@ -13,9 +13,11 @@ include:
     - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT isolcpus={{ system.kernel.isolcpu }}"'
     - require:
       - file: grub_d_directory
+{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %} 
     - watch_in:
       - cmd: grub_update
 
+{%- endif %}
 {%- endif %}
 
 {%- if system.kernel.version is defined %}

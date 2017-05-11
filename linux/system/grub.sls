@@ -6,6 +6,8 @@ grub_d_directory:
     - mode: 755
     - makedirs: True
 
+{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
 grub_update:
   cmd.wait:
   - name: update-grub
+{%- endif %}

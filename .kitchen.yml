@@ -2,7 +2,7 @@
 driver:
   name: docker
   hostname: linux.ci.local
-  use_sudo: sudo
+  use_sudo: false
 
 provisioner:
   name: salt_solo

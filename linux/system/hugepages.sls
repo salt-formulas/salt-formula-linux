@@ -11,8 +11,11 @@ include:
     - template: jinja
     - require:
       - file: grub_d_directory
+{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
     - watch_in:
       - cmd: grub_update
+
+{%- endif %}
 
 {%- for hugepages_type, hugepages in system.kernel.hugepages.iteritems() %}
 

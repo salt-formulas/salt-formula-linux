@@ -8,8 +8,10 @@ include:
     - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT intel_iommu=on iommu=pt"'
     - require:
       - file: grub_d_directory
+{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
     - watch_in:
       - cmd: grub_update
+{%- endif %}
 
 /etc/modprobe.d/sriov.conf:
   file.managed:

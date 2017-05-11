@@ -2,7 +2,7 @@ linux:
   system:
     enabled: true
     domain: ci.local
-    name: linux
+    name: linux.ci.local
   network:
     enabled: true
     hostname: linux
