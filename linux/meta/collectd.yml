@@ -3,10 +3,12 @@ local_plugin:
     plugin: netlink
     template: linux/files/collectd_netlink.conf
     ignore_selected: false
+    {%- if 'linux_netlink.ls' in salt.keys() %}
     interfaces:
     {%- for interface_name in salt['linux_netlink.ls']() %}
     - {{ interface_name }}
     {%- endfor %}
+    {%- endif %}
   linux_system_cpu:
     plugin: cpu
   linux_system_entropy:
