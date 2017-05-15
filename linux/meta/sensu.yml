@@ -18,7 +18,7 @@ check:
     occurrences: 1
     subscribers:
     - local-linux-system
-{%- if storage.swap is defined %}
+{%- if storage.swap|length > 0 %}
   local_linux_storage_swap_usage_{{ system.name|replace('.', '-') }}-{{ system.domain|replace('.', '-') }}:
     command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_swap -a -w {{ monitoring.swap.warn }} -c {{ monitoring.swap.crit }}"
     interval: 60
