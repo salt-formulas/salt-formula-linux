@@ -39,7 +39,7 @@ purge_sources_list_d_repos:
 {%- endif %}
 
 {%- for name, repo in system.repo.iteritems() %}
-
+{%- set name=repo.get('name', name) %}
 {%- if grains.os_family == 'Debian' %}
 
 # per repository proxy setup
