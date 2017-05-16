@@ -157,6 +157,7 @@ This ways ``linux.system.sudo`` pillar map to actual sudo attributes:
           salt-ops-2nd:
             name: salt-ops
             nopasswd: false
+            setenv: true # Enable sudo -E option
             runas:
             - DBA
             commands:
