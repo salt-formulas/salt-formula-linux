@@ -91,11 +91,23 @@ linux_repo_{{ name }}_key:
 
 {%- elif repo.key_url|default(False) %}
 
+{%- if system.proxy.get('pkg', {}).get('enabled', False) and system.proxy.get('pkg', {}).get('http', None) %}
+
+linux_repo_{{ name }}_key:
+  cmd.wait:
+    - name: "curl --proxy {{ system.proxy.get('pkg', {}).get('http', None) }}  -s {{ repo.key_url }} | apt-key add -"
+    - watch:
+      - file: default_repo_list
+
+{%- else %}
+
 linux_repo_{{ name }}_key:
   cmd.wait:
     - name: "curl -s {{ repo.key_url }} | apt-key add -"
     - watch:
       - file: default_repo_list
+
+{%- endif %}
 
 {%- endif %}
 
