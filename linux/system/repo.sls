@@ -183,7 +183,7 @@ default_repo_list:
     - user: root
     - group: root
     - mode: 0644
-{%- if system.purge_repos %}
+{%- if system.purge_repos|default(False) %}
     - replace: True
 {%- endif %}
     - defaults:
