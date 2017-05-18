@@ -80,3 +80,6 @@ include:
 {%- if system.netconsole is defined %}
 - linux.system.netconsole
 {%- endif %}
+{%- if system.service is defined %}
+- linux.system.service
+{%- endif %}

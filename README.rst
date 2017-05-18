@@ -601,6 +601,21 @@ day. Setting custom motd will cleanup existing ones.
               printf "This is [company name] network.\n"
               printf "Unauthorized access strictly prohibited.\n"
 
+Services
+~~~~~~~~
+
+Stop and disable linux service:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        service:
+          apt-daily.timer:
+            status: dead
+
+Possible status is dead (disable service by default), running (enable service by default), enabled, disabled.
+
 RHEL / CentOS
 ^^^^^^^^^^^^^
 
