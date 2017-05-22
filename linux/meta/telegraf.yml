@@ -5,5 +5,8 @@ agent:
       totalcpu: true
     disk:
     diskio:
+    kernel:
+    net:
     mem:
+    processes:
     system:
