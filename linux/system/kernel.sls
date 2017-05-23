@@ -53,14 +53,18 @@ linux_kernel_module_{{ module }}:
 
 {%- endfor %}
 
-{%- for kmod_config, kmod_content in system.kernel.get('kmod_config', {}).iteritems() %}
+{%- for module_name, module_content in system.kernel.get('module', {}).iteritems() %}
 
-/etc/modprobe.d/{{ kmod_config }}.conf:
+/etc/modprobe.d/{{ module_name }}.conf:
   file.managed:
-    - contents:
-{%- for line in kmod_content %}
-      - {{ line }}
-{%- endfor %}
+    - user: root
+    - group: root
+    - mode: 0644
+    - template: jinja
+    - source: salt://linux/files/modprobe.conf.jinja
+    - defaults:
+       module_content: {{ module_content }}
+       module_name: {{ module_name }}
 
 {%- endfor %}
 

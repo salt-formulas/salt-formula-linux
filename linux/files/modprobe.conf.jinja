@@ -1,0 +1,12 @@
+{% if module_content.disabled is defined and module_content.disabled -%}
+blacklist {{ module_name }}
+{%- else -%}
+
+{%- if module_content.option is defined -%}
+##### Module options #####
+{% for option, value in module_content.option | dictsort -%}
+options {{ module_name }} {{ option }}={{ value }}
+{%- endfor %}
+{%- endif -%}
+
+{%- endif %}

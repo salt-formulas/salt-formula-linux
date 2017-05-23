@@ -317,18 +317,19 @@ Load kernel modules and add them to `/etc/modules`:
             - tp_smapi
             - 8021q
 
-Configure kernel modules with additional options to `/etc/modprobe.d`
-following example will add `/etc/modprobe.d/nf_conntrack.conf` file
-with line `options nf_conntrack hashsize=262144`:
+Configure or blacklist kernel modules with additional options to `/etc/modprobe.d` following example 
+will add `/etc/modprobe.d/nf_conntrack.conf` file with line `options nf_conntrack hashsize=262144`:
 
 .. code-block:: yaml
 
     linux:
       system:
         kernel:
-          kmod_config:
+          module:
             nf_conntrack:
-              - "options nf_conntrack hashsize=262144"
+              option:
+                hashsize: 262144
+
 
 
 Install specific kernel version and ensure all other kernel packages are
