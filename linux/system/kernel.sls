@@ -53,6 +53,17 @@ linux_kernel_module_{{ module }}:
 
 {%- endfor %}
 
+{%- for kmod_config, kmod_content in system.kernel.get('kmod_config', {}).iteritems() %}
+
+/etc/modprobe.d/{{ kmod_config }}.conf:
+  file.managed:
+    - contents:
+{%- for line in kmod_content %}
+      - {{ line }}
+{%- endfor %}
+
+{%- endfor %}
+
 {%- for sysctl_name, sysctl_value in system.kernel.get('sysctl', {}).iteritems() %}
 
 linux_kernel_{{ sysctl_name }}:
