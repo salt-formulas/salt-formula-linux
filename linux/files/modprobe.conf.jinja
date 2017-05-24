@@ -1,0 +1,9 @@
+{% if module_content.get('blacklist', false) -%}
+blacklist {{ module_name }}
+{%- else -%}
+
+{%- for option, value in module_content.get('option', {}) | dictsort -%}
+options {{ module_name }} {{ option }}={{ value }}
+{%- endfor %}
+
+{%- endif %}

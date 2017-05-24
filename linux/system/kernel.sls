@@ -53,6 +53,21 @@ linux_kernel_module_{{ module }}:
 
 {%- endfor %}
 
+{%- for module_name, module_content in system.kernel.get('module', {}).iteritems() %}
+
+/etc/modprobe.d/{{ module_name }}.conf:
+  file.managed:
+    - user: root
+    - group: root
+    - mode: 0644
+    - template: jinja
+    - source: salt://linux/files/modprobe.conf.jinja
+    - defaults:
+       module_content: {{ module_content }}
+       module_name: {{ module_name }}
+
+{%- endfor %}
+
 {%- for sysctl_name, sysctl_value in system.kernel.get('sysctl', {}).iteritems() %}
 
 linux_kernel_{{ sysctl_name }}:

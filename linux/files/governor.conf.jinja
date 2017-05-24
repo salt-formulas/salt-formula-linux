@@ -1,0 +1,3 @@
+{% for cpu_core in range(salt['grains.get']('num_cpus', 1)) %}
+devices/system/cpu/cpu{{ cpu_core }}/cpufreq/scaling_governor = {{ governor }}
+{% endfor %}

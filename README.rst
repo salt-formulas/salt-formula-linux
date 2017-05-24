@@ -317,6 +317,21 @@ Load kernel modules and add them to `/etc/modules`:
             - tp_smapi
             - 8021q
 
+Configure or blacklist kernel modules with additional options to `/etc/modprobe.d` following example 
+will add `/etc/modprobe.d/nf_conntrack.conf` file with line `options nf_conntrack hashsize=262144`:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              option:
+                hashsize: 262144
+
+
+
 Install specific kernel version and ensure all other kernel packages are
 not present. Also install extra modules and headers for this kernel:
 
@@ -346,7 +361,7 @@ Systcl kernel parameters
 CPU
 ~~~
 
-Disable ondemand cpu mode service:
+Enable cpufreq governor for every cpu:
 
 .. code-block:: yaml
 
