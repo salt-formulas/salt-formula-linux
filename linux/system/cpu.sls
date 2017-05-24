@@ -17,6 +17,9 @@ ondemand_service_disable:
     - name: ondemand
     - enable: false
 
+{%- if grains.get('virtual', None) in ['physical', None] %}
+{#- Governor cannot be set in VMs, etc. #}
+
 /etc/sysfs.d/governor.conf:
   file.managed:
     - source: salt://linux/files/governor.conf.jinja
@@ -36,5 +39,7 @@ governor_write_sysfs_cpu_core_{{ cpu_core }}:
     - value: {{ system.cpu.governor }}
 
 {%- endfor %}
+
+{%- endif %}
 
 {%- endif %}
