@@ -291,6 +291,23 @@ Set system locales:
           "cs_CZ.UTF-8 UTF-8":
             enabled: true
 
+Systemd settings:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        systemd:
+          system:
+            Manager:
+              DefaultLimitNOFILE: 307200
+              DefaultLimitNPROC: 307200
+          user:
+            Manager:
+              DefaultLimitCPU: 2
+              DefaultLimitNPROC: 4
+
 Kernel
 ~~~~~~
 

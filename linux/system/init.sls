@@ -83,3 +83,6 @@ include:
 {%- if system.service is defined %}
 - linux.system.service
 {%- endif %}
+{%- if system.systemd is defined %}
+- linux.system.systemd
+{%- endif %}
