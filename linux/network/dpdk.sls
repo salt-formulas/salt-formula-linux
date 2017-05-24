@@ -147,8 +147,8 @@ linux_network_dpdk_bridge_port_interface_{{ interface_name }}:
     - require:
       - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
 
-  {# Multiqueue n_rxq and mtu setup on interfaces #}
-  {%- elif interface.type == 'dpdk_ovs_port' and (interface.n_rxq is defined or interface.mtu is defined) %}
+  {# Multiqueue n_rxq, pmd_rxq_affinity and mtu setup on interfaces #}
+  {%- elif interface.type == 'dpdk_ovs_port' and (interface.n_rxq is defined or interface.mtu is defined or interface.pmd_rxq_affinity is defined) %}
 
   {%- if interface.n_rxq is defined %}
 
@@ -157,6 +157,16 @@ linux_network_dpdk_bridge_port_interface_n_rxq_{{ interface_name }}:
     - name: "ovs-vsctl set Interface {{ interface_name }} options:n_rxq={{ interface.n_rxq }} "
     - unless: |
         ovs-vsctl get Interface {{ interface_name }} options | grep 'n_rxq="{{ interface.n_rxq }}"'
+
+  {%- endif %}
+
+  {%- if interface.pmd_rxq_affinity is defined %}
+
+linux_network_dpdk_bridge_port_interface_pmd_rxq_affinity_{{ interface_name }}:
+  cmd.run:
+    - name: "ovs-vsctl set Interface {{ interface_name }} other_config:pmd-rxq-affinity={{ interface.pmd_rxq_affinity }} "
+    - unless: |
+        ovs-vsctl get Interface {{ interface_name }} other_config | grep 'pmd-rxq-affinity="{{ interface.pmd_rxq_affinity }}"'
 
   {%- endif %}
 
