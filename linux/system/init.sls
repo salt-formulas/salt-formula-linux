@@ -1,4 +1,5 @@
 {%- from "linux/map.jinja" import system with context %}
+{%- from "linux/map.jinja" import network with context %}
 include:
 - linux.system.env
 - linux.system.profile
@@ -18,6 +19,9 @@ include:
 - linux.system.kernel
 {%- if system.kernel.hugepages is defined %}
 - linux.system.hugepages
+{%- endif %}
+{%- if network.dpdk is defined %}
+- linux.system.dpdk
 {%- endif %}
 {%- if system.kernel.sriov is defined %}
 - linux.system.sriov
