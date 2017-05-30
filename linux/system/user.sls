@@ -5,6 +5,14 @@
 
 {%- if user.enabled %}
 
+{%- set requires = [] %}
+{%- for group in user.get('groups', []) %}
+  {%- if group in system.get('group', {}).keys() %}
+    {%- do requires.append({'group': 'system_group_'+group}) %}
+  {%- endif %}
+{%- endfor %}
+
+
 system_user_{{ name }}:
   user.present:
   - name: {{ name }}
@@ -25,6 +33,7 @@ system_user_{{ name }}:
   {%- if user.uid is defined and user.uid %}
   - uid: {{ user.uid }}
   {%- endif %}
+  - require: {{ requires|yaml }}
 
 system_user_home_{{ user.home }}:
   file.directory:
