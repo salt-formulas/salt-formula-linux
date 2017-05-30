@@ -43,7 +43,8 @@ linux:
         full_name: Test User
         home: /home/test
         groups:
-          - root
+          - db-ops
+          - salt-ops
       salt_user1:
         enabled: true
         name: saltuser1
@@ -58,18 +59,19 @@ linux:
         uid: 9992
         full_name: Salt Sudo User2
         home: /home/saltuser2
+        groups:
+          - sudogroup1
     group:
-      testgroup:
+      test:
         enabled: true
         name: test
         gid: 9999
         system: true
       db-ops:
         enabled: true
-        name: testgroup
       salt-ops:
         enabled: true
-        name: sudogroup0
+        name: salt-ops
       sudogroup1:
         enabled: true
         name: sudogroup1
