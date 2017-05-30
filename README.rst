@@ -1057,6 +1057,7 @@ DPDK OVS interfaces
             enabled: true
             type: dpdk_ovs_port
             n_rxq: 2
+            pmd_rxq_affinity: "0:1,1:2"
             bridge: br-prv
             mtu: 9000
           br-prv:
@@ -1087,6 +1088,7 @@ DPDK OVS interfaces
             enabled: true
             type: dpdk_ovs_port
             n_rxq: 2
+            pmd_rxq_affinity: "0:1,1:2"
             mtu: 9000
           dpdk_first_nic:
             name: ${_param:primary_first_nic}
@@ -1096,6 +1098,7 @@ DPDK OVS interfaces
             enabled: true
             type: dpdk_ovs_port
             n_rxq: 2
+            pmd_rxq_affinity: "0:1,1:2"
             mtu: 9000
           dpdkbond0:
             enabled: true
