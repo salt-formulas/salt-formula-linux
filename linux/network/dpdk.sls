@@ -115,6 +115,7 @@ linux_network_dpdk_bridge_interface_{{ interface_name }}:
 {# create override for openvswitch dependency for dpdk br-prv #}
 /etc/systemd/system/ifup@{{ interface_name }}.service.d/override.conf:
   file.managed:
+    - makedirs: true
     - require:
       - cmd: linux_network_dpdk_bridge_interface_{{ interface_name }}
     - contents: |
