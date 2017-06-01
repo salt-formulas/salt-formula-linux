@@ -30,7 +30,23 @@ Basic Linux box
         environment: prod
         timezone: 'Europe/Prague'
         utc: true
+        
+Linux with system groups
 
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        group:
+          dba:
+            name: dba
+            enabled: true
+            system: true
+            gid: 11111
+
+# note: system option and gid number is optional
+            
 Linux with system users, some with password set
 
 .. code-block:: yaml
