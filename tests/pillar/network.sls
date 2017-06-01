@@ -88,3 +88,30 @@ linux:
       #     initial_interval: 12
       #     reject:
       #       - 10.0.4.0/24
+    systemd:
+      link:
+        10-iface-dmz:
+          match:
+            type: eth
+            # MACAddress: c8:5b:7f:a5:1a:da
+            # OriginalName: eth0
+          link:
+            name: dmz0
+      netdev:
+        20-bridge:
+          NetDev:
+             Name: br0
+             Kind: bridge
+        20-bridge-dmz:
+        # test all lowercase
+          match:
+            name: dmz0
+          network:
+            description: bridge
+            bridge: br-dmz0
+      network:
+        40-dhcp:
+          Match:
+            Name: '*'
+          Network:
+            DHCP: yes

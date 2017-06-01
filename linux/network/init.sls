@@ -13,6 +13,9 @@ include:
 {%- if network.dhclient is defined %}
 - linux.network.dhclient
 {%- endif %}
+{%- if network.systemd|length > 0 %}
+- linux.network.systemd
+{%- endif %}
 {%- if network.interface|length > 0 %}
 - linux.network.interface
 {%- endif %}

@@ -906,6 +906,36 @@ of available options under send, supersede, prepend, append refer to dhcp-option
                reject:
                  - 192.33.137.211
 
+Linux network systemd settings:
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        ...
+        systemd:
+          link:
+            10-iface-dmz:
+              Match:
+                MACAddress: c8:5b:67:fa:1a:af
+                OriginalName: eth0
+              Link:
+                Name: dmz0
+          netdev:
+            20-bridge-dmz:
+              match:
+                name: dmz0
+              network:
+                mescription: bridge
+                bridge: br-dmz0
+          network:
+          # works with lowercase, keys are by default capitalized
+            40-dhcp:
+              match:
+                name: '*'
+              network:
+                DHCP: yes
+
 
 Configure global environment variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
