@@ -4,14 +4,14 @@ include:
 {%- if storage.loopback|length > 0 %}
 - linux.storage.loopback
 {%- endif %}
+{%- if storage.lvm|length > 0 %}
+- linux.storage.lvm
+{%- endif %}
 {%- if storage.mount|length > 0 %}
 - linux.storage.mount
 {%- endif %}
 {%- if storage.swap|length > 0 %}
 - linux.storage.swap
-{%- endif %}
-{%- if storage.lvm|length > 0 %}
-- linux.storage.lvm
 {%- endif %}
 {%- if storage.multipath.enabled %}
 - linux.storage.multipath
