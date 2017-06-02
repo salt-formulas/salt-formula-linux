@@ -50,3 +50,23 @@ server:
         summary: 'High system load (5m) on {{ $labels.host }}'
         description: 'High system load (5m) on node {{ $labels.host }}'
       {% endraw %}
+    NetworkRxPacketsDropped:
+      {%- set net_rx_dropped_threshold = prometheus_server.get('alert', {}).get('NetworkRxPacketsDropped', {}).get('var', {}).get('threshold', 100) %}
+      if: avg_over_time(net_drop_in[1m]) > {{ net_rx_dropped_threshold }}
+      {% raw %}
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'Too many received packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
+        description: 'The average number of received packets which are dropped is too high on node {{ $labels.host }} for interface {{ $label.interface }} (current value={{ $value }}, threshold={% endraw %}{{ net_rx_dropped_threshold }})'
+    NetworkTxPacketsDropped:
+      {%- set net_tx_dropped_threshold = prometheus_server.get('alert', {}).get('NetworkTxPacketsDropped', {}).get('var', {}).get('threshold', 100) %}
+      if: avg_over_time(net_drop_out[1m]) > {{ net_tx_dropped_threshold }}
+      {% raw %}
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'Too many transmitted packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
+        description: 'The average number of transmitted packets which are dropped is too high on node {{ $labels.host }} for interface {{ $label.interface }} (current value={{ $value }}, threshold={% endraw %}{{ net_tx_dropped_threshold }})'
