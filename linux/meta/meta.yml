@@ -1,0 +1,16 @@
+graph:
+{%- if pillar.get('linux', {}).system is defined %}
+{%- from "linux/map.jinja" import system with context %}
+- host: {{ grains.id }}
+  service: linux.system
+  type: software-system
+  relations:
+  {%- if system.repo is defined %}
+  {%- for repo_name, repo in system.repo.iteritems() %}
+  - service: apt.repo
+    host_external: {{ repo.source }}
+    direction: source
+    type: tcp-http
+  {%- endfor %}
+  {%- endif %}
+{%- endif %}
