@@ -1,3 +1,4 @@
+{%- from "linux/map.jinja" import monitoring with context -%}
 metric_collector:
   trigger:
     linux_system_cpu_critical:
@@ -61,15 +62,20 @@ metric_collector:
         window: 60
         periods: 0
         function: avg
+{%- if monitoring.disk.use_raw_size %}
+{%- set disk_space_metric = 'fs_space_free' %}
+{%- else %}
+{%- set disk_space_metric = 'fs_space_percent_free' %}
+{%- endif %}
     linux_system_root_fs_warning:
       description: "The root filesystem's free space is low"
       severity: warning
       rules:
-      - metric: fs_space_percent_free
+      - metric: {{ disk_space_metric }}
         field:
           fs: '/'
         relational_operator: '<'
-        threshold: 10
+        threshold: {{ monitoring.disk.warn }}
         window: 60
         periods: 0
         function: min
@@ -77,11 +83,11 @@ metric_collector:
       description: "The root filesystem's free space is too low"
       severity: critical
       rules:
-      - metric: fs_space_percent_free
+      - metric: {{ disk_space_metric }}
         field:
           fs: '/'
         relational_operator: '<'
-        threshold: 5
+        threshold: {{ monitoring.disk.crit }}
         window: 60
         periods: 0
         function: min
