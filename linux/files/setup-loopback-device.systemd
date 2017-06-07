@@ -8,6 +8,8 @@ Wants=systemd-udev-settle.service
 [Service]
 {# The command is prefixed with '-' to consider it a success if the loopback device is already setup #}
 ExecStart=-/sbin/losetup {{ device_name }} {{ file }}
+{# In order to Salt can recognize oneshot service as running, we need it to remain active after it exited #}
+RemainAfterExit=true
 Type=oneshot
 
 [Install]

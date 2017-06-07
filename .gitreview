@@ -1,0 +1,5 @@
+[gerrit]
+host=gerrit.mcp.mirantis.net
+port=29418
+project=salt-formulas/linux
+
