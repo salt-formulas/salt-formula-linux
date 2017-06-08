@@ -1043,7 +1043,7 @@ DPDK OVS interfaces
         bridge: openvswitch
         dpdk:
           enabled: true
-          driver: uio/vfio-pci
+          driver: uio/vfio
         openvswitch:
           pmd_cpu_mask: "0x6"
           dpdk_socket_mem: "1024,1024"
@@ -1053,7 +1053,7 @@ DPDK OVS interfaces
           dpkd0:
             name: ${_param:dpdk_nic}
             pci: 0000:06:00.0
-            driver: igb_uio/vfio
+            driver: igb_uio/vfio-pci
             enabled: true
             type: dpdk_ovs_port
             n_rxq: 2
@@ -1073,7 +1073,7 @@ DPDK OVS interfaces
         bridge: openvswitch
         dpdk:
           enabled: true
-          driver: uio/vfio-pci
+          driver: uio/vfio
         openvswitch:
           pmd_cpu_mask: "0x6"
           dpdk_socket_mem: "1024,1024"
@@ -1083,7 +1083,7 @@ DPDK OVS interfaces
           dpdk_second_nic:
             name: ${_param:primary_second_nic}
             pci: 0000:06:00.0
-            driver: igb_uio/vfio
+            driver: igb_uio/vfio-pci
             bond: dpdkbond0
             enabled: true
             type: dpdk_ovs_port
@@ -1093,7 +1093,7 @@ DPDK OVS interfaces
           dpdk_first_nic:
             name: ${_param:primary_first_nic}
             pci: 0000:05:00.0
-            driver: igb_uio/vfio
+            driver: igb_uio/vfio-pci
             bond: dpdkbond0
             enabled: true
             type: dpdk_ovs_port
