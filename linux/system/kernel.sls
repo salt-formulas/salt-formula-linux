@@ -20,6 +20,12 @@ include:
 {%- endif %}
 {%- endif %}
 
+{%- if system.vm_swappiness is defined %}
+vm.swappiness:
+  sysctl.present:
+  - value: {{ system.vm_swappiness }}
+{%- endif %}
+
 {%- if system.kernel.version is defined %}
 
 linux_kernel_package:
