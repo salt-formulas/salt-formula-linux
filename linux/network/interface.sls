@@ -122,9 +122,6 @@ linux_interface_{{ interface_name }}:
   - enabled: {{ interface.enabled }}
   - name: {{ interface_name }}
   - type: {{ interface.type }}
-  {% if interface.mtu is defined %}
-  - mtu: {{ interface.mtu }}
-  {% endif %}
   {%- if interface.address is defined %}
   {%- if grains.os_family == 'Debian' %}
   - proto: {{ interface.get('proto', 'static') }}
