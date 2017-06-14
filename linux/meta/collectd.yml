@@ -1,11 +1,11 @@
+{%- from "linux/map.jinja" import monitoring with context %}
 local_plugin:
   linux_network_netlink:
     plugin: netlink
     template: linux/files/collectd_netlink.conf
-    ignore_selected: false
-    {%- if 'linux_netlink.ls' in salt.keys() %}
+    ignore_selected: {{ monitoring.netlink.ignore_selected }}
     interfaces:
-    {%- for interface_name in salt['linux_netlink.ls']() %}
+    {%- for interface_name in monitoring.netlink.interfaces|sort %}
     - {{ interface_name }}
     {%- endfor %}
     {%- endif %}
