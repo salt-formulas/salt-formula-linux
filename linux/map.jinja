@@ -207,8 +207,8 @@
         },
         'disk': {
               'use_raw_size': False,
-              'warn': '15%',
-              'crit': '5%',
+              'warn': '15',
+              'crit': '5',
         },
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:monitoring')) %}
