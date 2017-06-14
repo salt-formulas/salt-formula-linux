@@ -1,6 +1,9 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
+include:
+  - linux.system.group
+
 {%- for name, user in system.user.iteritems() %}
 
 {%- if user.enabled %}
@@ -11,7 +14,6 @@
     {%- do requires.append({'group': 'system_group_'+group}) %}
   {%- endif %}
 {%- endfor %}
-
 
 system_user_{{ name }}:
   user.present:

@@ -35,9 +35,9 @@ linux:
         enabled: true
         home: /root
         name: root
-      test:
+      testuser:
         enabled: true
-        name: test
+        name: testuser
         sudo: true
         uid: 9999
         full_name: Test User
@@ -62,9 +62,9 @@ linux:
         groups:
           - sudogroup1
     group:
-      test:
+      testgroup:
         enabled: true
-        name: test
+        name: testgroup
         gid: 9999
         system: true
       db-ops:
@@ -85,7 +85,7 @@ linux:
       test:
         enabled: true
         command: "/bin/sleep 3"
-        user: test
+        user: testuser
         minute: 0
         hour: 13
     package:
