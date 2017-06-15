@@ -9,4 +9,5 @@ agent:
     net:
     mem:
     processes:
+    swap:
     system:
