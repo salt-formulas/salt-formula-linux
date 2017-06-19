@@ -70,3 +70,33 @@ server:
       annotations:
         summary: 'Too many transmitted packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
         description: 'The average number of transmitted packets which are dropped is too high on node {{ $labels.host }} for interface {{ $label.interface }} (current value={{ $value }}, threshold={% endraw %}{{ net_tx_dropped_threshold }})'
+    SystemSwapUsed:
+      {%- set swap_used_threshold = prometheus_server.get('alert', {}).get('SystemSwapUsed', {}).get('var', {}).get('threshold', 80) %}
+      if: avg_over_time(swap_used_percent[1m]) > {{ swap_used_threshold }}
+      {% raw %}
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'Swap usage too high on {{ $labels.host }}'
+        description: 'The average percentage of used swap is too high on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ swap_used_threshold }})'
+    SystemSwapIn:
+      {%- set swap_in_threshold = prometheus_server.get('alert', {}).get('SystemSwapIn', {}).get('var', {}).get('threshold', 1024 * 1024) %}
+      if: rate(swap_in[2m]) > {{ swap_in_threshold }}
+      {% raw %}
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'Swap input throughput too high on {{ $labels.host }}'
+        description: 'The rate of swap input bytes is too high on node {{ $labels.host }} (current value={{ $value }}b/s, threshold={% endraw %}{{ swap_in_threshold }})'
+    SystemSwapOut:
+      {%- set swap_out_threshold = prometheus_server.get('alert', {}).get('SystemSwapOut', {}).get('var', {}).get('threshold', 1024 * 1024) %}
+      if: rate(swap_out[2m]) > {{ swap_out_threshold }}
+      {% raw %}
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'Swap output throughput too high on {{ $labels.host }}'
+        description: 'The rate of swap output bytes is too high on node {{ $labels.host }} (current value={{ $value }}b/s, threshold={% endraw %}{{ swap_out_threshold }})'
