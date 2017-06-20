@@ -32,11 +32,14 @@ ondemand_service_disable:
 
 {% for cpu_core in range(salt['grains.get']('num_cpus', 1)) %}
 
+{% set core_key = 'devices/system/cpu/cpu' + cpu_core|string + '/cpufreq/scaling_governor' %}
+{% if salt['file.file_exists']('/sys/'+ core_key) %}
 governor_write_sysfs_cpu_core_{{ cpu_core }}:
   module.run:
     - name: sysfs.write
-    - key: devices/system/cpu/cpu{{ cpu_core }}/cpufreq/scaling_governor
+    - key: {{ core_key }}
     - value: {{ system.cpu.governor }}
+{% endif %}
 
 {%- endfor %}
 
