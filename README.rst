@@ -31,7 +31,10 @@ Basic Linux box
         timezone: 'Europe/Prague'
         utc: true
 
-Linux with system users, some with password set
+Linux with system users, some with password set:
+.. WARNING::
+If no 'password' variable has been passed - any predifined password
+will be removed.
 
 .. code-block:: yaml
 
@@ -50,9 +53,22 @@ Linux with system users, some with password set
           jsmith:
             name: 'jsmith'
             enabled: true
-            full_name: 'Password'
+            full_name: 'With clear password'
             home: '/home/jsmith'
-            password: userpassword
+            hash_password: true
+            password: "userpassword"
+          mark:
+            name: 'mark'
+            enabled: true
+            full_name: "unchange password'
+            home: '/home/mark'
+            password: false
+          elizabeth:
+            name: 'elizabeth'
+            enabled: true
+            full_name: 'With hased password'
+            home: '/home/elizabeth'
+            password: "$6$nUI7QEz3$dFYjzQqK5cJ6HQ38KqG4gTWA9eJu3aKx6TRVDFh6BVJxJgFWg2akfAA7f1fCxcSUeOJ2arCO6EEI6XXnHXxG10"
 
 Configure sudo for users and groups under ``/etc/sudoers.d/``.
 This ways ``linux.system.sudo`` pillar map to actual sudo attributes:

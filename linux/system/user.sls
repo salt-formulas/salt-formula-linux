@@ -19,11 +19,17 @@ system_user_{{ name }}:
   user.present:
   - name: {{ name }}
   - home: {{ user.home }}
-  {%- if user.password is defined %}
-  - password: {{ user.password }}
+  {% if user.get('password') == False %}
+  - enforce_password: false
+  {% elif user.get('password') == None %}
   - enforce_password: true
+  - password: '*'
+  {% elif user.get('password') %}
+  - enforce_password: true
+  - password: {{ user.password }}
+  - hash_password: {{ user.get('hash_password', False) }}
+  {% endif %}
   - gid_from_name: true
-  {%- endif %}
   {%- if user.groups is defined %}
   - groups: {{ user.groups }}
   {%- endif %}
