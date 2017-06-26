@@ -1,7 +1,6 @@
 {%- from "linux/map.jinja" import storage with context %}
 {%- if storage.enabled %}
 
-
 linux_lvm_pkgs:
   pkg.installed:
   - pkgs: {{ storage.lvm_pkgs }}
@@ -47,5 +46,12 @@ lvm_{{ vg.get('name', vgname) }}_lv_{{ volume.get('name', lvname) }}:
 {%- endif %}
 
 {%- endfor %}
+
+/etc/lvm/lvm.conf:
+  file.managed:
+  - source: salt://linux/files/lvm.conf
+  - template: jinja
+  - require:
+    - pkg: linux_lvm_pkgs
 
 {%- endif %}
