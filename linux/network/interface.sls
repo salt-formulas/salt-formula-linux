@@ -70,7 +70,7 @@ ovs_port_set_type_{{ interface_name }}:
 ovs_port_set_peer_{{ interface_name }}:
   cmd.run:
   - name: ovs-vsctl set interface {{ interface_name }} options:peer={{ interface.peer }}
-  - unless: ovs-vsctl show | grep -A 2 'Interface floating-to-prv' | grep {{ interface.peer }}
+  - unless: ovs-vsctl show | grep -A 2 'Interface {{ interface_name }}' | grep {{ interface.peer }}
 
 {%- else %}
 
