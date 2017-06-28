@@ -538,7 +538,7 @@
               "step": 10
             },
             {
-              "expr": "processes_zombie{host=\"$host\"}",
+              "expr": "processes_zombies{host=\"$host\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "zombie",
