@@ -4,8 +4,14 @@ local_plugin:
     plugin: netlink
     template: linux/files/collectd_netlink.conf
     ignore_selected: {{ monitoring.netlink.ignore_selected }}
+    {%- if monitoring.netlink.interface_override and monitoring.netlink.interfaces is list %}
+    {%- set interfaces = monitoring.netlink.interfaces %}
+    {%- else %}
+    {%- set interfaces = salt['linux_netlink.ls'](monitoring.netlink.interface_regex) %}
+    {%- endif %} 
+    {%- if interfaces %}
     interfaces:
-    {%- for interface_name in monitoring.netlink.interfaces|sort %}
+    {%- for interface_name in interfaces|sort %}
     - {{ interface_name }}
     {%- endfor %}
     {%- endif %}
