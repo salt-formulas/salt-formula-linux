@@ -20,6 +20,32 @@ linux_network_bridge_pkgs:
 
 {%- endif %}
 
+{%- for f in network.get('concat_iface_files', []) %}
+
+{%- if salt['file.file_exists'](f.src) %}
+
+append_{{ f.src }}_{{ f.dst }}:
+  file.append:
+    - name: {{ f.dst }}
+    - source: {{ f.src }}
+
+remove_appended_{{ f.src }}:
+  file.absent:
+    - name: {{ f.src }}
+
+{%- endif %}
+
+{%- endfor %}
+
+{%- for f in network.get('remove_iface_files', []) %}
+
+remove_iface_file_{{ f }}:
+  file.absent:
+    - name: {{ f }}
+
+{%- endfor %}
+
+
 {%- for interface_name, interface in network.interface.iteritems() %}
 
 {%- set interface_name = interface.get('name', interface_name) %}

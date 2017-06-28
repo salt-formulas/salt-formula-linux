@@ -847,6 +847,25 @@ OpenVswitch Bridges
             use_interfaces:
             - eth1
 
+Concatinating and removing interface files
+
+Debian based distributions have `/etc/network/interfaces.d/` directory, where
+you can store configuration of network interfaces in separate files. You can
+concatinate the files to the defined destination when needed, this operation
+removes the file from the `/etc/network/interfaces.d/`. If you just need to
+remove iface files, you can use the `remove_iface_files` key.
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        concat_iface_files:
+        - src: '/etc/network/interfaces.d/50-cloud-init.cfg'
+          dst: '/etc/network/interfaces'
+        remove_iface_files:
+        - '/etc/network/interfaces.d/90-custom.cfg'
+
+
 DHCP client configuration
 
 None of the keys is mandatory, include only those you really need. For full list
