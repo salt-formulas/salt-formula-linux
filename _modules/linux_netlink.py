@@ -3,7 +3,7 @@
 import re
 
 
-def ls(regex=r'^[a-z0-9]+$'):
+def ls(regex):
     """
     Provide a list of network interfaces.
     """
