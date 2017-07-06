@@ -29,6 +29,8 @@ ondemand_service_disable:
     - mode: 0644
     - defaults:
         governor: {{ system.cpu.governor }}
+    - require:
+      - file: /etc/sysfs.d
 
 {% for cpu_core in range(salt['grains.get']('num_cpus', 1)) %}
 
