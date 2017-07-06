@@ -147,9 +147,10 @@ linux:
           enabled: true
           https: https://127.0.5.1:443
           #http: http://127.0.5.2:8080
-      apt-mk-salt:
-        source: "deb http://apt-mk.mirantis.com/xenial stable salt"
-        #key_url: http://apt-mk.mirantis.com/public.gpg
+      apt-salt:
+        source: "deb http://apt.mirantis.com/xenial stable salt"
+        #key_url: http://apt.mirantis.com/public.gpg
+        # pub   4096R/A76882D3 2015-06-17
         key: |
           -----BEGIN PGP PUBLIC KEY BLOCK-----
           Version: GnuPG v1
@@ -206,15 +207,15 @@ linux:
         architectures: amd64
         proxy:
           enabled: true
-      apt-mk-salt-nightly:
-        source: "deb http://apt-mk.mirantis.com/xenial nightly salt"
-        key_url: http://apt-mk.mirantis.com/public.gpg
+      apt-salt-nightly:
+        source: "deb http://apt.mirantis.com/xenial nightly salt"
+        key_url: http://apt.mirantis.com/public.gpg
         architectures: amd64
         proxy:
           enabled: false
-      apt-mk-extra-nightly:
-        source: "deb http://apt-mk.mirantis.com/xenial nightly extra"
-        key_url: http://apt-mk.mirantis.com/public.gpg
+      apt-extra-nightly:
+        source: "deb http://apt.mirantis.com/xenial nightly extra"
+        key_url: http://apt.mirantis.com/public.gpg
         architectures: amd64
     locale:
       en_US:

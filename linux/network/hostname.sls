@@ -25,7 +25,6 @@ linux_enforce_hostname:
     - apply_hostname: True
     - retain_settings: True
 #}
-
 linux_enforce_hostname:
   cmd.run:
   - name: hostname {{ network.hostname }}

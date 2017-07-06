@@ -1,6 +1,11 @@
 linux:
+  network:
+    enabled: true
+    hostname: linux
+    fqdn: linux.ci.local
   system:
     enabled: true
+    name: linux
     banner:
       enabled: true
       contents: |

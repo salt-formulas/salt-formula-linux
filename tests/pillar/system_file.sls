@@ -1,5 +1,10 @@
 linux:
+  network:
+    enabled: true
+    hostname: linux
+    fqdn: linux.ci.local
   system:
+    name: linux
     enabled: true
     file:
       /tmp/sample.txt:

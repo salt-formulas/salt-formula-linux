@@ -2,6 +2,7 @@ linux:
   system:
     enabled: true
     domain: local
+    name: linux
   network:
     enabled: true
     hostname: test01

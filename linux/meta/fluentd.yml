@@ -1,3 +1,5 @@
+{%- if pillar.get('fluentd', {}).get('agent', {}).get('enabled', False) %}
+{%- set positiondb = pillar.fluentd.agent.dir.positiondb %}
 {%- if grains.get('init') == 'systemd' %}
 agent:
   plugin:
@@ -54,7 +56,7 @@ agent:
             type: systemd
             tag: systemd.source
             path: /run/log/journal
-            pos_file: {{ pillar.fluentd.agent.dir.positiondb }}/systemd.source.pos
+            pos_file: {{ positiondb }}/systemd.source.pos
             entry:
               field_map:
                 MESSAGE: 'Payload'
@@ -142,7 +144,7 @@ agent:
             type: tail
             tag: linux.syslog
             path: /var/log/syslog
-            pos_file: {{ pillar.fluentd.agent.dir.positiondb }}/linux_syslog.pos
+            pos_file: {{ positiondb }}/linux_syslog.pos
             suppress_parse_error_log: true
             parser:
               type: regexp
@@ -169,4 +171,5 @@ agent:
             tag: 'metric.**'
             type: relabel
             label: default_metric
+{%- endif %}
 {%- endif %}

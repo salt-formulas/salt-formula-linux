@@ -1,5 +1,9 @@
 
 linux:
+  network:
+    enabled: true
+    hostname: linux
+    fqdn: linux.ci.local
   system:
     auth:
       enabled: true
