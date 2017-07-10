@@ -54,4 +54,13 @@ lvm_{{ vg.get('name', vgname) }}_lv_{{ volume.get('name', lvname) }}:
   - require:
     - pkg: linux_lvm_pkgs
 
+lvm_services:
+  service.running:
+  - enable: true
+  - names: {{ storage.lvm_services }}
+  - require:
+    - file: /etc/lvm/lvm.conf
+  - watch:
+    - file: /etc/lvm/lvm.conf
+
 {%- endif %}
