@@ -847,6 +847,26 @@ OpenVswitch Bridges
             use_interfaces:
             - eth1
 
+Debian manual proto interfaces
+
+When you are changing interface proto from static in up state to manual, you
+may need to flush ip addresses. For example, if you want to use the interface
+and the ip on the bridge. This can be done by setting the ``ipflush_onchange``
+to true.
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        interface:
+          eth1:
+            enabled: true
+            type: eth
+            proto: manual
+            mtu: 9100
+            ipflush_onchange: true
+
+
 Concatinating and removing interface files
 
 Debian based distributions have `/etc/network/interfaces.d/` directory, where

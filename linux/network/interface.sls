@@ -205,6 +205,16 @@ linux_interface_{{ interface_name }}:
   - mode: {{ interface.mode }}
   {%- endif %}
 
+{%- if interface.get('ipflush_onchange', False) %}
+
+linux_interface_ipflush_onchange_{{ interface_name }}:
+  cmd.run:
+  - name: "/sbin/ip address flush dev {{ interface_name }}"
+  - onchanges:
+    - network: linux_interface_{{ interface_name }}
+
+{%- endif %}
+
 {%- for network in interface.get('use_ovs_ports', []) %}
 
 remove_interface_{{ network }}_line1:
