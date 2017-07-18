@@ -212,5 +212,26 @@
               'warn': '15%',
               'crit': '5%',
         },
+        'cpu_idle_percentage': {
+              'warn': 10.0,
+        },
+        'free_memory_percentage': {
+              'warn': 10.0,
+        },
+        'load_5': {
+              'warn': 3,
+        },
+        'rx_packets_dropped_rate': {
+              'warn': 100,
+        },
+        'tx_packets_dropped_rate': {
+              'warn': 100,
+        },
+        'swap_in_rate': {
+              'warn': 1024 * 1024,
+        },
+        'swap_out_rate': {
+              'warn': 1024 * 1024,
+        },
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:monitoring')) %}
