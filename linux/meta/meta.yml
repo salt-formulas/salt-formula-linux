@@ -7,10 +7,19 @@ graph:
   relations:
   {%- if system.repo is defined %}
   {%- for repo_name, repo in system.repo.iteritems() %}
-  - service: apt.repo
+  - service: external-service
     host_external: {{ repo.source }}
     direction: source
     type: tcp-http
   {%- endfor %}
   {%- endif %}
+  {#
+  {%- if system.user is defined %}
+  {%- for user_name, user in system.user.iteritems() %}
+  - service: human
+    host_external: {{ user_name }}
+    direction: source
+  {%- endfor %}
+  {%- endif %}
+  #}
 {%- endif %}
