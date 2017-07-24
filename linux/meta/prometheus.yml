@@ -1,7 +1,7 @@
 {%- from "linux/map.jinja" import monitoring with context %}
 server:
   alert:
-    AvgCPUUsageIdle:
+    SystemCpuIdleTooLow:
       {%- set cpu_idle_threshold = monitoring.cpu_idle_percentage.warn|float %}
       if: avg_over_time(cpu_usage_idle{cpu="cpu-total"}[5m]) < {{ cpu_idle_threshold }}
       {% raw %}
@@ -11,7 +11,7 @@ server:
       annotations:
         summary: 'Idle CPU usage too low on {{ $labels.host }}'
         description: 'The average idle CPU usage is too low on node {{ $labels.host }} (current value={{ $value }}, threshold={% endraw %}{{ cpu_idle_threshold}})'
-    PredictLinearDiskFree:
+    SystemDiskSpaceTooLow:
       if: 'predict_linear(disk_free[1h], 8*3600) < 0'
       {% raw %}
       labels:
@@ -21,7 +21,7 @@ server:
         summary: 'Free space for {{ $labels.path }} too low on {{ $labels.host }}'
         description: 'The disk partition ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}'
       {% endraw %}
-    PredictLinearDiskInodesFree:
+    SystemDiskInodesTooLow:
       if: 'predict_linear(disk_inodes_free[1h], 8*3600) < 0'
       {% raw %}
       labels:
@@ -31,7 +31,7 @@ server:
         summary: 'Free inodes for {{ $labels.path }} too low on {{ $labels.host }}'
         description: 'The disk inodes ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}'
       {% endraw %}
-    AvgMemAvailablePercent:
+    SystemMemoryAvailableTooLow:
       {%- set mem_avail_threshold = monitoring.free_memory_percentage.warn|float %}
       if: avg_over_time(mem_available_percent[5m]) < {{ mem_avail_threshold }}
       {% raw %}
@@ -41,7 +41,7 @@ server:
       annotations:
         summary: 'Free memory too low on {{ $labels.host }}'
         description: 'The percentage of free memory is too low on node {{ $labels.host }} (current value={{ $value }}, threshold={% endraw %}{{ mem_avail_threshold }})'
-    SystemLoad5:
+    SystemLoad5TooHigh:
       if: system_load5 / system_n_cpus > {{ monitoring.load_5.warn }}
       {% raw %}
       labels:
@@ -51,7 +51,7 @@ server:
         summary: 'High system load (5m) on {{ $labels.host }}'
         description: 'High system load (5m) on node {{ $labels.host }}'
       {% endraw %}
-    NetworkRxPacketsDropped:
+    SystemRxPacketsDroppedTooHigh:
       {%- set net_rx_dropped_threshold = monitoring.rx_packets_dropped_rate.warn %}
       if: avg_over_time(net_drop_in[1m]) > {{ net_rx_dropped_threshold }}
       {% raw %}
@@ -61,7 +61,7 @@ server:
       annotations:
         summary: 'Too many received packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
         description: 'The average number of received packets which are dropped is too high on node {{ $labels.host }} for interface {{ $label.interface }} (current value={{ $value }}, threshold={% endraw %}{{ net_rx_dropped_threshold }})'
-    NetworkTxPacketsDropped:
+    SystemTxPacketsDroppedTooHigh:
       {%- set net_tx_dropped_threshold = monitoring.tx_packets_dropped_rate.warn %}
       if: avg_over_time(net_drop_out[1m]) > {{ net_tx_dropped_threshold }}
       {% raw %}
