@@ -10,7 +10,7 @@ server:
         service: system
       annotations:
         summary: 'Idle CPU usage too low on {{ $labels.host }}'
-        description: 'The average idle CPU usage is too low on node {{ $labels.host }} (current value={{ $value }}, threshold={% endraw %}{{ cpu_idle_threshold}})'
+        description: 'The average idle CPU usage is too low on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ cpu_idle_threshold}}%).'
     SystemDiskSpaceTooLow:
       if: 'predict_linear(disk_free[1h], 8*3600) < 0'
       {% raw %}
@@ -19,7 +19,7 @@ server:
         service: system
       annotations:
         summary: 'Free space for {{ $labels.path }} too low on {{ $labels.host }}'
-        description: 'The disk partition ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}'
+        description: 'The disk partition ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}.'
       {% endraw %}
     SystemDiskInodesTooLow:
       if: 'predict_linear(disk_inodes_free[1h], 8*3600) < 0'
@@ -29,7 +29,7 @@ server:
         service: system
       annotations:
         summary: 'Free inodes for {{ $labels.path }} too low on {{ $labels.host }}'
-        description: 'The disk inodes ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}'
+        description: 'The disk inodes ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}.'
       {% endraw %}
     SystemMemoryAvailableTooLow:
       {%- set mem_avail_threshold = monitoring.free_memory_percentage.warn|float %}
@@ -40,7 +40,7 @@ server:
         service: system
       annotations:
         summary: 'Free memory too low on {{ $labels.host }}'
-        description: 'The percentage of free memory is too low on node {{ $labels.host }} (current value={{ $value }}, threshold={% endraw %}{{ mem_avail_threshold }})'
+        description: 'The percentage of free memory is too low on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ mem_avail_threshold }}%).'
     SystemLoad5TooHigh:
       if: system_load5 / system_n_cpus > {{ monitoring.load_5.warn }}
       {% raw %}
@@ -49,28 +49,27 @@ server:
         service: system
       annotations:
         summary: 'High system load (5m) on {{ $labels.host }}'
-        description: 'High system load (5m) on node {{ $labels.host }}'
-      {% endraw %}
+        description: 'The 5-minutes system load is too high on node {{ $labels.host }} (current value={{ $value }}, threshold={% endraw %}{{ monitoring.load_5.warn }}).'
     SystemRxPacketsDroppedTooHigh:
       {%- set net_rx_dropped_threshold = monitoring.rx_packets_dropped_rate.warn %}
-      if: avg_over_time(net_drop_in[1m]) > {{ net_rx_dropped_threshold }}
+      if: rate(net_drop_in[1m]) > {{ net_rx_dropped_threshold }}
       {% raw %}
       labels:
         severity: warning
         service: system
       annotations:
         summary: 'Too many received packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
-        description: 'The average number of received packets which are dropped is too high on node {{ $labels.host }} for interface {{ $label.interface }} (current value={{ $value }}, threshold={% endraw %}{{ net_rx_dropped_threshold }})'
+        description: 'The rate of received packets which are dropped is too high on node {{ $labels.host }} for interface {{ $label.interface }} (current value={{ $value }}/sec, threshold={% endraw %}{{ net_rx_dropped_threshold }}/sec)'
     SystemTxPacketsDroppedTooHigh:
       {%- set net_tx_dropped_threshold = monitoring.tx_packets_dropped_rate.warn %}
-      if: avg_over_time(net_drop_out[1m]) > {{ net_tx_dropped_threshold }}
+      if: rate(net_drop_out[1m]) > {{ net_tx_dropped_threshold }}
       {% raw %}
       labels:
         severity: warning
         service: system
       annotations:
         summary: 'Too many transmitted packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
-        description: 'The average number of transmitted packets which are dropped is too high on node {{ $labels.host }} for interface {{ $label.interface }} (current value={{ $value }}, threshold={% endraw %}{{ net_tx_dropped_threshold }})'
+        description: 'The rate of transmitted packets which are dropped is too high on node {{ $labels.host }} for interface {{ $label.interface }} (current value={{ $value }}/sec, threshold={% endraw %}{{ net_tx_dropped_threshold }}/sec)'
     SystemSwapUsed:
       {%- set swap_used_threshold = monitoring.swap.warn.strip('%')|float %}
       if: avg_over_time(swap_used_percent[1m]) > {{ swap_used_threshold }}
@@ -80,7 +79,7 @@ server:
         service: system
       annotations:
         summary: 'Swap usage too high on {{ $labels.host }}'
-        description: 'The average percentage of used swap is too high on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ swap_used_threshold }})'
+        description: 'The average percentage of used swap is too high on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ swap_used_threshold }}%)'
     SystemSwapIn:
       {%- set swap_in_threshold = monitoring.swap_in_rate.warn %}
       if: rate(swap_in[2m]) > {{ swap_in_threshold }}
@@ -90,7 +89,7 @@ server:
         service: system
       annotations:
         summary: 'Swap input throughput too high on {{ $labels.host }}'
-        description: 'The rate of swap input bytes is too high on node {{ $labels.host }} (current value={{ $value }}b/s, threshold={% endraw %}{{ swap_in_threshold }})'
+        description: 'The rate of swap input bytes is too high on node {{ $labels.host }} (current value={{ $value }}b/s, threshold={% endraw %}{{ swap_in_threshold }}b/s).'
     SystemSwapOut:
       {%- set swap_out_threshold = monitoring.swap_out_rate.warn %}
       if: rate(swap_out[2m]) > {{ swap_out_threshold }}
@@ -100,4 +99,4 @@ server:
         service: system
       annotations:
         summary: 'Swap output throughput too high on {{ $labels.host }}'
-        description: 'The rate of swap output bytes is too high on node {{ $labels.host }} (current value={{ $value }}b/s, threshold={% endraw %}{{ swap_out_threshold }})'
+        description: 'The rate of swap output bytes is too high on node {{ $labels.host }} (current value={{ $value }}b/s, threshold={% endraw %}{{ swap_out_threshold }}b/s).'
