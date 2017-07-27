@@ -10,7 +10,7 @@ apparmor_service:
   - name: apparmor
   - enable: true
   - require:
-    - pkg: linux_packages
+    - pkg: linux_repo_prereq_pkgs
 
 {%- else %}
 
