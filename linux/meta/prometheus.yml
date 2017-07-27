@@ -31,16 +31,26 @@ server:
         summary: 'Free inodes for {{ $labels.path }} too low on {{ $labels.host }}'
         description: 'The disk inodes ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}.'
       {% endraw %}
-    SystemMemoryAvailableTooLow:
-      {%- set mem_avail_threshold = monitoring.free_memory_percentage.warn|float %}
-      if: avg_over_time(mem_available_percent[5m]) < {{ mem_avail_threshold }}
+    SystemMemoryAvailableLow:
+      {%- set mem_avail_warn_threshold = monitoring.free_memory_percentage.warn|float %}
+      if: avg_over_time(mem_available_percent[5m]) < {{ mem_avail_warn_threshold }}
       {% raw %}
       labels:
         severity: warning
         service: system
       annotations:
+        summary: 'Free memory low on {{ $labels.host }}'
+        description: 'The percentage of free memory is low on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ mem_avail_warn_threshold }}%).'
+    SystemMemoryAvailableTooLow:
+      {%- set mem_avail_crit_threshold = monitoring.free_memory_percentage.crit|float %}
+      if: avg_over_time(mem_available_percent[5m]) < {{ mem_avail_crit_threshold }}
+      {% raw %}
+      labels:
+        severity: critical
+        service: system
+      annotations:
         summary: 'Free memory too low on {{ $labels.host }}'
-        description: 'The percentage of free memory is too low on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ mem_avail_threshold }}%).'
+        description: 'The percentage of free memory is too low on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ mem_avail_crit_threshold }}%).'
     SystemLoad5TooHigh:
       if: system_load5 / system_n_cpus > {{ monitoring.load_5.warn }}
       {% raw %}
