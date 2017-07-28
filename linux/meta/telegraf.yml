@@ -4,6 +4,16 @@ agent:
       percpu: false
       totalcpu: true
     disk:
+      ignore_fs:
+        - rootfs
+        - sysfs
+        - proc
+        - devtmpfs
+        - devpts
+        - tmpfs
+        - fusectl
+        - cgroup
+        - overlay
     diskio:
     kernel:
     net:
