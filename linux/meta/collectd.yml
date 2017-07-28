@@ -36,6 +36,7 @@ local_plugin:
     - tmpfs
     - fusectl
     - cgroup
+    - overlay
   linux_storage_disk:
     plugin: disk
     template: linux/files/collectd_disk.conf
