@@ -1,6 +1,12 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
+{%- macro set_p(paramname, dictvar) -%}
+  {%- if paramname in dictvar -%}
+- {{ paramname }}: {{ dictvar[paramname] }}
+  {%- endif -%}
+{%- endmacro -%}
+
 {%- for group_name, group in system.group.iteritems() %}
 
 {%- if group.enabled %}
@@ -14,6 +20,8 @@ system_group_{{ group_name }}:
   {%- if group.gid is defined and group.gid %}
   - gid: {{ group.gid }}
   {%- endif %}
+{{ set_p('addusers', group)|indent(2, True) }}
+{{ set_p('delusers', group)|indent(2, True) }}
 
 {%- else %}
 
