@@ -1,7 +1,7 @@
 agent:
   input:
     cpu:
-      percpu: true
+      percpu: false
       totalcpu: true
     disk:
     diskio:
