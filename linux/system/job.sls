@@ -4,10 +4,10 @@
 {%- for name, job in system.job.iteritems() %}
 
 linux_job_{{ job.command }}:
-  {%- if job.enabled %}
+  {%- if job.enabled|default(True) %}
   cron.present:
     - name: {{ job.command }}
-    - user: {{ job.user }}
+    - user: {{ job.user|default("root") }}
     {%- if job.minute is defined %}
     - minute: '{{ job.minute }}'
     {%- endif %}
@@ -23,9 +23,9 @@ linux_job_{{ job.command }}:
     {%- if job.dayweek is defined %}
     - dayweek: '{{ job.dayweek }}'
     {%- endif %}
-    {%- if job.user in system.get('user', {}).keys() %}
+    {%- if job.user|default("root") in system.get('user', {}).keys() %}
     - require:
-      - user: system_user_{{ job.user }}
+      - user: system_user_{{ job.user|default("root") }}
     {%- endif %}
   {%- else %}
   cron.absent:
