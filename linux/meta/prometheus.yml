@@ -59,7 +59,7 @@ server:
         service: system
       annotations:
         summary: 'Too many received packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
-        description: 'The rate of received packets which are dropped is too high on node {{ $labels.host }} for interface {{ $label.interface }} (current value={{ $value }}/sec, threshold={% endraw %}{{ net_rx_dropped_threshold }}/sec)'
+        description: 'The rate of received packets which are dropped is too high on node {{ $labels.host }} for interface {{ $labels.interface }} (current value={{ $value }}/sec, threshold={% endraw %}{{ net_rx_dropped_threshold }}/sec)'
     SystemTxPacketsDroppedTooHigh:
       {%- set net_tx_dropped_threshold = monitoring.tx_packets_dropped_rate.warn %}
       if: rate(net_drop_out[1m]) > {{ net_tx_dropped_threshold }}
@@ -69,7 +69,7 @@ server:
         service: system
       annotations:
         summary: 'Too many transmitted packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
-        description: 'The rate of transmitted packets which are dropped is too high on node {{ $labels.host }} for interface {{ $label.interface }} (current value={{ $value }}/sec, threshold={% endraw %}{{ net_tx_dropped_threshold }}/sec)'
+        description: 'The rate of transmitted packets which are dropped is too high on node {{ $labels.host }} for interface {{ $labels.interface }} (current value={{ $value }}/sec, threshold={% endraw %}{{ net_tx_dropped_threshold }}/sec)'
     SystemSwapUsed:
       {%- set swap_used_threshold = monitoring.swap.warn.strip('%')|float %}
       if: avg_over_time(swap_used_percent[1m]) > {{ swap_used_threshold }}
