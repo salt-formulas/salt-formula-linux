@@ -234,6 +234,9 @@ Linux with autoupdates (automatically install security package updates)
           automatic_reboot_time: "02:00"
 
 Linux with cron jobs
+By default it will use name as an identifier, unless identifier key is
+explicitly set or False (then it will use Salt's default behavior which is
+identifier same as command resulting in not being able to change it)
 
 .. code-block:: yaml
 
@@ -243,6 +246,7 @@ Linux with cron jobs
         job:
           cmd1:
             command: '/cmd/to/run'
+            identifier: cmd1
             enabled: true
             user: 'root'
             hour: 2

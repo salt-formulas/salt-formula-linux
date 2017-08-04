@@ -7,6 +7,9 @@ linux_job_{{ job.command }}:
   {%- if job.enabled|default(True) %}
   cron.present:
     - name: {{ job.command }}
+    {%- if job.get('identifier', True) %}
+    - identifier: {{ job.get('identifier', job.get('name', name)) }}
+    {%- endif %}
     - user: {{ job.user|default("root") }}
     {%- if job.minute is defined %}
     - minute: '{{ job.minute }}'
@@ -30,6 +33,9 @@ linux_job_{{ job.command }}:
   {%- else %}
   cron.absent:
     - name: {{ job.command }}
+    {%- if job.get('identifier', True) %}
+    - identifier: {{ job.get('identifier', job.get('name', name)) }}
+    {%- endif %}
   {%- endif %}
 
 {%- endfor %}
