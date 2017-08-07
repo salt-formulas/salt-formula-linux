@@ -1,7 +1,7 @@
 {%- from "linux/map.jinja" import storage with context %}
 {%- if storage.enabled %}
 
-{%- for name, mount in storage.mount.iteritems() %}
+{%- for name, mount in storage.mount|dictsort %}
 
 {%- if mount.enabled %}
 
