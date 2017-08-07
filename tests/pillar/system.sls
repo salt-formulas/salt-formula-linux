@@ -67,8 +67,13 @@ linux:
         name: testgroup
         gid: 9999
         system: true
+        addusers:
+          - salt_user1
+          - salt_user2
       db-ops:
         enabled: true
+        delusers:
+          - salt_user1
       salt-ops:
         enabled: true
         name: salt-ops
