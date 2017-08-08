@@ -74,6 +74,7 @@ linux:
         enabled: true
         delusers:
           - salt_user1
+          - dontexistatall
       salt-ops:
         enabled: true
         name: salt-ops
