@@ -1,6 +1,9 @@
 {%- from "linux/map.jinja" import storage with context %}
 {%- if storage.enabled %}
 
+parted:
+  pkg.installed
+
 {%- for disk_name, disk in storage.disk.iteritems() %}
 
 {%- if disk.type is defined %}
