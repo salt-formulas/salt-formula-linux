@@ -1269,6 +1269,28 @@ LVM group `vg1` with one device and `data` volume mounted into `/mnt/data`
                   size: 40G
                   mount: ${linux:storage:mount:data}
 
+Create partitions on disk. Specify size in MB. It expects empty
+disk without any existing partitions.
+
+.. code-block:: yaml
+
+      linux:
+        storage:
+          disk:
+            first_drive:
+              name: /dev/loop1
+              type: gpt
+              partitions:
+                - size: 200 #size in MB
+                  type: fat32
+                - size: 300 #size in MB
+                  type: ext4
+            /dev/vda1:
+              partitions:
+                - size: 5
+                  type: ext2
+                - size: 10
+                  type: ext4
 
 Multipath with Fujitsu Eternus DXL
 

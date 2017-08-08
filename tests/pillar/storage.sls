@@ -50,12 +50,12 @@ linux:
               device: /dev/vg0/lv03
               path: /mnt/lv03
               file_system: xfs
-    disk1:
-      enabled: true
-      device: /dev/loop_dev4
-      path: /tmp/dummy
-      file_system: xfs
-      options: "noatime,nobarrier,logbufs=8"
-      user: nobody
-      group: nogroup
-      mode: 755
+    disk:
+      first_drive:
+        name: /tmp/loop_dev4
+        type: gpt
+        partitions:
+          - size: 5
+            type: fat32
+          - size: 5
+            type: fat32
