@@ -346,3 +346,8 @@ linux:
         192.168.0.1:
           mac: "ff:ff:ff:ff:ff:ff"
           interface: bond0
+    atop:
+      enabled: true
+      interval: 20
+      logpath: "/var/mylog/atop"
+      outfile: "/var/mylog/atop/daily.log"

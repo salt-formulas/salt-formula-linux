@@ -687,6 +687,18 @@ Stop and disable linux service:
 
 Possible status is dead (disable service by default), running (enable service by default), enabled, disabled.
 
+Linux with atop service:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        atop:
+          enabled: true
+          interval: 20
+          logpath: "/var/log/atop"
+          outfile: "/var/log/atop/daily.log"
+
 RHEL / CentOS
 ^^^^^^^^^^^^^
 

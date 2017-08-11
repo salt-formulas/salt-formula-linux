@@ -1,0 +1,16 @@
+{%- from "linux/map.jinja" import system with context -%}
+[Unit]
+Description=atop - advanced interactive monitor
+After=syslog.target
+ConditionPathExists={{ config_file }}
+Documentation=man:atop(1)
+Documentation=https://atoptool.nl
+
+[Service]
+EnvironmentFile=-{{ config_file }}
+ExecStart=/usr/bin/atop -a -w ${LOGPATH}/daily.log ${INTERVAL}
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

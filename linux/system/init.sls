@@ -63,6 +63,9 @@ include:
 {%- if system.apparmor is defined %}
 - linux.system.apparmor
 {%- endif %}
+{%- if pillar.linux.system.atop is defined %}
+- linux.system.atop
+{%- endif %}
 {%- if system.console is defined %}
 - linux.system.console
 {%- endif %}

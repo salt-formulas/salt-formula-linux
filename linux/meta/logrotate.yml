@@ -1,0 +1,20 @@
+{%- from "linux/map.jinja" import system with context -%}
+
+{%- if system.atop.enabled %}
+job:
+  atop:
+    - files:
+        - {{ system.atop.logpath }}/atop*
+        - {{ system.atop.logpath }}/{{ system.atop.outfile }}
+      options:
+        - olddir {{ system.atop.logpath }}/old
+        - compress
+        - delaycompress
+        - missingok
+        - notifempty
+        - rotate: 10
+        - daily
+        - minsize: 20M
+        - maxsize: 500M
+        - postrotate: "if ! service atop status > /dev/null; then service atop restart > /dev/null; fi"
+{%- endif %}
