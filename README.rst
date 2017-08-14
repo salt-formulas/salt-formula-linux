@@ -1284,7 +1284,8 @@ disk without any existing partitions.
                 - size: 200 #size in MB
                   type: fat32
                 - size: 300 #size in MB
-                  type: ext4
+                  mkfs: True
+                  type: xfs
             /dev/vda1:
               partitions:
                 - size: 5

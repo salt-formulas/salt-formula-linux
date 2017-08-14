@@ -32,6 +32,22 @@ create_partition_{{ disk_name }}_{{ loop.index }}:
   - require:
     - module: create_disk_label
 
+{%- if partition.get('mkfs') %}
+
+{%- if partition.type == "xfs" %}
+
+mkfs_partition_{{ disk_name }}_{{ loop.index }}:
+  module.run:
+  - name: xfs.mkfs
+  - device: {{ disk_name }}{{ loop.index }}
+  - unless: "blkid {{ disk_name }}{{ loop.index }} {{ disk_name }}p{{ loop.index }} | grep xfs"
+  - require:
+    - module: create_partition_{{ disk_name }}_{{ loop.index }}
+
+{%- endif %}
+
+{%- endif %}
+
 {% set end_size = end_size + partition.size -%}
 
 {%- endfor %}
