@@ -4,10 +4,13 @@
 parted:
   pkg.installed
 
+xfsprogs:
+  pkg.installed
+
 {%- for disk_name, disk in storage.disk.iteritems() %}
 {%- set disk_name = disk.name|default(disk_name) %}
 
-create_disk_label:
+create_disk_label_{{ disk_name }}:
   module.run:
   - name: partition.mklabel
   - device: {{ disk_name }}
@@ -30,7 +33,8 @@ create_partition_{{ disk_name }}_{{ loop.index }}:
   - end: {{ end_size + partition.size }}MB
   - unless: "blkid {{ disk_name }}{{ loop.index }} {{ disk_name }}p{{ loop.index }}"
   - require:
-    - module: create_disk_label
+    - module: create_disk_label_{{ disk_name }}
+    - pkg: xfsprogs
 
 {%- if partition.get('mkfs') %}
 
