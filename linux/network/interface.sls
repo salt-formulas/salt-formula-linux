@@ -183,6 +183,15 @@ linux_interface_{{ interface_name }}:
   {%- for param in network.interface_params %}
   {{ set_param(param, interface) }}
   {%- endfor %}
+  {%- if interface.require_interfaces is defined %}
+  - require:
+    {%- for netif in interface.get('require_interfaces', []) %}
+    - network: linux_interface_{{ netif }}
+    {%- endfor %}
+    {%- for network in interface.get('use_ovs_ports', []) %}
+    - cmd: ovs_port_up_{{ network }}
+    {%- endfor %}
+  {%- endif %}
   {%- if interface.type == 'bridge' %}
   - bridge: {{ interface_name }}
   - delay: 0
