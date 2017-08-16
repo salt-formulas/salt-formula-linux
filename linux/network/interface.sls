@@ -301,7 +301,9 @@ linux_network_{{ interface_name }}_routes:
     - name: {{ route_name }}
       ipaddr: {{ route.address }}
       netmask: {{ route.netmask }}
+      {%- if route.gateway is defined %}
       gateway: {{ route.gateway }}
+      {%- endif %}
     {%- endfor %}
 
 {%- endif %}
