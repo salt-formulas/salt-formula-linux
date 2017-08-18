@@ -33,7 +33,7 @@ linux_extra_package_{{ name }}:
   - hold: {{ package.hold }}
     {%- endif %}
     {%- if package.verify is defined %}
-  - skip_verify: {{ true if package.verify else false }}
+  - skip_verify: {{ "False" if package.verify else "True" }}
     {%- endif %}
   {%- else %}
     {%- if package.version is not defined %}
