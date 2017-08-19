@@ -36,9 +36,18 @@ create_partition_{{ disk_name }}_{{ loop.index }}:
     - module: create_disk_label_{{ disk_name }}
     - pkg: xfsprogs
 
-{%- if partition.get('mkfs') %}
+{% set end_size = end_size + partition.size -%}
 
-{%- if partition.type == "xfs" %}
+{%- endfor %}
+
+probe_partions_{{ disk_name }}:
+  module.run:
+  - name: partition.probe
+  - device: {{ disk_name }}
+
+{%- for partition in disk.get('partitions', []) %}
+
+{%- if partition.get('mkfs') and partition.type == "xfs" %}
 
 mkfs_partition_{{ disk_name }}_{{ loop.index }}:
   module.run:
@@ -50,11 +59,8 @@ mkfs_partition_{{ disk_name }}_{{ loop.index }}:
 
 {%- endif %}
 
-{%- endif %}
-
-{% set end_size = end_size + partition.size -%}
-
 {%- endfor %}
+
 {%- endfor %}
 
 {%- endif %}
