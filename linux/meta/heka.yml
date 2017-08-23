@@ -1,3 +1,4 @@
+{%- from "linux/map.jinja" import monitoring with context %}
 metric_collector:
   trigger:
     linux_system_cpu_critical:
@@ -136,6 +137,18 @@ metric_collector:
         window: 60
         periods: 0
         function: max
+    {%- if monitoring.bond_status.interfaces is defined and monitoring.bond_status.interfaces is list %}
+    linux_bond_status_critical:
+      description: Bond members are down.
+      rules:
+      - function: last
+        metric: bond_status_links_down
+        periods: 0
+        relational_operator: '>'
+        threshold: 0
+        window: 120
+      severity: critical
+    {%- endif %}
   alarm:
     linux_system_cpu:
       alerting: enabled
@@ -167,3 +180,9 @@ metric_collector:
       alerting: enabled_with_notification
       triggers:
       - linux_system_hdd_errors_critical
+    {%- if monitoring.bond_status.interfaces is defined and monitoring.bond_status.interfaces is list %}
+    linux_bond_status:
+      alerting: enabled
+      triggers:
+        - linux_bond_status_critical
+    {%- endif %}
