@@ -1,16 +1,8 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.cpu.governor is defined %}
 
-linux_sysfs_package:
-  pkg.installed:
-    - pkgs:
-      - sysfsutils
-    - refresh: true
-
-/etc/sysfs.d:
-  file.directory:
-    - require:
-      - pkg: linux_sysfs_package
+include:
+  - linux.system.sysfs
 
 ondemand_service_disable:
   service.dead:

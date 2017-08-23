@@ -30,6 +30,9 @@ include:
 {%- if system.cpu is defined %}
 - linux.system.cpu
 {%- endif %}
+{%- if system.sysfs is defined %}
+- linux.system.sysfs
+{%- endif %}
 {%- if system.locale|length > 0 %}
 - linux.system.locale
 {%- endif %}

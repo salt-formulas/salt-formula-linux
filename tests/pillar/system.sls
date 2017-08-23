@@ -15,6 +15,15 @@ linux:
       default: "linux.ci.local$"
     kernel:
       isolcpu: 1,2,3,4
+    sysfs:
+      scheduler:
+        block/sda/queue/scheduler: deadline
+      power:
+        mode:
+          power/state: 0660
+        owner:
+          power/state: "root:power"
+        devices/system/cpu/cpu0/cpufreq/scaling_governor: powersave
     motd:
       - warning: |
           #!/bin/sh

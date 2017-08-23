@@ -407,6 +407,25 @@ Enable cpufreq governor for every cpu:
         cpu:
           governor: performance
 
+Sysfs
+~~~~~
+
+Install sysfsutils and set sysfs attributes:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        sysfs:
+          scheduler:
+            block/sda/queue/scheduler: deadline
+          power:
+            mode:
+              power/state: 0660
+            owner:
+              power/state: "root:power"
+            devices/system/cpu/cpu0/cpufreq/scaling_governor: powersave
+
 Huge Pages
 ~~~~~~~~~~~~
 
