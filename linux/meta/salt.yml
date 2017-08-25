@@ -1,4 +1,4 @@
-{%- from "linux/map.jinja" import system with context -%}
+{%- from "linux/map.jinja" import system,network with context -%}
 orchestrate:
   system:
     priority: 30
@@ -18,3 +18,11 @@ grain:
       {%- endif %}
     {%- endfor %}
     {{ service_grains|yaml(False)|indent(4) }}
+  {%- set dns_records = [] %}
+  {%- for host_name, host in network.host.items() %}
+  {%- if host.get('grain', False) %}
+  {%- do dns_records.append(host.pop('grain')) %}
+  {%- endif %}
+  {%- endfor %}
+  dns_records: 
+    dns_records: {{ dns_records|yaml }}

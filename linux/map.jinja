@@ -108,6 +108,7 @@
            'host': 'none',
         },
         'host': {},
+        'mine_dns_records': False,
         'dhclient_config': '/etc/dhcp/dhclient.conf',
     },
     'Debian': {
@@ -123,6 +124,7 @@
            'host': 'none'
         },
         'host': {},
+        'mine_dns_records': False,
         'dhclient_config': '/etc/dhcp/dhclient.conf',
     },
     'RedHat': {
@@ -137,6 +139,7 @@
            'host': 'none'
         },
         'host': {},
+        'mine_dns_records': False,
         'dhclient_config': '/etc/dhcp/dhclient.conf',
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:network')) %}

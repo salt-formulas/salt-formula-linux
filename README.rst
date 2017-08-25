@@ -986,10 +986,9 @@ of available options under send, supersede, prepend, append refer to dhcp-option
 
 
 Configure global environment variables
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Linux /etc/environment:
-``/etc/environment`` is for static system wide variable assignment after boot. Variable expansion is frequently not supported.
+Use ``/etc/environment`` for static system wide variable assignment after
+boot. Variable expansion is frequently not supported.
 
 .. code-block:: yaml
 
@@ -1021,11 +1020,10 @@ Linux /etc/environment:
             - .local
 
 Configure profile.d scripts
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Linux /etc/profile.d:
-The profile.d scripts are being sourced during .sh execution and support variable expansion in opposite to /etc/environment
-global settings in ``/etc/environment``.
+The profile.d scripts are being sourced during .sh execution and support
+variable expansion in opposite to /etc/environment global settings in
+``/etc/environment``.
 
 .. code-block:: yaml
 
@@ -1048,11 +1046,11 @@ global settings in ``/etc/environment``.
             export NO_PROXY='.local'
 
 Linux with hosts
-~~~~~~~~~~~~~~~~
 
 Parameter purge_hosts will enforce whole /etc/hosts file, removing entries
 that are not defined in model except defaults for both IPv4 and IPv6 localhost
 and hostname + fqdn.
+
 It's good to use this option if you want to ensure /etc/hosts is always in a
 clean state however it's not enabled by default for safety.
 
@@ -1060,7 +1058,6 @@ clean state however it's not enabled by default for safety.
 
     linux:
       network:
-        ...
         purge_hosts: true
         host:
           # No need to define this one if purge_hosts is true
@@ -1080,9 +1077,27 @@ clean state however it's not enabled by default for safety.
             - node2.domain.com
             - service2.domain.com
 
+Linux with hosts collected from mine
+
+In this case all dns records defined within infrastrucuture will be passed to
+local hosts records or any DNS server. Only hosts with `grain` parameter to
+true will be propagated to the mine.
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        purge_hosts: true
+        mine_dns_records: true
+        host:
+          node1:
+            address: 192.168.10.200
+            grain: true
+            names:
+            - node2.domain.com
+            - service2.domain.com
 
 Setup resolv.conf, nameservers, domain and search domains
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: yaml
 
@@ -1101,7 +1116,7 @@ Setup resolv.conf, nameservers, domain and search domains
           - timeout: 2
           - attempts: 2
 
-**setting custom TX queue length for tap interfaces**
+setting custom TX queue length for tap interfaces
 
 .. code-block:: yaml
 
@@ -1110,7 +1125,6 @@ Setup resolv.conf, nameservers, domain and search domains
         tap_custom_txqueuelen: 10000
 
 DPDK OVS interfaces
---------------------
 
 **DPDK OVS NIC**
 

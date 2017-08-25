@@ -31,7 +31,7 @@
         'ip6-allhosts'
     ],
 } -%}
-{%- for name, host in network.host.iteritems() -%}
+{%- for name, host in host_dict.iteritems() -%}
 {%- do hosts.update({host.address: host.names}) -%}
 {%- endfor %}
 {% for address, entries in hosts|dictsort %}

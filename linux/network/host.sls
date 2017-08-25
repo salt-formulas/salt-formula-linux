@@ -1,6 +1,21 @@
 {%- from "linux/map.jinja" import network with context %}
 {%- if network.enabled %}
 
+{%- set host_dict = network.host %}
+
+{%- if network.mine_dns_records %}
+
+{%- for node_name, node_grains in salt['mine.get']('*', 'grains.items').iteritems() %}
+{%- if node_grains.get('dns_records', []) is iterable %}
+{%- for record in node_grains.get('dns_records', []) %}
+{%- set record_key = node_name ~ '-' ~ loop.index %}
+{%- do host_dict.update({ record_key: {'address': record.address, 'names': record.names} }) %}
+{%- endfor %}
+{%- endif %}
+{%- endfor %}
+
+{%- endif %}
+
 {%- if network.get('purge_hosts', false) %}
 
 linux_hosts:
@@ -8,10 +23,12 @@ linux_hosts:
     - name: /etc/hosts
     - source: salt://linux/files/hosts
     - template: jinja
+    - defaults:
+        host_dict: {{ host_dict|yaml }}
 
 {%- else %}
 
-{%- for name, host in network.host.iteritems() %}
+{%- for name, host in host_dict.iteritems() %}
 
 {%- if host.names is defined %}
 
