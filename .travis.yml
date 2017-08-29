@@ -22,17 +22,19 @@ install:
   - bundle install
 
 env:
-    - PLATFORM=trevorj/salty-whales:trusty
-    - PLATFORM=trevorj/salty-whales:xenial
-
+  - PLATFORM=trevorj/salty-whales:trusty SUITE=network
+  - PLATFORM=trevorj/salty-whales:xenial SUITE=network
+  # - PLATFORM=trevorj/salty-whales:trusty SUITE=storage
+  # - PLATFORM=trevorj/salty-whales:xenial SUITE=storage
+  - PLATFORM=trevorj/salty-whales:trusty SUITE=system
+  - PLATFORM=trevorj/salty-whales:xenial SUITE=system
 
 before_script:
   - set -o pipefail
   - make test | tail
 
 script:
-  - test ! -e .kitchen.yml || bundle exec kitchen converge || true
-  - test ! -e .kitchen.yml || bundle exec kitchen verify -t tests/integration
+  - KITCHEN_LOCAL_YAML=.kitchen.travis.yml bundle exec kitchen test -t tests/integration
 
 notifications:
   webhooks:
