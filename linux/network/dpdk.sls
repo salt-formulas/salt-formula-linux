@@ -148,8 +148,10 @@ linux_network_dpdk_bridge_port_interface_{{ interface_name }}:
     - require:
       - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
 
+  {%- endif %}
+
   {# Multiqueue n_rxq, pmd_rxq_affinity and mtu setup on interfaces #}
-  {%- elif interface.type == 'dpdk_ovs_port' and (interface.n_rxq is defined or interface.mtu is defined or interface.pmd_rxq_affinity is defined) %}
+  {%- if interface.type == 'dpdk_ovs_port' %}
 
   {%- if interface.n_rxq is defined %}
 
