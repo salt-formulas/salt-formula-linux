@@ -21,7 +21,8 @@ grain:
   {%- set dns_records = [] %}
   {%- for host_name, host in network.host.items() %}
   {%- if host.get('grain', False) %}
-  {%- do dns_records.append(host.pop('grain')) %}
+  {%- do host.pop('grain') %}
+  {%- do dns_records.append(host) %}
   {%- endif %}
   {%- endfor %}
   dns_records: 
