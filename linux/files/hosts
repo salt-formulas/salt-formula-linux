@@ -40,5 +40,10 @@
 {%- do hosts.update({host.address: host.names}) -%}
 {%- endfor %}
 {% for address, entries in hosts|dictsort %}
-{{ address }}   {{ entries|join(' ') }}
+{%- if 'linux_hosts.fqdn_sort_filter' in salt.keys() %}
+{%- set sorted_entries = salt['linux_hosts.fqdn_sort_filter'](entries) -%}
+{%- else %}
+{%- set sorted_entries = entries -%}
+{%- endif %}
+{{ address }}   {{ sorted_entries|join(' ') }}
 {%- endfor %}
