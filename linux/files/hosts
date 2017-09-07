@@ -32,6 +32,11 @@
     ],
 } -%}
 {%- for name, host in host_dict.iteritems() -%}
+{%- for hname in host.names -%}
+{%- if hname in hosts.get('127.0.1.1', []) -%}
+{%- do hosts.pop('127.0.1.1') -%}
+{%- endif %}
+{%- endfor %}
 {%- do hosts.update({host.address: host.names}) -%}
 {%- endfor %}
 {% for address, entries in hosts|dictsort %}
