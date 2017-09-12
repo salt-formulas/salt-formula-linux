@@ -51,3 +51,12 @@ local_plugin:
     plugin: swap
     template: linux/files/collectd_swap.conf
     report_bytes: True
+  {%- if monitoring.bond_status.interfaces is defined and monitoring.bond_status.interfaces is list %}
+  linux_bond_status:
+    plugin: python
+    template: linux/files/collectd_bond_status.conf
+    interfaces:
+      {%- for interface in monitoring.bond_status.interfaces %}
+      - {{ interface }}
+      {%- endfor %}
+  {%- endif %}
