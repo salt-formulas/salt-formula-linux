@@ -200,24 +200,29 @@
 {% set monitoring = salt['grains.filter_by']({
     'default': {
         'zombie': {
-              'warn': 3,
-              'crit': 7,
+            'warn': 3,
+            'crit': 7,
         },
         'procs': {
-              'warn': 5000,
-              'crit': 10000,
+            'warn': 5000,
+            'crit': 10000,
         },
         'load': {
-              'warn': '6,4,2',
-              'crit': '12,8,4',
+            'warn': '6,4,2',
+            'crit': '12,8,4',
         },
         'swap': {
-              'warn': '50%',
-              'crit': '20%',
+            'warn': '50%',
+            'crit': '20%',
         },
         'disk': {
-              'warn': '15%',
-              'crit': '5%',
+            'warn': '15%',
+            'crit': '5%',
+        },
+        'netlink': {
+            'interfaces': [],
+            'interface_regex': '^[a-z0-9]+$',
+            'ignore_selected': False,
         },
         'cpu_idle_percentage': {
               'warn': 10.0,
