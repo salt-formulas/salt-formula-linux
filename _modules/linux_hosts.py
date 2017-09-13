@@ -24,4 +24,4 @@ def fqdn_sort_filter(iterable):
     if iterable is None or isinstance(iterable, Undefined):
         return iterable
     # Do effective custom sorting of iterable here
-    return sorted(iterable, cmp=fqdn_sort_fn)
+    return sorted(set(iterable), cmp=fqdn_sort_fn)
