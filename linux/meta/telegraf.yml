@@ -5,6 +5,7 @@ agent:
       totalcpu: true
     disk:
       ignore_fs:
+        - aufs
         - rootfs
         - sysfs
         - proc
