@@ -21,6 +21,16 @@ server:
         summary: 'Free space for {{ $labels.path }} too low on {{ $labels.host }}'
         description: 'The disk partition ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}.'
       {% endraw %}
+    SystemDiskSpaceFull:
+      if: 'disk_used_percent >= 99 and disk_inodes_total > 0'
+      {% raw %}
+      labels:
+        severity: critical
+        service: system
+      annotations:
+        summary: 'Disk partition {{ $labels.path }} full on {{ $labels.host }}'
+        description: 'The disk partition ({{ $labels.path }}) is used at {{ $value }}% on {{ $labels.host }}.'
+      {% endraw %}
     SystemDiskInodesTooLow:
       if: 'predict_linear(disk_inodes_free[1h], 8*3600) < 0'
       {% raw %}
@@ -30,6 +40,16 @@ server:
       annotations:
         summary: 'Free inodes for {{ $labels.path }} too low on {{ $labels.host }}'
         description: 'The disk inodes ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}.'
+      {% endraw %}
+    SystemDiskInodesFull:
+      if: 'disk_inodes_used / disk_inodes_total >= 99'
+      {% raw %}
+      labels:
+        severity: critical
+        service: system
+      annotations:
+        summary: 'Inodes for {{ $labels.path }} full on {{ $labels.host }}'
+        description: 'The disk inodes ({{ $labels.path }}) are used at {{ $value }}% on {{ $labels.host }}.'
       {% endraw %}
     SystemMemoryAvailableLow:
       {%- set mem_avail_warn_threshold = monitoring.free_memory_percentage.warn|float %}
