@@ -16,6 +16,9 @@ linux:
       dpdk_socket_mem: "1024"
       dpdk_lcore_mask: "0x400"
       memory_channels: "2"
+      vhost_socket_dir:
+        name: "openvswitch-vhost"
+        path: "/run/openvswitch-vhost"
     interface:
       dpdk0:
         name: enp5s0f1
