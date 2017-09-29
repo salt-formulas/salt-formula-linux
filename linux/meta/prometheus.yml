@@ -100,16 +100,6 @@ server:
       annotations:
         summary: 'Too many transmitted packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
         description: 'The rate of transmitted packets which are dropped is too high on node {{ $labels.host }} for interface {{ $labels.interface }} (current value={{ $value }}/sec, threshold={% endraw %}{{ net_tx_dropped_threshold }}/sec)'
-    SystemSwapUsed:
-      {%- set swap_used_threshold = monitoring.swap.warn.strip('%')|float %}
-      if: avg_over_time(swap_used_percent[1m]) > {{ swap_used_threshold }}
-      {% raw %}
-      labels:
-        severity: warning
-        service: system
-      annotations:
-        summary: 'Swap usage too high on {{ $labels.host }}'
-        description: 'The average percentage of used swap is too high on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ swap_used_threshold }}%)'
     SystemSwapIn:
       {%- set swap_in_threshold = monitoring.swap_in_rate.warn %}
       if: rate(swap_in[2m]) > {{ swap_in_threshold }}
