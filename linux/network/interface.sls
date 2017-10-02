@@ -203,7 +203,23 @@ linux_interface_{{ interface_name }}:
   {%- if interface.type == 'bond' %}
   - slaves: {{ interface.slaves }}
   - mode: {{ interface.mode }}
+  - require:
+    {%- for network in interface.get('slaves', '').split() %}
+    - network: linux_interface_{{ network }}
+    {%- endfor %}
   {%- endif %}
+  {%- if interface.type == 'vlan' %}
+    {%- if interface.get('use_interfaces', []) %}
+  - use:
+    {%- for network in interface.use_interfaces %}
+    - network: linux_interface_{{ network }}
+    {%- endfor %}
+  - require:
+    {%- for network in interface.use_interfaces %}
+    - network: linux_interface_{{ network }}
+    {%- endfor %}
+    {%- endif %}
+  {% endif %}
 
 {%- if interface.get('ipflush_onchange', False) %}
 
