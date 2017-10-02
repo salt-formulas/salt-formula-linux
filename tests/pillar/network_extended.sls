@@ -31,4 +31,4 @@ linux:
         enabled: true
         type: vlan
         use_interfaces:
-        - interface: ${linux:interface:eth0}
+        - ${linux:interface:eth0}
