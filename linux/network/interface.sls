@@ -199,16 +199,14 @@ linux_interface_{{ interface_name }}:
     {%- for network in interface.get('use_ovs_ports', []) %}
     - cmd: ovs_port_up_{{ network }}
     {%- endfor %}
-  {%- endif %}
-  {%- if interface.type == 'bond' %}
+  {%- elif interface.type == 'bond' %}
   - slaves: {{ interface.slaves }}
   - mode: {{ interface.mode }}
   - require:
     {%- for network in interface.get('slaves', '').split() %}
     - network: linux_interface_{{ network }}
     {%- endfor %}
-  {%- endif %}
-  {%- if interface.type == 'vlan' %}
+  {%- elif interface.type == 'vlan' %}
     {%- if interface.get('use_interfaces', []) %}
   - use:
     {%- for network in interface.use_interfaces %}
@@ -219,6 +217,11 @@ linux_interface_{{ interface_name }}:
     - network: linux_interface_{{ network }}
     {%- endfor %}
     {%- endif %}
+  {%- elif interface.get('require_interfaces', []) %}
+  - require:
+    {%- for network in interface.require_interfaces %}
+    - network: linux_interface_{{ network }}
+    {%- endfor %}
   {% endif %}
 
 {%- if interface.get('ipflush_onchange', False) %}
