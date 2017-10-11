@@ -1,5 +1,5 @@
 {%- from "linux/map.jinja" import system with context %}
-{%- if system.enabled %}
+{%- if system.selinux is defined %}
 
 include:
 - linux.system.repo
@@ -10,21 +10,29 @@ include:
 
 selinux_config:
   cmd.run:
-  - names:
-    - "sed -i 's/enforcing/disabled/g' /etc/selinux/config; setenforce 0"
-    - "sed -i 's/permissive/disabled/g' /etc/selinux/config; setenforce 0"
-  - unless: cat '/etc/selinux/config' | grep 'SELINUX=disabled'
+  - name: "sed -i 's/SELINUX=[a-z][a-z]*$/SELINUX={{ system.selinux }}/' /etc/selinux/config"
+  - unless: cat '/etc/selinux/config' | grep 'SELINUX={{ system.selinux }}'
+  - require:
+    - pkg: linux_repo_prereq_pkgs
+
+permisive:
+  selinux.mode
 
 {%- else %}
 
 selinux_config:
-  selinux.mode:
-  - name: {{ system.get('selinux', 'permissive') }}
+  cmd.run:
+  - name: "sed -i 's/SELINUX=[a-z][a-z]*$/SELINUX={{ system.selinux }}/' /etc/selinux/config"
+  - unless: cat '/etc/selinux/config' | grep 'SELINUX={{ system.selinux }}'
   - require:
     - pkg: linux_repo_prereq_pkgs
 
-{%- endif %}
+{{ system.selinux }}:
+  selinux.mode
 
 {%- endif %}
 
 {%- endif %}
+
+{%- endif %}
+
