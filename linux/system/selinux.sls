@@ -7,30 +7,20 @@ include:
 {%- if grains.os_family == 'RedHat' %}
 
 {%- if system.selinux == 'disabled' %}
-
-selinux_config:
-  cmd.run:
-  - name: "sed -i 's/SELINUX=[a-z][a-z]*$/SELINUX={{ system.selinux }}/' /etc/selinux/config"
-  - unless: cat '/etc/selinux/config' | grep 'SELINUX={{ system.selinux }}'
-  - require:
-    - pkg: linux_repo_prereq_pkgs
-
-permisive:
-  selinux.mode
-
+	{%- set mode = 'permissive' %}
 {%- else %}
+	{%- set mode = {{ system.selinux }} %}
+{%- endif %}
 
 selinux_config:
   cmd.run:
   - name: "sed -i 's/SELINUX=[a-z][a-z]*$/SELINUX={{ system.selinux }}/' /etc/selinux/config"
-  - unless: cat '/etc/selinux/config' | grep 'SELINUX={{ system.selinux }}'
+  - unless: grep 'SELINUX={{ system.selinux }}' /etc/selinux/config
   - require:
     - pkg: linux_repo_prereq_pkgs
 
-{{ system.selinux }}:
-  selinux.mode
-
-{%- endif %}
+{{ mode }}:
+	selinux.mode
 
 {%- endif %}
 
