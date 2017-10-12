@@ -7,9 +7,9 @@ include:
 {%- if grains.os_family == 'RedHat' %}
 
 {%- if system.selinux == 'disabled' %}
-	{%- set mode = 'permissive' %}
+  {%- set mode = 'permissive' %}
 {%- else %}
-	{%- set mode = {{ system.selinux }} %}
+  {%- set mode = system.selinux %}
 {%- endif %}
 
 selinux_config:
@@ -20,7 +20,7 @@ selinux_config:
     - pkg: linux_repo_prereq_pkgs
 
 {{ mode }}:
-	selinux.mode
+  selinux.mode
 
 {%- endif %}
 
