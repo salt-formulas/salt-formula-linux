@@ -85,7 +85,7 @@ server:
       if: rate(net_drop_in[1m]) > {{ net_rx_dropped_threshold }}
       {% raw %}
       labels:
-        severity: warning
+        severity: critical
         service: system
       annotations:
         summary: 'Too many received packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
@@ -95,7 +95,7 @@ server:
       if: rate(net_drop_out[1m]) > {{ net_tx_dropped_threshold }}
       {% raw %}
       labels:
-        severity: warning
+        severity: critical
         service: system
       annotations:
         summary: 'Too many transmitted packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
