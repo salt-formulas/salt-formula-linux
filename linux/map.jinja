@@ -118,7 +118,7 @@
 
 {% set network = salt['grains.filter_by']({
     'Arch': {
-        'pkgs': ['wpa_supplicant', 'dhclient', 'wireless_tools'],
+        'pkgs': ['wpa_supplicant', 'dhclient', 'wireless_tools', 'ifenslave'],
         'bridge_pkgs': ['bridge-utils'],
         'ovs_pkgs': ['openvswitch-switch'],
         'hostname_file': '/etc/hostname',
@@ -135,6 +135,7 @@
         'dhclient_config': '/etc/dhcp/dhclient.conf',
     },
     'Debian': {
+        'pkgs': ['ifenslave'],
         'hostname_file': '/etc/hostname',
         'bridge_pkgs': ['bridge-utils'],
         'ovs_pkgs': ['openvswitch-switch', 'bridge-utils'],
@@ -152,6 +153,7 @@
         'dhclient_config': '/etc/dhcp/dhclient.conf',
     },
     'RedHat': {
+        'pkgs': ['iputils'],
         'bridge_pkgs': ['bridge-utils'],
         'ovs_pkgs': ['openvswitch-switch', 'bridge-utils'],
         'hostname_file': '/etc/sysconfig/network',
