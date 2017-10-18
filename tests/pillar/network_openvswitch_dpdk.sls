@@ -39,3 +39,11 @@ linux:
       br-prv:
         enabled: true
         type: dpdk_ovs_bridge
+      dummy0:
+        enabled: true
+        name: dummy0
+        proto: manual
+        ovs_port_type: OVSIntPort
+        type: ovs_port
+        ovs_bridge: br-prv
+        bridge: br-prv

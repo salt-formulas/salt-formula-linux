@@ -1,7 +1,7 @@
 auto {{ port_name }}
 allow-{{ port.bridge }} {{ port_name }}
 iface {{ port_name }} inet {{ port.get('proto', 'manual') }}
-ovs_type OVSIntPort
+ovs_type {{ port.get('ovs_port_type', 'OVSIntPort') }}
 mtu {{ port.get('mtu', '1500') }}
 ovs_bridge {{ port.bridge }}
 {%- if port.get('proto', 'manual') == 'static' %}

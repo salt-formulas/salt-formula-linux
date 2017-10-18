@@ -907,6 +907,44 @@ OpenVswitch Bridges
             netmask: 255.255.255.0
             use_interfaces:
             - eth1
+          br-prv:
+            enabled: true
+            type: ovs_bridge
+            mtu: 65000
+          br-ens7:
+            enabled: true
+            name: br-ens7
+            type: ovs_bridge
+            proto: manual
+            mtu: 9000
+            use_interfaces:
+            - ens7
+          patch-br-ens7-br-prv:
+            enabled: true
+            name: ens7-prv
+            ovs_type: ovs_port
+            type: ovs_port
+            bridge: br-ens7
+            port_type: patch
+            peer: prv-ens7
+            mtu: 65000
+          patch-br-prv-br-ens7:
+            enabled: true
+            name: prv-ens7
+            bridge: br-prv
+            ovs_type: ovs_port
+            type: ovs_port
+            port_type: patch
+            peer: ens7-prv
+            mtu: 65000
+          ens7:
+            enabled: true
+            name: ens7
+            proto: manual
+            ovs_port_type: OVSPort
+            type: ovs_port
+            ovs_bridge: br-ens7
+            bridge: br-ens7
 
 Debian manual proto interfaces
 
