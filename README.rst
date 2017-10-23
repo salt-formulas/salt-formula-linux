@@ -778,7 +778,9 @@ Linux with bonded interfaces and disabled NetworkManager
             address: 192.168.0.102
             netmask: 255.255.255.0
             mtu: 1500
-            slaves: eth0 eth1
+            slaves:
+            - eth0
+            - eth1
         network_manager:
           disable: true
 

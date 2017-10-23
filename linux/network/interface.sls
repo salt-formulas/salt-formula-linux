@@ -200,10 +200,16 @@ linux_interface_{{ interface_name }}:
     - cmd: ovs_port_up_{{ network }}
     {%- endfor %}
   {%- elif interface.type == 'bond' %}
-  - slaves: {{ interface.slaves }}
+  # It makes more sense to specify slaves in a list, but previously this was a string value.
+  # So for backwards compatibility, we allow both.
+  {%- set bond_slaves = interface.get('slaves', []) %}
+  {%- if interface.get('slaves', []) is string %}
+    {%- set bond_slaves = interface.get('slaves', '').split() %}
+  {% endif %}
+  - slaves: {{ bond_slaves | join(' ') }}
   - mode: {{ interface.mode }}
   - require:
-    {%- for network in interface.get('slaves', '').split() %}
+    {%- for network in bond_slaves %}
     - network: linux_interface_{{ network }}
     {%- endfor %}
   {%- elif interface.type == 'vlan' %}
