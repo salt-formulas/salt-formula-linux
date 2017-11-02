@@ -6,7 +6,8 @@
 linux_job_{{ job.command }}:
   {%- if job.enabled|default(True) %}
   cron.present:
-    - name: {{ job.command }}
+    - name: >
+        {{ job.command }}
     {%- if job.get('identifier', True) %}
     - identifier: {{ job.get('identifier', job.get('name', name)) }}
     {%- endif %}
