@@ -1,6 +1,9 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
+include:
+- linux.system.user
+
 {%- for name, job in system.job.iteritems() %}
 
 linux_job_{{ job.command }}:
