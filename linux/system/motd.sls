@@ -10,15 +10,17 @@
 
 {%- else %}
 
+{%- if grains.os == 'Ubuntu' %}
 package_update_motd:
   pkg.installed:
     - name: update-motd
+    - require_in:
+      - file: /etc/update-motd.d
+{%- endif %}
 
 /etc/update-motd.d:
   file.directory:
     - clean: true
-    - require:
-      - pkg: package_update_motd
 
 {%- for motd in system.motd %}
 {%- set motd_index = loop.index %}
