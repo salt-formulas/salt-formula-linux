@@ -22,6 +22,14 @@ package_update_motd:
   file.directory:
     - clean: true
 
+{%- if grains.oscodename == "jessie" %}
+motd_fix_pam_sshd:
+  file.replace:
+    - name: /etc/pam.d/sshd
+    - pattern: "/run/motd.dynamic"
+    - repl: "/run/motd"
+{%- endif %}
+
 {%- for motd in system.motd %}
 {%- set motd_index = loop.index %}
 
