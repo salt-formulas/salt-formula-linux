@@ -30,6 +30,9 @@ motd_fix_pam_sshd:
     - repl: "/run/motd"
 {%- endif %}
 
+/etc/motd:
+  file.absent
+
 {%- for motd in system.motd %}
 {%- set motd_index = loop.index %}
 
