@@ -35,7 +35,7 @@ linux_system_ca_certificates:
 
 update_certificates:
   cmd.wait:
-  - name: update-ca-certificates
+  - name: {{ system.ca_certs_bin }}
 
 {%- endif %}
 

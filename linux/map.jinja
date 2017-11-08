@@ -18,6 +18,7 @@
          },
         'selinux': 'permissive',
         'ca_certs_dir': '/usr/local/share/ca-certificates',
+        'ca_certs_bin': 'update-ca-certificates',
         'atop': {
              'enabled': false,
              'interval': '20',
@@ -45,6 +46,7 @@
          },
         'selinux': 'permissive',
         'ca_certs_dir': '/usr/local/share/ca-certificates',
+        'ca_certs_bin': 'update-ca-certificates',
         'atop': {
              'enabled': false,
              'interval': '20',
@@ -71,7 +73,8 @@
              'pkgs': []
          },
         'selinux': 'permissive',
-        'ca_certs_dir': '/usr/local/share/ca-certificates',
+        'ca_certs_dir': '/etc/pki/ca-trust/source/anchors',
+        'ca_certs_bin': 'update-ca-trust extract',
         'atop': {
              'enabled': false,
              'interval': '20',
