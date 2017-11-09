@@ -42,7 +42,7 @@ server:
         description: 'The disk inodes ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}.'
       {% endraw %}
     SystemDiskInodesFull:
-      if: 'disk_inodes_used / disk_inodes_total >= 99'
+      if: 'disk_inodes_used / disk_inodes_total >= 0.99'
       {% raw %}
       labels:
         severity: critical
