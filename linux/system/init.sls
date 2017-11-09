@@ -96,3 +96,6 @@ include:
 {%- if system.systemd is defined %}
 - linux.system.systemd
 {%- endif %}
+{%- if system.directory is defined %}
+- linux.system.directory
+{%- endif %}

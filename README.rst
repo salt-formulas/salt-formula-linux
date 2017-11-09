@@ -328,6 +328,19 @@ Systemd settings:
               DefaultLimitCPU: 2
               DefaultLimitNPROC: 4
 
+Ensure presence of directory:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        directory:
+          /tmp/test:
+            user: root
+            group: root
+            mode: 700
+            makedirs: true
+
 Kernel
 ~~~~~~
 

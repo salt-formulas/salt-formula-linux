@@ -7,6 +7,9 @@ linux:
     environment: prd
     hostname: system.pillar.local
     purge_repos: true
+    directory:
+      /tmp/test:
+        makedirs: true
     apparmor:
       enabled: false
     haveged:
