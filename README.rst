@@ -1411,6 +1411,7 @@ LVM group `vg1` with one device and `data` volume mounted into `/mnt/data`
 Create File System during mount using lvm. For EXT and XFS there is ability to add block size. For XFS you must define if you want ``size`` or ``log``, so for size is ``block_size: size=2048``.
 
 .. code-block:: yaml
+
     parameters:
       linux:
         storage:
