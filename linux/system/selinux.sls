@@ -8,7 +8,9 @@ include:
   {%- set mode = system.selinux %}
 
 {{ mode }}:
-  selinux.mode
+  selinux.mode:
+    - require:
+      - pkg: linux_repo_prereq_pkgs
 
 {%- endif %}
 
