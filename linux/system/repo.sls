@@ -104,7 +104,7 @@ linux_repo_{{ name }}_key:
 linux_repo_{{ name }}:
   pkgrepo.managed:
   {%- if repo.ppa is defined %}
-  - ppa: {{ ppa }}
+  - ppa: {{ repo.ppa }}
   {%- else %}
   - human_name: {{ name }}
   - name: {{ repo.source }}
