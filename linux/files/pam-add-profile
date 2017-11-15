@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ "$(basename $EDITOR 2>/dev/null)" == "$(basename $0)" ]; then
+    PROFILES=$(debconf-get-selections | grep libpam-runtime/profiles | awk '{$1=$2=$3=""; print $0}')
+
+    for profile in ${PROFILE[@]}; do
+        if [[ $PROFILES =~ $profile ]]; then
+            continue
+        else
+            PROFILES="${PROFILES}, ${profile}"
+        fi
+    done
+
+    for profile in /usr/share/pam-configs/*; do
+        profile_name=$(grep Name: $profile | cut -d ' ' -f 2-)
+        PROFILES=$(echo $PROFILES | sed s,$(basename $profile),"${profile_name}",g)
+    done
+
+    cat > $1 <<EOF
+libpam-runtime/profiles="${PROFILES}"
+EOF
+else
+    [ -z $1 ] && { echo "Usage: $0 [PROFILE]"; exit 1; }
+    export PROFILE="$*"
+    EDITOR=/usr/local/bin/pam-add-profile DEBIAN_FRONTEND=editor pam-auth-update --force
+fi

@@ -1608,6 +1608,29 @@ Multipath with multiple backends
             - fujitsu_eternus_dxl
             - hitachi_vsp1000
 
+PAM LDAP integration
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        system:
+          auth:
+            enabled: true
+            ldap:
+              enabled: true
+              binddn: cn=bind,ou=service_users,dc=example,dc=com
+              bindpw: secret
+              uri: ldap://127.0.0.1
+              base: ou=users,dc=example,dc=com
+              ldap_version: 3
+              pagesize: 65536
+              referrals: off
+              filter:
+                passwd: (&(&(objectClass=person)(uidNumber=*))(unixHomeDirectory=*))
+                shadow: (&(&(objectClass=person)(uidNumber=*))(unixHomeDirectory=*))
+                group:  (&(objectClass=group)(gidNumber=*))
+
 Disabled multipath (the default setup)
 
 .. code-block:: yaml
