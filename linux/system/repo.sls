@@ -101,6 +101,8 @@ linux_repo_{{ name }}_key:
 
 {%- else %}
 
+{%- if repo.get('enabled', True) %}
+
 linux_repo_{{ name }}:
   pkgrepo.managed:
   {%- if repo.ppa is defined %}
@@ -137,6 +139,14 @@ linux_repo_{{ name }}:
     - file: purge_sources_list_d_repos
   {%- endif %}
   {%- endif %}
+
+{%- else %}
+
+linux_repo_{{ name }}_absent:
+  file.absent:
+    - name: /etc/apt/sources.list.d/{{ name }}.list:
+
+{%- endif %}
 
 {%- endif %}
 
