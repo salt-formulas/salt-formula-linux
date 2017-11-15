@@ -6,7 +6,7 @@ config:
           type: systemd
           tag: systemd.source
           path: /run/log/journal
-          pos_file: /tmp/fluentd-systemd.pos
+          pos_file: /var/log/td-agent/tmp/systemd.source.pos
           entry:
             field_map:
               MESSAGE: 'Payload'
