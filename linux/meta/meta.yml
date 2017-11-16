@@ -7,10 +7,12 @@ graph:
   relations:
   {%- if system.repo is defined %}
   {%- for repo_name, repo in system.repo.iteritems() %}
+  {%- if repo.get('enabled', True) %}
   - service: apt.repo
     host_external: {{ repo.source }}
     direction: source
     type: tcp-http
+  {%- endif %}
   {%- endfor %}
   {%- endif %}
 {%- endif %}
