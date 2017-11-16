@@ -144,7 +144,7 @@ linux_repo_{{ name }}:
 
 linux_repo_{{ name }}_absent:
   file.absent:
-    - name: /etc/apt/sources.list.d/{{ name }}.list:
+    - name: /etc/apt/sources.list.d/{{ name }}.list
 
 {%- endif %}
 
