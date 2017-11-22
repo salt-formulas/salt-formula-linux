@@ -626,6 +626,21 @@ Remove all repositories:
       system:
         purge_repos: true
 
+Setup custom apt config options:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        apt:
+          config:
+            compression-workaround:
+              "Acquire::CompressionTypes::Order": "gz"
+            docker-clean:
+              "DPkg::Post-Invoke":
+                - "rm -f /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/*.deb /var/cache/apt/*.bin || true"
+              "APT::Update::Post-Invoke":
+                - "rm -f /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/*.deb /var/cache/apt/*.bin || true"
 
 RC
 ~~

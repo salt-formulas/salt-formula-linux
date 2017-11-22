@@ -99,3 +99,6 @@ include:
 {%- if system.directory is defined %}
 - linux.system.directory
 {%- endif %}
+{%- if system.apt is defined and grains.os_family == 'Debian' %}
+- linux.system.apt
+{%- endif %}
