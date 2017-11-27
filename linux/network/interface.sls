@@ -346,6 +346,14 @@ linux_interfaces_final_include:
       # Workaround for Upstream-Bug: https://github.com/saltstack/salt/issues/40262
       source /etc/network/interfaces.u/*
 
+linux_interfaces_final_include_no_requisite:
+  file.prepend:
+  - name: /etc/network/interfaces
+  - text: |
+      source /etc/network/interfaces.d/*
+      # Workaround for Upstream-Bug: https://github.com/saltstack/salt/issues/40262
+      source /etc/network/interfaces.u/*
+
 {%- endif %}
 
 {%- endif %}
