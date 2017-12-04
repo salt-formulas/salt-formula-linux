@@ -20,6 +20,9 @@ create_disk_label_{{ disk_name }}:
     - pkg: parted
 
 {% set end_size = 0 -%}
+{% if disk.get('startsector', None) %}
+{% set end_size = disk.get('startsector')|int %}
+{% endif %}
 
 {%- for partition in disk.get('partitions', []) %}
 

@@ -1437,7 +1437,7 @@ LVM group `vg1` with one device and `data` volume mounted into `/mnt/data`
                   mount: ${linux:storage:mount:data}
 
 Create partitions on disk. Specify size in MB. It expects empty
-disk without any existing partitions.
+disk without any existing partitions. (set startsector=1, if you want to start partitions from 2048)
 
 .. code-block:: yaml
 
@@ -1445,6 +1445,7 @@ disk without any existing partitions.
         storage:
           disk:
             first_drive:
+              startsector: 1
               name: /dev/loop1
               type: gpt
               partitions:
