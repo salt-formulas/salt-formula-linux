@@ -55,6 +55,10 @@ linux_network_dpdk_ovs_service:
 ]
 %}
 
+{%- if network.openvswitch.get('vhost_socket_dir',{}).get('path') %}
+{%- do ovs_options.append("vhost-sock-dir=\""+network.openvswitch.vhost_socket_dir.path+"\"") %}
+{%- endif %}
+
 {%- for option in ovs_options %}
 
 linux_network_dpdk_ovs_option_{{ option }}:
