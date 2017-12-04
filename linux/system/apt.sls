@@ -9,9 +9,9 @@ include:
 
 {%- for key, config in system.apt.get('config', {}).iteritems() %}
 
-linux_apt_conf_{{ key }}
+linux_apt_conf_{{ key }}:
   file.managed:
-  - name: /etc/apt/apt.conf.d/99{{ key }}-salt:
+  - name: /etc/apt/apt.conf.d/99{{ key }}-salt
   - template: jinja
   - source: salt://linux/files/apt.conf
   - defaults:
