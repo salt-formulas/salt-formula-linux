@@ -1,41 +1,47 @@
-config:
-  label:
-    systemd:
-      input:
-        systemd:
-          type: systemd
-          tag: systemd.source
-          path: /run/log/journal
-          pos_file: /var/log/td-agent/tmp/systemd.source.pos
-          entry:
-            field_map:
-              MESSAGE: 'Payload'
-              _CMDLINE: 'process'
-              _PID: 'Pid'
-              _COMM: 'programname'
-              _SYSTEMD_UNIT: 'service'
-              syslog_identifier: 'ident'
-              priority: 'Severity'
-            field_map_strict: True
-            fields_strip_underscores: True
-            fields_lowercase: True
-      filter:
-        add_severity_label:
-          tag: systemd.source
-          type: record_transformer
-          enable_ruby: true
-          record:
-            - name: severity_label
-              value: '${ {"TRACE"=>8,"DEBUG"=>7,"INFO"=>6,"NOTICE"=>5,"WARNING"=>4,"ERROR"=>3,"CRITICAL"=>2,"ALERT"=>1,"EMERGENCY"=>0}.key(record["Severity"].to_i) }'
-      match:
-        rewrite_tag:
-          tag: systemd.source
-          type: rewrite_tag_filter
-          rule:
-            - name: service
-              regexp: '^(.*)\.(.*)$'
-              result: __TAG__.$1
-        push_to_default:
-          tag: 'systemd.source.*'
-          type: relabel
-          label: default_output
+{%- if grains.get('init') == 'systemd' %}
+agent:
+  plugin:
+    fluent-plugin-systemd:
+      gem: ['fluent-plugin-systemd']
+  config:
+    label:
+      systemd:
+        input:
+          systemd:
+            type: systemd
+            tag: systemd.source
+            path: /run/log/journal
+            pos_file: {{ pillar.fluentd.agent.dir.positiondb }}/systemd.source.pos
+            entry:
+              field_map:
+                MESSAGE: 'Payload'
+                _CMDLINE: 'process'
+                _PID: 'Pid'
+                _COMM: 'programname'
+                _SYSTEMD_UNIT: 'service'
+                syslog_identifier: 'ident'
+                priority: 'Severity'
+              field_map_strict: True
+              fields_strip_underscores: True
+              fields_lowercase: True
+        filter:
+          add_severity_label:
+            tag: systemd.source
+            type: record_transformer
+            enable_ruby: true
+            record:
+              - name: severity_label
+                value: '${ {"TRACE"=>8,"DEBUG"=>7,"INFO"=>6,"NOTICE"=>5,"WARNING"=>4,"ERROR"=>3,"CRITICAL"=>2,"ALERT"=>1,"EMERGENCY"=>0}.key(record["Severity"].to_i) }'
+        match:
+          rewrite_tag:
+            tag: systemd.source
+            type: rewrite_tag_filter
+            rule:
+              - name: service
+                regexp: '^(.*)\.(.*)$'
+                result: __TAG__.$1
+          push_to_default:
+            tag: 'systemd.source.*'
+            type: relabel
+            label: default_output
+{%- endif %}
