@@ -18,6 +18,7 @@ linux:
       default: "linux.ci.local$"
     kernel:
       isolcpu: 1,2,3,4
+      elevator: deadline
     sysfs:
       scheduler:
         block/sda/queue/scheduler: deadline
