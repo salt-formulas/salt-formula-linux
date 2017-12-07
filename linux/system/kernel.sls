@@ -20,6 +20,23 @@ include:
 {%- endif %}
 {%- endif %}
 
+{%- if system.kernel.elevator is defined %}
+
+include:
+  - linux.system.grub
+
+/etc/default/grub.d/91-elevator.cfg:
+  file.managed:
+    - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT elevator={{ system.kernel.elevator }}"'
+    - require:
+      - file: grub_d_directory
+{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
+    - watch_in:
+      - cmd: grub_update
+
+{%- endif %}
+{%- endif %}
+
 {%- if system.kernel.version is defined %}
 
 linux_kernel_package:
