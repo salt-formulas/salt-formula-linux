@@ -3,10 +3,12 @@
 
 {%- if system.kernel is defined %}
 
-{%- if system.kernel.isolcpu is defined %}
+{%- if system.kernel.isolcpu is defined or system.kernel.elevator is defined %}
 
 include:
   - linux.system.grub
+
+{%- if system.kernel.isolcpu is defined %}
 
 /etc/default/grub.d/90-isolcpu.cfg:
   file.managed:
@@ -22,9 +24,6 @@ include:
 
 {%- if system.kernel.elevator is defined %}
 
-include:
-  - linux.system.grub
-
 /etc/default/grub.d/91-elevator.cfg:
   file.managed:
     - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT elevator={{ system.kernel.elevator }}"'
@@ -35,6 +34,8 @@ include:
       - cmd: grub_update
 
 {%- endif %}
+{%- endif %}
+
 {%- endif %}
 
 {%- if system.kernel.version is defined %}
