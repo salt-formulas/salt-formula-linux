@@ -45,6 +45,13 @@ remove_iface_file_{{ f }}:
 
 {%- endfor %}
 
+{%- if network.interface is defined %}
+
+remove_cloud_init_file:
+  file.absent:
+  - name: /etc/network/interfaces.d/50-cloud-init.cfg
+
+{%- endif %}
 
 {%- for interface_name, interface in network.interface.iteritems() %}
 
@@ -218,7 +225,7 @@ linux_interface_{{ interface_name }}:
 
 linux_interface_ipflush_onchange_{{ interface_name }}:
   cmd.run:
-  - name: "/sbin/ip address flush dev {{ interface_name }}"
+  - name: "/sbin/ip address flush dev {{ interface_name }}; ifdown {{ interface_name }} ;ifup {{ interface_name }};"
   - onchanges:
     - network: linux_interface_{{ interface_name }}
 
