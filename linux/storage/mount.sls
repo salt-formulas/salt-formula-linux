@@ -10,7 +10,7 @@
 mkfs_{{ mount.device}}:
   cmd.run:
   - name: "mkfs.{{ mount.file_system }} -L {{ name }} {{ mount.device }}"
-  - onlyif: "test `blkid {{ mount.device }} >/dev/null;echo $?` -eq 2"
+  - onlyif: "test `blkid {{ mount.device }} | grep -q TYPE;echo $?` -eq 1"
   - require_in:
     - mount: {{ mount.path }}
   {%- if mount.file_system == 'xfs' %}
