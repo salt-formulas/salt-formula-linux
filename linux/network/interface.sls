@@ -121,7 +121,7 @@ ovs_port_{{ interface_name }}:
 ovs_port_{{ interface_name }}_line1:
   file.replace:
   - name: /etc/network/interfaces
-  - pattern: auto {{ interface_name }}
+  - pattern: auto {{ interface_name }}$
   - repl: ""
 
 ovs_port_{{ interface_name }}_line2:
@@ -246,7 +246,7 @@ linux_bond_interface_{{ interface_name }}:
 remove_interface_{{ network }}_line1:
   file.replace:
   - name: /etc/network/interfaces
-  - pattern: auto {{ network }}
+  - pattern: auto {{ network }}$
   - repl: ""
 
 remove_interface_{{ network }}_line2:
