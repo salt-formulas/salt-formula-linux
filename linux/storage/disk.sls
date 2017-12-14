@@ -31,7 +31,9 @@ create_partition_{{ disk_name }}_{{ loop.index }}:
   - name: partition.mkpart
   - device: {{ disk_name }}
   - part_type: primary
+  {%- if partition.type is defined %}
   - fs_type: {{ partition.type }}
+  {%- endif %}
   - start: {{ end_size }}MB
   - end: {{ end_size + partition.size }}MB
   - unless: "blkid {{ disk_name }}{{ loop.index }} {{ disk_name }}p{{ loop.index }}"
