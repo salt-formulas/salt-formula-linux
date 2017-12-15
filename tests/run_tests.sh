@@ -110,7 +110,7 @@ clean() {
 }
 
 salt_run() {
-    [ -e ${VEN_DIR}/bin/activate ] && source ${VENV_DIR}/bin/activate
+    [ -e ${VENV_DIR}/bin/activate ] && source ${VENV_DIR}/bin/activate
     salt-call ${SALT_OPTS} $*
 }
 
