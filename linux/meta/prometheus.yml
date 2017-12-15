@@ -14,7 +14,7 @@ server:
     SystemDiskSpaceTooLow:
       if: 'predict_linear(disk_free[1h], 8*3600) < 0'
       {% raw %}
-      for: 5m
+      for: 15m
       labels:
         severity: warning
         service: system
@@ -35,7 +35,7 @@ server:
     SystemDiskInodesTooLow:
       if: 'predict_linear(disk_inodes_free[1h], 8*3600) < 0'
       {% raw %}
-      for: 5m
+      for: 15m
       labels:
         severity: warning
         service: system
