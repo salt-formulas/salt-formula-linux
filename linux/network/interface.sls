@@ -373,5 +373,19 @@ NetworkManager:
   - source: salt://linux/files/60-net-txqueue.rules
   - mode: 755
   - template: jinja
+  - defaults:
+    tap_custom_txqueuelen: {{ network.tap_custom_txqueuelen }}
+
+udev_reload_rules:
+  cmd.run:
+  - name: "/bin/udevadm control --reload-rules"
+  - onchanges:
+    - file: /etc/udev/rules.d/60-net-txqueue.rules
+
+udev_retrigger:
+  cmd.run:
+  - name: "/bin/udevadm trigger --attr-match=subsystem=net"
+  - onchanges:
+    - udev_reload_rules
 
 {%- endif %}

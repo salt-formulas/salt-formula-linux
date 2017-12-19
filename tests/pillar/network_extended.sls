@@ -8,6 +8,7 @@ linux:
     hostname: linux
     fqdn: linux.ci.local
     network_manager: false
+    tap_custom_txqueuelen: 10000
     interface:
       eth0:
         enabled: true
