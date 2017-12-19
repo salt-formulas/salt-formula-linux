@@ -8,4 +8,11 @@ dhclient_conf:
     - source: salt://linux/files/dhclient.conf
     - template: jinja
 
+{%- elif network.dhclient.enabled is defined and network.dhclient.enabled == False %}
+
+kill_dhcp_client:
+  cmd.run:
+  - name: "pkill dhclient"
+  - onlyif: "pgrep dhclient"
+
 {%- endif %}
