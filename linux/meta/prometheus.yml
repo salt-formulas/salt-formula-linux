@@ -22,6 +22,16 @@ server:
         summary: 'Free space for {{ $labels.path }} too low on {{ $labels.host }}'
         description: 'The disk partition ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}.'
       {% endraw %}
+    SystemFreeOpenFilesTooLow:
+      if: 'predict_linear(linux_sysctl_fs_file_nr[1h], 8*3600) > linux_sysctl_fs_file_max'
+      {% raw %}
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'Free open files for {{ $labels.path }} too low on {{ $labels.host }}'
+        description: 'Host {{ $labels.host }}) will run out of free open files in less than 8 hours.'
+      {% endraw %}
     SystemDiskSpaceFull:
       if: 'disk_used_percent >= 99 and disk_inodes_total > 0'
       {% raw %}
