@@ -32,6 +32,16 @@ server:
         summary: 'Free open files for {{ $labels.path }} too low on {{ $labels.host }}'
         description: 'Host {{ $labels.host }}) will run out of free open files in less than 8 hours.'
       {% endraw %}
+    SystemDiskErrors:
+      if: 'increase(hdd_errors_total[5m]) > 0'
+      {% raw %}
+      labels:
+        severity: critical
+        service: system
+      annotations:
+        summary: 'Disk {{ $labels.device }} is failing'
+        description: 'The disk ({{ $labels.device }}) is reporting errors on {{ $labels.host }}.'
+      {% endraw %}
     SystemDiskSpaceFull:
       if: 'disk_used_percent >= 99 and disk_inodes_total > 0'
       {% raw %}

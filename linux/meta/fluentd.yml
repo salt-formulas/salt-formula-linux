@@ -5,6 +5,49 @@ agent:
       gem: ['fluent-plugin-systemd']
   config:
     label:
+      default_metric:
+        filter:
+          metric_failed_user:
+            tag: metric.failed_user
+            type: prometheus
+            metric:
+              - name: failed_logins_total
+                type: counter
+                desc: The total number of failed logins.
+            label:
+              - name: host
+                value: ${Hostname}
+          metric_out_of_memory:
+            tag: metric.out_of_memory
+            type: prometheus
+            metric:
+              - name: out_of_memory_total
+                type: counter
+                desc: The total number of OOM.
+            label:
+              - name: host
+                value: ${Hostname}
+          metric_hdd_errors_parse:
+            tag: metric.hdd_errors
+            type: parser
+            key_name: Payload
+            parser:
+              type: regexp
+              format: '/(?<device>[sv]d[a-z]+\d*)/'
+          metric_hdd_errors:
+            tag: metric.hdd_errors
+            require:
+              - metric_hdd_errors_parse
+            type: prometheus
+            metric:
+              - name: hdd_errors_total
+                type: counter
+                desc: The total number of hdd errors.
+            label:
+              - name: host
+                value: ${Hostname}
+              - name: device
+                value: ${device}
       systemd:
         input:
           systemd:
@@ -37,11 +80,33 @@ agent:
             tag: systemd.source
             type: rewrite_tag_filter
             rule:
-              - name: service
-                regexp: '^(.*)\.(.*)$'
+              - name: ident
+                regexp: '^(.*)$'
                 result: __TAG__.$1
           push_to_default:
             tag: 'systemd.source.*'
+            type: copy
+            store:
+              - type: relabel
+                label: default_output
+              - type: rewrite_tag_filter
+                rule:
+                  - name: Payload
+                    regexp: '^Invalid user'
+                    result: metric.failed_user
+                  - name: Payload
+                    regexp: '^Out of memory'
+                    result: metric.out_of_memory
+                  - name: Payload
+                    regexp: >-
+                      'error.+[sv]d[a-z]+\d*'
+                    result: metric.hdd_errors
+                  - name: Payload
+                    regexp: >-
+                      '[sv]d[a-z]+\d*.+error'
+                    result: metric.hdd_errors
+          push_to_metric:
+            tag: 'metric.**'
             type: relabel
-            label: default_output
+            label: default_metric
 {%- endif %}
