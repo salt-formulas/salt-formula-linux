@@ -420,6 +420,23 @@ Enable cpufreq governor for every cpu:
         cpu:
           governor: performance
 
+
+Shared Libraries
+~~~~~~~~~~~~~~~~
+
+Set additional shared library to Linux system library path
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ld:
+          library:
+            java:
+              - /usr/lib/jvm/jre-openjdk/lib/amd64/server
+              - /opt/java/jre/lib/amd64/server
+    
+
 Certificates
 ~~~~~~~~~~~~
 
