@@ -2,14 +2,14 @@
 
 {%- if system.enabled %}
 
-{%- for key in system.ld.libraries %}
+{%- for key in system.ld.library %}
 /etc/ld.so.conf.d/{{ key }}.conf:
   file.managed:
     - user: root
     - group: root
     - mode: 644
     - contents: |
-          {% for val in system.ld.libraries[key] -%}
+          {% for val in system.ld.library[key] -%}
           {{ val }}
           {% endfor %}
     - watch_in:
