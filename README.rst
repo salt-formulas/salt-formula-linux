@@ -428,14 +428,14 @@ Set additional shared libraries to Linux system library path
 
 .. code-block:: yaml
 
-linux:
-  system:
-    ld:
-      libraries:
-        java:
-          - /usr/lib/jvm/jre-openjdk/lib/amd64/server
-          - /opt/java/jre/lib/amd64/server
-
+    linux:
+      system:
+        ld:
+          libraries:
+            java:
+              - /usr/lib/jvm/jre-openjdk/lib/amd64/server
+              - /opt/java/jre/lib/amd64/server
+    
 
 Certificates
 ~~~~~~~~~~~~
