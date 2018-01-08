@@ -5,6 +5,23 @@ linux_lvm_pkgs:
   pkg.installed:
   - pkgs: {{ storage.lvm_pkgs }}
 
+
+/etc/lvm/lvm.conf:
+  file.managed:
+  - source: salt://linux/files/lvm.conf
+  - template: jinja
+  - require:
+    - pkg: linux_lvm_pkgs
+
+lvm_services:
+  service.running:
+  - enable: true
+  - names: {{ storage.lvm_services }}
+  - require:
+    - file: /etc/lvm/lvm.conf
+  - watch:
+    - file: /etc/lvm/lvm.conf
+
 {%- for vgname, vg in storage.lvm.iteritems() %}
 
 {%- if vg.get('enabled', True) %}
@@ -15,6 +32,8 @@ lvm_{{ vg.get('name', vgname) }}_pv_{{ dev }}:
     - name: {{ dev }}
     - require:
       - pkg: linux_lvm_pkgs
+      - file: /etc/lvm/lvm.conf
+      - service: lvm_services
     - require_in:
       - lvm: lvm_vg_{{ vg.get('name', vgname) }}
 {%- endfor %}
@@ -46,21 +65,5 @@ lvm_{{ vg.get('name', vgname) }}_lv_{{ volume.get('name', lvname) }}:
 {%- endif %}
 
 {%- endfor %}
-
-/etc/lvm/lvm.conf:
-  file.managed:
-  - source: salt://linux/files/lvm.conf
-  - template: jinja
-  - require:
-    - pkg: linux_lvm_pkgs
-
-lvm_services:
-  service.running:
-  - enable: true
-  - names: {{ storage.lvm_services }}
-  - require:
-    - file: /etc/lvm/lvm.conf
-  - watch:
-    - file: /etc/lvm/lvm.conf
 
 {%- endif %}
