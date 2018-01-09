@@ -10,6 +10,6 @@ Vcs-Git: https://github.com/tcpcloud/salt-formula-linux.git
 
 Package: salt-formula-linux
 Architecture: all
-Depends: ${misc:Depends}, salt-master, reclass
+Depends: ${misc:Depends}
 Description: Linux salt formula
  Configure Linux operating system.
