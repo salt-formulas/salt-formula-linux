@@ -1,6 +1,0 @@
-suites:
-
-  - name: <%= ENV['SUITE'] %>
-    provisioner:
-      pillars-from-files:
-        linux.sls: tests/pillar/<%= ENV['SUITE'] %>.sls
