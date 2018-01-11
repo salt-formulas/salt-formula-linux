@@ -19,6 +19,16 @@ linux:
     kernel:
       isolcpu: 1,2,3,4
       elevator: deadline
+    cgroup:
+      group:
+        group_1:
+          controller:
+            cpu:
+              shares:
+                value: 250
+          mapping:
+            subjects:
+            - '@group1'
     sysfs:
       scheduler:
         block/sda/queue/scheduler: deadline

@@ -33,6 +33,9 @@ include:
 {%- if system.sysfs is defined %}
 - linux.system.sysfs
 {%- endif %}
+{%- if system.cgroup is defined %}
+- linux.system.cgroup
+{%- endif %}
 {%- if system.locale|length > 0 %}
 - linux.system.locale
 {%- endif %}

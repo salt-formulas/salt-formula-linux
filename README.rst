@@ -421,6 +421,51 @@ Enable cpufreq governor for every cpu:
           governor: performance
 
 
+CGROUPS
+~~~~~~~
+
+Setup linux cgroups:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        cgroup:
+          enabled: true
+          group:
+            ceph_group_1:
+              controller:
+                cpu:
+                  shares:
+                    value: 250
+                cpuacct:
+                  usage:
+                    value: 0
+                cpuset:
+                  cpus:
+                    value: 1,2,3
+                memory:
+                  limit_in_bytes:
+                    value: 2G
+                  memsw.limit_in_bytes:
+                    value: 3G
+              mapping:
+                subjects:
+                - '@ceph'
+            generic_group_1:
+              controller:
+                cpu:
+                  shares:
+                    value: 250
+                cpuacct:
+                  usage:
+                    value: 0
+              mapping:
+                subjects:
+                - '*:firefox'
+                - 'student:cp'
+
+
 Shared Libraries
 ~~~~~~~~~~~~~~~~
 
