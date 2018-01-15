@@ -1010,6 +1010,27 @@ to true.
             mtu: 9100
             ipflush_onchange: true
 
+Debian static proto interfaces
+
+When you are changing interface proto from dhcp in up state to static, you
+may need to flush ip addresses and restart interface to assign ip address from a managed file.
+For example, if you want to use the interface and the ip on the bridge.
+This can be done by setting the ``ipflush_onchange`` with combination
+``restart_on_ipflush`` param set to to true.
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        interface:
+          eth1:
+            enabled: true
+            type: eth
+            proto: static
+            address: 10.1.0.22
+            netmask: 255.255.255.0
+            ipflush_onchange: true
+            restart_on_ipflush: true
 
 Concatinating and removing interface files
 

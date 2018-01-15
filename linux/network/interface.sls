@@ -225,9 +225,19 @@ linux_interface_{{ interface_name }}:
 
 linux_interface_ipflush_onchange_{{ interface_name }}:
   cmd.run:
-  - name: "/sbin/ip address flush dev {{ interface_name }}; ifdown {{ interface_name }} ;ifup {{ interface_name }};"
+  - name: "/sbin/ip address flush dev {{ interface_name }}"
   - onchanges:
     - network: linux_interface_{{ interface_name }}
+
+{%- if interface.get('restart_on_ipflush', False) %}
+
+linux_interface_restart_on_ipflush_{{ interface_name }}:
+  cmd.run:
+  - name: "ifdown {{ interface_name }}; ifup {{ interface_name }};"
+  - onchanges:
+    - cmd: linux_interface_ipflush_onchange_{{ interface_name }}
+
+{%- endif %}
 
 {%- endif %}
 
