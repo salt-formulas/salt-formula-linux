@@ -55,7 +55,7 @@ linux_kernel_package:
 # Not very Salt-ish.. :-(
 linux_kernel_old_absent:
   cmd.wait:
-  - name: "apt-get purge -y $(dpkg -l '*linux-image-[0-9]*' '*linux-headers-[0-9]*' '*linux-image-extra-[0-9]*' | grep -E '^ii' | awk '{print $2}' | grep -v '{{ system.kernel.version }}')"
+  - name: "dpkg -l '*linux-generic-*[0-9]*' '*linux-image-*[0-9]*' '*linux-headers-*[0-9]*' '*linux-image-extra-*[0-9]*' | grep -E '^ii' | awk '{print $2}' | grep -v '{{ system.kernel.version }}' | xargs dpkg --purge --force-depends"
   - watch:
     - pkg: linux_kernel_package
 
