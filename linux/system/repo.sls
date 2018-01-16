@@ -108,7 +108,7 @@ linux_repo_{{ name }}:
   {%- if repo.ppa is defined %}
   - ppa: {{ repo.ppa }}
   {%- else %}
-  - human_name: {{ name }}
+  - humanname: {{ name }}
   - name: {{ repo.source }}
   {%- if repo.architectures is defined %}
   - architectures: {{ repo.architectures }}
@@ -143,6 +143,19 @@ linux_repo_{{ name }}:
 {%- else %}
 
 linux_repo_{{ name }}_absent:
+  pkgrepo.absent:
+    {%- if repo.ppa is defined %}
+    - ppa: {{ repo.ppa }}
+    {%- if repo.key_id is defined %}
+    - keyid_ppa: {{ repo.keyid_ppa }}
+    {%- endif %}
+    {%- else %}
+    - name: {{ repo.source }}
+    - file: /etc/apt/sources.list.d/{{ name }}.list
+    {%- if repo.key_id is defined %}
+    - keyid: {{ repo.key_id }}
+    {%- endif %}
+    {%- endif %}
   file.absent:
     - name: /etc/apt/sources.list.d/{{ name }}.list
 
@@ -150,9 +163,12 @@ linux_repo_{{ name }}_absent:
 
 {%- endif %}
 
+{#- os_family Debian #}
 {%- endif %}
 
 {%- if grains.os_family == "RedHat" %}
+
+{%- if repo.get('enabled', True) %}
 
 {%- if repo.get('proxy', {}).get('enabled', False) %}
 # PLACEHOLDER
@@ -160,7 +176,6 @@ linux_repo_{{ name }}_absent:
 {%- endif %}
 
 {%- if not repo.get('default', False) %}
-
 linux_repo_{{ name }}:
   pkgrepo.managed:
   - name: {{ name }}
@@ -176,11 +191,18 @@ linux_repo_{{ name }}:
   {%- endif %}
   - require:
     - pkg: linux_repo_prereq_pkgs
-
 {%- endif %}
 
+{#- repo.enabled is false #}
+{%- else %}
+  pkgrepo.absent:
+    - name: {{ repo.source }}
 {%- endif %}
 
+{#- os_family Redhat #}
+{%- endif %}
+
+{#- repo.iteritems() loop #}
 {%- endfor %}
 
 {%- if default_repos|length > 0 and grains.os_family == 'Debian' %}
