@@ -150,7 +150,6 @@ linux_repo_{{ name }}_absent:
     - keyid_ppa: {{ repo.keyid_ppa }}
     {%- endif %}
     {%- else %}
-    - name: {{ repo.source }}
     - file: /etc/apt/sources.list.d/{{ name }}.list
     {%- if repo.key_id is defined %}
     - keyid: {{ repo.key_id }}
