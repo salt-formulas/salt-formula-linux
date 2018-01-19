@@ -61,6 +61,7 @@ linux:
       testuser:
         enabled: true
         name: testuser
+        password: passw0rd
         sudo: true
         uid: 9999
         full_name: Test User
