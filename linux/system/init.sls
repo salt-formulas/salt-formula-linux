@@ -108,3 +108,6 @@ include:
 {%- if system.apt is defined and grains.os_family == 'Debian' %}
 - linux.system.apt
 {%- endif %}
+{%- if system.auth is defined %}
+- linux.system.auth
+{%- endif %}
