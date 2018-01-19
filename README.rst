@@ -341,6 +341,41 @@ Ensure presence of directory:
             mode: 700
             makedirs: true
 
+Ensure presence of file by specifying it's source:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        file:
+          /tmp/test.txt:
+            source: http://example.com/test.txt
+            user: root
+            group: root
+            file_mode: 700
+            dir_mode: 700
+            encoding: utf-8
+            hash: <<md5 hash>>
+            makedirs: true
+
+Ensure presence of file by specifying it's contents:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        file:
+          /tmp/test.txt:
+            contents: |
+              line1
+              line2
+            user: root
+            group: root
+            file_mode: 700
+            dir_mode: 700
+            encoding: utf-8
+            hash: <<md5 hash>>
+            makedirs: true
 Kernel
 ~~~~~~
 

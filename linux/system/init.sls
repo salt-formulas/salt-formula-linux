@@ -102,6 +102,9 @@ include:
 {%- if system.directory is defined %}
 - linux.system.directory
 {%- endif %}
+{%- if system.file is defined %}
+- linux.system.file
+{%- endif %}
 {%- if system.ld is defined %}
 - linux.system.ld
 {%- endif %}
