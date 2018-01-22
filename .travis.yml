@@ -22,12 +22,19 @@ install:
   - bundle install
 
 env:
+  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=network
+  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=network
+  # - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=storage
+  # - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=storage
+  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=system
+  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=system
   - PLATFORM=trevorj/salty-whales:trusty SUITE=network
   - PLATFORM=trevorj/salty-whales:xenial SUITE=network
   # - PLATFORM=trevorj/salty-whales:trusty SUITE=storage
   # - PLATFORM=trevorj/salty-whales:xenial SUITE=storage
   - PLATFORM=trevorj/salty-whales:trusty SUITE=system
   - PLATFORM=trevorj/salty-whales:xenial SUITE=system
+## Test on both Salt version until there is new test policy accepted
 
 before_script:
   - set -o pipefail

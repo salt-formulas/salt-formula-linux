@@ -29,9 +29,9 @@ verifier:
   sudo: true
 
 platforms:
-  - name: <%=ENV['PLATFORM'] || 'ubuntu-xenial'%>
+  - name: <%=ENV['PLATFORM'] || 'ubuntu-xenial-2017.7'%>
     driver_config:
-      image: <%=ENV['PLATFORM'] || 'trevorj/salty-whales:xenial'%>
+      image: <%=ENV['PLATFORM'] || 'trevorj/salty-whales:xenial-2017.7'%>
       platform: ubuntu
 
 
