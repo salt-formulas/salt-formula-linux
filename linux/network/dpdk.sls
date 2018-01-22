@@ -110,7 +110,7 @@ linux_network_dpdk_bond_mode_{{ interface_name }}:
 
 linux_network_dpdk_bridge_interface_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl add-br {{ interface_name }} -- set bridge {{ interface_name }} datapath_type=netdev"
+    - name: "ovs-vsctl add-br {{ interface_name }} -- set bridge {{ interface_name }} datapath_type=netdev{% if interface.tag is defined %} -- set port {{ interface_name }} tag={{ interface.tag }}{% endif %}"
     - unless: "ovs-vsctl show | grep {{ interface_name }}"
 
     {# OVS dpdk needs ip address for vxlan termination on bridge br-prv #}
