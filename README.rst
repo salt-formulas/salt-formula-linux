@@ -1433,6 +1433,7 @@ If VXLAN is used as tenant segmentation then ip address must be set on br-prv
             type: dpdk_ovs_bridge
             address: 192.168.50.0
             netmask: 255.255.255.0
+            tag: 101
             mtu: 9000
 
 Linux storage
