@@ -6,10 +6,13 @@
   - source: salt://linux/files/resolv.conf
   - mode: 644
   - template: jinja
+  - follow_symlinks: false
+  - require:
+    - service: resolvconf_service
 
-linux_resolvconf_disable:
-  cmd.run:
-  - name: resolvconf --disable-updates
-  - onlyif: resolvconf --updates-are-enabled
+resolvconf_service:
+  service.dead:
+    - name: resolvconf
+    - enable: false
 
 {%- endif %}
