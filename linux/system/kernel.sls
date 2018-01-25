@@ -3,39 +3,24 @@
 
 {%- if system.kernel is defined %}
 
-{%- if system.kernel.isolcpu is defined or system.kernel.elevator is defined %}
+{%- set kernel_boot_opts = [] %}
+{%- do kernel_boot_opts.append('isolcpus=' ~ system.kernel.isolcpu) if system.kernel.isolcpu is defined %}
+{%- do kernel_boot_opts.append('elevator=' ~ system.kernel.elevator) if system.kernel.elevator is defined %}
+{%- do kernel_boot_opts.extend(system.kernel.boot_options) if system.kernel.boot_options is defined %}
 
+{%- if kernel_boot_opts %}
 include:
   - linux.system.grub
 
-{%- if system.kernel.isolcpu is defined %}
-
-/etc/default/grub.d/90-isolcpu.cfg:
+/etc/default/grub.d/99-custom-settings.cfg:
   file.managed:
-    - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT isolcpus={{ system.kernel.isolcpu }}"'
-    - require:
-      - file: grub_d_directory
-{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %} 
-    - watch_in:
-      - cmd: grub_update
-
-{%- endif %}
-{%- endif %}
-
-{%- if system.kernel.elevator is defined %}
-
-/etc/default/grub.d/91-elevator.cfg:
-  file.managed:
-    - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT elevator={{ system.kernel.elevator }}"'
+    - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT {{ kernel_boot_opts|join(' ') }}"'
     - require:
       - file: grub_d_directory
 {%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
     - watch_in:
       - cmd: grub_update
-
 {%- endif %}
-{%- endif %}
-
 {%- endif %}
 
 {%- if system.kernel.version is defined %}

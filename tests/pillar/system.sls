@@ -19,6 +19,9 @@ linux:
     kernel:
       isolcpu: 1,2,3,4
       elevator: deadline
+      boot_options:
+        - pti=off
+        - spectre_v2=auto
     cgroup:
       group:
         group_1:

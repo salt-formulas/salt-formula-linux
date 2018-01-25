@@ -407,6 +407,18 @@ Systcl kernel parameters
             net.ipv4.tcp_keepalive_time: 30
             net.ipv4.tcp_keepalive_probes: 8
 
+Configure kernel boot options:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          boot_options:
+            - elevator=deadline
+            - spectre_v2=off
+            - nopti
+
 
 CPU
 ~~~
