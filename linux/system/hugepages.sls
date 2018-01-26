@@ -3,7 +3,7 @@
 include:
   - linux.system.grub
 
-{%- if "pse" in grains.cpu_flags or "pdpe1gb" in grains.cpu_flags %}
+{%- if "pse" in grains.cpu_flags or "pdpe1gb" in grains.cpu_flags or "aarch64" in grains.cpuarch %}
 
 /etc/default/grub.d/90-hugepages.cfg:
   file.managed:
