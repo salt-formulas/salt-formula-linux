@@ -11,6 +11,9 @@
     {%- if file.contents is defined %}
     - contents: {{ file.contents }}
     {%- endif %}
+    {%- if file.contents_pillar is defined %}
+    - contents_pillar: {{ file.contents_pillar }}
+    {%- endif %}
     - makedirs: {{ file.get('makedirs', 'True') }}
     - user: {{ file.get('user', 'root') }}
     - group: {{ file.get('group', 'root') }}
