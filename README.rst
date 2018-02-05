@@ -352,7 +352,7 @@ Ensure presence of file by specifying it's source:
             source: http://example.com/test.txt
             user: root
             group: root
-            file_mode: 700
+            mode: 700
             dir_mode: 700
             encoding: utf-8
             hash: <<md5 hash>>
@@ -371,7 +371,7 @@ Ensure presence of file by specifying it's contents:
               line2
             user: root
             group: root
-            file_mode: 700
+            mode: 700
             dir_mode: 700
             encoding: utf-8
             hash: <<md5 hash>>
