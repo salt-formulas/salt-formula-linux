@@ -2,7 +2,7 @@
 agent:
   plugin:
     fluent-plugin-systemd:
-      gem: ['fluent-plugin-systemd']
+      deb: ['td-agent-additional-plugins']
   config:
     label:
       default_metric:
