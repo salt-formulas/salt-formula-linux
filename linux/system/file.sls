@@ -3,16 +3,26 @@
 
 {%- for file_name, file in system.file.iteritems() %}
 
-{{ file_name }}:
+linux_file_{{ file_name }}:
   file.managed:
+    {%- if file.name is defined %}
+    - name: {{ file.name }}
+    {%- else %}
+    - name: {{ file_name }}
+    {%- endif %}
     {%- if file.source is defined %}
     - source: {{ file.source }}
+    {%- if file.hash is defined %}
+    - source_hash: {{ file.hash }}
+    {%- else %}
+    - skip_verify: True
     {%- endif %}
-    {%- if file.contents is defined %}
-    - contents: {{ file.contents }}
-    {%- endif %}
-    {%- if file.contents_pillar is defined %}
+    {%- elif file.contents is defined %}
+    - contents: {{ file.contents|yaml }}
+    {%- elif file.contents_pillar is defined %}
     - contents_pillar: {{ file.contents_pillar }}
+    {%- elif file.contents_grains is defined %}
+    - contents_grains: {{ file.contents_grains }}
     {%- endif %}
     - makedirs: {{ file.get('makedirs', 'True') }}
     - user: {{ file.get('user', 'root') }}
@@ -25,11 +35,6 @@
     {%- endif %}
     {%- if file.encoding is defined %}
     - encoding: {{ file.encoding }}
-    {%- endif %}
-    {%- if file.hash is defined %}
-    - source_hash: {{ file.hash }}
-    {%- else %}
-    - skip_verify: True
     {%- endif %}
 
 {%- endfor %}

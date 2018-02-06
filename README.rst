@@ -350,13 +350,20 @@ Ensure presence of file by specifying it's source:
         file:
           /tmp/test.txt:
             source: http://example.com/test.txt
-            user: root
-            group: root
-            mode: 700
-            dir_mode: 700
-            encoding: utf-8
-            hash: <<md5 hash>>
-            makedirs: true
+            user: root #optional
+            group: root #optional
+            mode: 700 #optional
+            dir_mode: 700 #optional
+            encoding: utf-8 #optional
+            hash: <<hash>> or <<URI to hash>> #optional
+            makedirs: true #optional
+
+    linux:
+      system:
+        file:
+          test.txt:
+            name: /tmp/test.txt
+            source: http://example.com/test.txt
 
 Ensure presence of file by specifying it's contents:
 
@@ -369,13 +376,19 @@ Ensure presence of file by specifying it's contents:
             contents: |
               line1
               line2
-            user: root
-            group: root
-            mode: 700
-            dir_mode: 700
-            encoding: utf-8
-            hash: <<md5 hash>>
-            makedirs: true
+
+    linux:
+      system:
+        file:
+          /tmp/test.txt:
+            contents_pillar: linux:network:hostname
+
+    linux:
+      system:
+        file:
+          /tmp/test.txt:
+            contents_grains: motd
+
 Kernel
 ~~~~~~
 
