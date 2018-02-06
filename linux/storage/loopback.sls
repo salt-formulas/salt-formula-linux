@@ -6,8 +6,9 @@
 
 {%- if loopback.get('enabled', True) %}
 
-{{ salt['file.dirname'](loopback.file) }}:
+{{ loopback.file }}_directory:
   file.directory:
+  - name: {{ salt['file.dirname'](loopback.file) }}
   - makedirs: true
   - require_in:
     - file: {{ loopback.file }}
