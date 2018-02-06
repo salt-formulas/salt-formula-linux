@@ -17,8 +17,8 @@
     - makedirs: {{ file.get('makedirs', 'True') }}
     - user: {{ file.get('user', 'root') }}
     - group: {{ file.get('group', 'root') }}
-    {%- if file.file_mode is defined %}
-    - file_mode: {{ file.file_mode }}
+    {%- if file.mode is defined %}
+    - mode: {{ file.mode }}
     {%- endif %}
     {%- if file.dir_mode is defined %}
     - dir_mode: {{ file.dir_mode }}
