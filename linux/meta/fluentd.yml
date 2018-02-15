@@ -99,11 +99,11 @@ agent:
                     result: metric.out_of_memory
                   - name: Payload
                     regexp: >-
-                      'error.+[sv]d[a-z]+\d*'
+                      'error.*\b[sv]d[a-z]{1,2}\d{0,3}\b.*'
                     result: metric.hdd_errors
                   - name: Payload
                     regexp: >-
-                      '[sv]d[a-z]+\d*.+error'
+                      '\b[sv]d[a-z]{1,2}\d{0,3}\b.*error'
                     result: metric.hdd_errors
           push_to_metric:
             tag: 'metric.**'
