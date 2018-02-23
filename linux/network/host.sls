@@ -5,7 +5,7 @@
 
 {%- if network.mine_dns_records %}
 
-{%- for node_name, node_grains in salt['mine.get']('*', 'grains.items').iteritems() %}
+{%- for node_name, node_grains in salt['mine.get']('*', 'grains.items').items() %}
 {%- if node_grains.get('dns_records', []) is iterable %}
 {%- for record in node_grains.get('dns_records', []) %}
 {%- set record_key = node_name ~ '-' ~ loop.index %}
@@ -28,12 +28,12 @@ linux_hosts:
 
 {%- else %}
 
-{%- for name, host in host_dict.iteritems() %}
+{%- for name, host in host_dict.items() %}
 
 {%- if host.names is defined %}
 
 {%- set clearers = [] %}
-{%- for etc_addr, etc_names in salt.hosts.list_hosts().iteritems() %}
+{%- for etc_addr, etc_names in salt.hosts.list_hosts().items() %}
 {%- set names_to_clear = [] %}
 {%- for host_name in host.names %}
 {%- if (host.address != etc_addr) and host_name in etc_names %}

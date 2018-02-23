@@ -1,7 +1,7 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
-{%- for locale_name, locale in system.locale.iteritems() %}
+{%- for locale_name, locale in system.locale.items() %}
 {%- if locale.get('enabled', True) %}
 
 linux_locale_{{ locale_name }}:

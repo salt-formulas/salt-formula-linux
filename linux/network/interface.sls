@@ -53,7 +53,7 @@ remove_cloud_init_file:
 
 {%- endif %}
 
-{%- for interface_name, interface in network.interface.iteritems() %}
+{%- for interface_name, interface in network.interface.items() %}
 
 {%- set interface_name = interface.get('name', interface_name) %}
 
@@ -69,7 +69,7 @@ ovs_bridge_{{ interface_name }}:
   - name: {{ interface_name }}
 
 {# add linux network interface into OVS bridge #}
-{%- for int_name, int in network.interface.iteritems() %}
+{%- for int_name, int in network.interface.items() %}
 
 {%- set int_name = int.get('name', int_name) %}
 
@@ -340,7 +340,7 @@ linux_network_{{ interface_name }}_routes:
   network.routes:
   - name: {{ interface_name }}
   - routes:
-    {%- for route_name, route in interface.route.iteritems() %}
+    {%- for route_name, route in interface.route.items() %}
     - name: {{ route_name }}
       ipaddr: {{ route.address }}
       netmask: {{ route.netmask }}

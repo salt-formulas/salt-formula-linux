@@ -38,7 +38,7 @@ purge_sources_list_d_repos:
 
 {%- endif %}
 
-{%- for name, repo in system.repo.iteritems() %}
+{%- for name, repo in system.repo.items() %}
 {%- set name=repo.get('name', name) %}
 {%- if grains.os_family == 'Debian' %}
 
@@ -201,7 +201,7 @@ linux_repo_{{ name }}:
 {#- os_family Redhat #}
 {%- endif %}
 
-{#- repo.iteritems() loop #}
+{#- repo.items() loop #}
 {%- endfor %}
 
 {%- if default_repos|length > 0 and grains.os_family == 'Debian' %}

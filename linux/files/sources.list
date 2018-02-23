@@ -1,4 +1,4 @@
-{%- for name, repo in default_repos.iteritems() %}
+{%- for name, repo in default_repos.items() %}
 # Repository {{ name }}
 {{ repo.source }}
 {%- endfor %}

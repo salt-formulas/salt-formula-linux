@@ -1,2 +1,2 @@
 {%- from "linux/map.jinja" import system with context %}
-GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT {%- for hugepages_type, hugepages in system.kernel.hugepages.iteritems() %}{%- if hugepages.get('default', False) %} default_hugepagesz={{ hugepages.size }} {%- endif %} hugepagesz={{ hugepages.size }} hugepages={{ hugepages.count }} {%- endfor %}"
+GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT {%- for hugepages_type, hugepages in system.kernel.hugepages.items() %}{%- if hugepages.get('default', False) %} default_hugepagesz={{ hugepages.size }} {%- endif %} hugepagesz={{ hugepages.size }} hugepages={{ hugepages.count }} {%- endfor %}"

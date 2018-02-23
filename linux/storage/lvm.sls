@@ -22,7 +22,7 @@ lvm_services:
   - watch:
     - file: /etc/lvm/lvm.conf
 
-{%- for vgname, vg in storage.lvm.iteritems() %}
+{%- for vgname, vg in storage.lvm.items() %}
 
 {%- if vg.get('enabled', True) %}
 
@@ -43,7 +43,7 @@ lvm_vg_{{ vg.get('name', vgname) }}:
     - name: {{ vg.get('name', vgname) }}
     - devices: {{ vg.devices|join(',') }}
 
-{%- for lvname, volume in vg.get('volume', {}).iteritems() %}
+{%- for lvname, volume in vg.get('volume', {}).items() %}
 
 lvm_{{ vg.get('name', vgname) }}_lv_{{ volume.get('name', lvname) }}:
   lvm.lv_present:

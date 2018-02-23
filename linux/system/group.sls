@@ -7,7 +7,7 @@
   {%- endif -%}
 {%- endmacro -%}
 
-{%- for group_name, group in system.group.iteritems() %}
+{%- for group_name, group in system.group.items() %}
 
 {%- if group.enabled %}
 

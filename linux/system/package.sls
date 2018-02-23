@@ -7,7 +7,7 @@
   'removed': [],
   'installed': [],
   } %}
-{%- for name, package in system.package.iteritems() %}
+{%- for name, package in system.package.items() %}
 
   {%- if package.repo is defined or package.hold is defined or package.verify is defined %}
 linux_extra_package_{{ name }}:
@@ -47,7 +47,7 @@ linux_extra_package_{{ name }}:
 
 {%- endfor %}
 
-{%- for pkgs_group, pkgs in pkgs_groups.iteritems() %}
+{%- for pkgs_group, pkgs in pkgs_groups.items() %}
   {%- if pkgs %}
 linux_extra_packages_{{ pkgs_group }}:
   pkg.{{ pkgs_group }}:

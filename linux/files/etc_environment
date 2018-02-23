@@ -1,5 +1,5 @@
 
-{%- for name,value in variables.iteritems() if not name.lower().endswith('_proxy') %}
+{%- for name,value in variables.items() if not name.lower().endswith('_proxy') %}
 
 {%- if value is sequence and value is not string %}
 {{ name }}="{{ value|join(':') }}"

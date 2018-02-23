@@ -1,7 +1,7 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
-{%- for name, limit in system.limit.iteritems() %}
+{%- for name, limit in system.limit.items() %}
 
 linux_limit_{{ name }}:
   {%- if limit.get('enabled', True) %}

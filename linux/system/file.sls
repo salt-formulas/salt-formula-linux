@@ -1,7 +1,7 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
-{%- for file_name, file in system.file.iteritems() %}
+{%- for file_name, file in system.file.items() %}
 
 linux_file_{{ file_name }}:
   file.managed:
