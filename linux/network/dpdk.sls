@@ -128,7 +128,7 @@ linux_network_dpdk_bridge_interface_{{ interface_name }}:
         After=openvswitch-switch.service
 
 {# enforce ip address and mtu for ovs dpdk br-prv #}
-/etc/network/interfaces.d/ifcfg-{{ interface_name }}:
+/etc/network/interfaces.u/ifcfg-{{ interface_name }}:
   file.managed:
     - contents: |
         auto {{ interface_name }}
@@ -138,6 +138,7 @@ linux_network_dpdk_bridge_interface_{{ interface_name }}:
         {%- if interface.mtu is defined %}
         mtu {{ interface.mtu }}
         {%- endif %}
+    - makedirs: True
     - require:
       - file: /etc/systemd/system/ifup@{{ interface_name }}.service.d/override.conf
 
