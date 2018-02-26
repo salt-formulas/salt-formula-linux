@@ -3,7 +3,7 @@
 
 {%- if system.console is defined %}
 
-{%- for tty_name, console in system.console.iteritems() %}
+{%- for tty_name, console in system.console.items() %}
 
 {%- if grains.get('init', None) == 'upstart' %}
 {{ tty_name }}_service_file:

@@ -31,7 +31,7 @@
         'ip6-allhosts'
     ],
 } -%}
-{%- for name, host in host_dict.iteritems() -%}
+{%- for name, host in host_dict.items() -%}
 {%- for hname in host.names -%}
 {%- if hname in hosts.get('127.0.1.1', []) -%}
 {%- do hosts.pop('127.0.1.1') -%}

@@ -7,7 +7,7 @@ include:
 - linux.system.repo
 {%- endif %}
 
-{%- for key, config in system.apt.get('config', {}).iteritems() %}
+{%- for key, config in system.apt.get('config', {}).items() %}
 
 linux_apt_conf_{{ key }}:
   file.managed:

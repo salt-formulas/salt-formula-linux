@@ -1,7 +1,7 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
-{%- for name, service in system.service.iteritems() %}
+{%- for name, service in system.service.items() %}
 
 linux_service_{{ name }}:
   service.{{ service.status }}:

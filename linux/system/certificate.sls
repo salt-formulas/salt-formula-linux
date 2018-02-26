@@ -8,7 +8,7 @@ linux_system_ca_certificates:
     - name: ca-certificates
 {%- if system.ca_certificates is mapping %}
 
-{%- for name, cert in system.ca_certificates.iteritems() %}
+{%- for name, cert in system.ca_certificates.items() %}
 {{ system.ca_certs_dir }}/{{ name }}.crt:
   file.managed:
   - contents_pillar: "linux:system:ca_certificates:{{ name }}"

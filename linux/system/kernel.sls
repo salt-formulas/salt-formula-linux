@@ -56,7 +56,7 @@ linux_kernel_module_{{ module }}:
 
 {%- endfor %}
 
-{%- for module_name, module_content in system.kernel.get('module', {}).iteritems() %}
+{%- for module_name, module_content in system.kernel.get('module', {}).items() %}
 
 /etc/modprobe.d/{{ module_name }}.conf:
   file.managed:
@@ -71,7 +71,7 @@ linux_kernel_module_{{ module }}:
 
 {%- endfor %}
 
-{%- for sysctl_name, sysctl_value in system.kernel.get('sysctl', {}).iteritems() %}
+{%- for sysctl_name, sysctl_value in system.kernel.get('sysctl', {}).items() %}
 
 linux_kernel_{{ sysctl_name }}:
   sysctl.present:

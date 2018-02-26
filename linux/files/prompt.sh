@@ -6,7 +6,7 @@
 # Don't set prompt on non-interactive shell
 [[ $- == *i* ]] || return 0
 
-{%- for user, prompt in system.prompt.iteritems() %}
+{%- for user, prompt in system.prompt.items() %}
 {% if user != "default" %}
 if [ "$USERNAME" == "{{ user }}" ]; then
   export PS1="{{ prompt }} "

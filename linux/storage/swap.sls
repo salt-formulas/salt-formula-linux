@@ -1,7 +1,7 @@
 {%- from "linux/map.jinja" import storage with context %}
 {%- if storage.enabled %}
 
-{%- for swap_name, swap in storage.swap.iteritems() %}
+{%- for swap_name, swap in storage.swap.items() %}
 
 {%- if swap.enabled %}
 

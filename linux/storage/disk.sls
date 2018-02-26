@@ -7,7 +7,7 @@ parted:
 xfsprogs:
   pkg.installed
 
-{%- for disk_name, disk in storage.disk.iteritems() %}
+{%- for disk_name, disk in storage.disk.items() %}
 {%- set disk_name = disk.name|default(disk_name) %}
 
 create_disk_label_{{ disk_name }}:

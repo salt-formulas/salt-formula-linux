@@ -9,7 +9,7 @@ profile.d_clean:
 
 {%- if system.profile|length > 0 %}
 
-{%- for name, script in system.profile.iteritems() %}
+{%- for name, script in system.profile.items() %}
 profile.d_script_{{ name  }}:
     file.managed:
     - name: /etc/profile.d/salt_profile_{{ name }}{%if name.split('.')|length == 1 %}.sh{% endif %}

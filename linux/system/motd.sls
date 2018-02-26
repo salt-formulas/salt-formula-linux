@@ -36,7 +36,7 @@ motd_fix_pam_sshd:
 {%- for motd in system.motd %}
 {%- set motd_index = loop.index %}
 
-{%- for name, value in motd.iteritems() %}
+{%- for name, value in motd.items() %}
 motd_{{ motd_index }}_{{ name }}:
   file.managed:
     - name: /etc/update-motd.d/5{{ motd_index }}-{{ name }}

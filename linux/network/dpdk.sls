@@ -82,19 +82,19 @@ service_openvswitch:
 
 {%- endif %}
 
-{%- for interface_name, interface in network.interface.iteritems() if interface.get('enabled', True) %}
+{%- for interface_name, interface in network.interface.items() if interface.get('enabled', True) %}
 
   {%- if interface.type == "dpdk_ovs_bond" %}
 
     {%- set bond_interfaces = {} %}
-    {%- for iface_name, iface in network.interface.iteritems() if iface.get('enabled', True) and iface.get('bond',"") == interface_name %}
+    {%- for iface_name, iface in network.interface.items() if iface.get('enabled', True) and iface.get('bond',"") == interface_name %}
       {#- Get list of child interfaces #}
       {%- do bond_interfaces.update({iface_name: iface}) %}
     {%- endfor %}
 
 linux_network_dpdk_bond_interface_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl add-bond {{ interface.bridge }} {{ interface_name }} {{ bond_interfaces.keys()|join(' ') }} {% for iface_name, iface in bond_interfaces.iteritems() %}-- set Interface {{ iface_name }} type=dpdk options:dpdk-devargs={{ iface.pci }} {% endfor %}"
+    - name: "ovs-vsctl add-bond {{ interface.bridge }} {{ interface_name }} {{ bond_interfaces.keys()|join(' ') }} {% for iface_name, iface in bond_interfaces.items() %}-- set Interface {{ iface_name }} type=dpdk options:dpdk-devargs={{ iface.pci }} {% endfor %}"
     - unless: "ovs-vsctl show | grep {{ interface_name }}"
     - require:
         - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}

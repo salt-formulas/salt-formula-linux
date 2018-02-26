@@ -17,7 +17,7 @@ include:
 
 {%- endif %}
 
-{%- for hugepages_type, hugepages in system.kernel.hugepages.iteritems() %}
+{%- for hugepages_type, hugepages in system.kernel.hugepages.items() %}
 
 {%- if hugepages.get('mount', False) or hugepages.get('default', False) %}
 

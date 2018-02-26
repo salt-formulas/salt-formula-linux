@@ -24,7 +24,7 @@
     - template: jinja
 
 {% if system.netconsole is mapping and system.netconsole.target is mapping %}
-{% for target, data in system.netconsole.target.iteritems() %}
+{% for target, data in system.netconsole.target.items() %}
 {% if data is mapping and data.interface is defined %}
 /etc/network/if-up.d/netconsole {{ target }} {{ data.interface }}:
   cmd.run:

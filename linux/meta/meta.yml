@@ -6,7 +6,7 @@ graph:
   type: software-system
   relations:
   {%- if system.repo is defined %}
-  {%- for repo_name, repo in system.repo.iteritems() %}
+  {%- for repo_name, repo in system.repo.items() %}
   {%- if repo.get('enabled', True) %}
   - service: apt.repo
     host_external: {{ repo.source }}

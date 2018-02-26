@@ -2,7 +2,7 @@
 {%- if network.enabled and grains.get('init', None) == 'systemd' %}
 
 {%- if network.systemd is mapping %}
-{%- for config_type, configs in network.systemd.iteritems() %}
+{%- for config_type, configs in network.systemd.items() %}
 
 {%- if config_type == 'link' %}
 /etc/udev/rules.d/80-net-setup-link.rules:
@@ -11,7 +11,7 @@
     - content: ""
 {%- endif %}
 
-{%- for config_name, config in configs.iteritems() %}
+{%- for config_name, config in configs.items() %}
 linux_network_systemd_networkd_{{ config_type }}_config_{{ config_name }}:
   file.managed:
     - name: /etc/systemd/network/{{ config_name }}.{{ config_type }}

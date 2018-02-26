@@ -11,7 +11,7 @@ linux_sysfs_package:
     - require:
       - pkg: linux_sysfs_package
 
-{%- for name, sysfs in system.get('sysfs', {}).iteritems() %}
+{%- for name, sysfs in system.get('sysfs', {}).items() %}
 
 /etc/sysfs.d/{{ name }}.conf:
   file.managed:
@@ -26,7 +26,7 @@ linux_sysfs_package:
     - require:
       - file: /etc/sysfs.d
 
-  {%- for key, value in sysfs.iteritems() %}
+  {%- for key, value in sysfs.items() %}
     {%- if key not in ["mode", "owner"] %}
       {%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
       {#- Sysfs cannot be set in docker, LXC, etc. #}

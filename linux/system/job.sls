@@ -4,7 +4,7 @@
 include:
 - linux.system.user
 
-{%- for name, job in system.job.iteritems() %}
+{%- for name, job in system.job.items() %}
 
 linux_job_{{ job.command }}:
   {%- if job.enabled|default(True) %}

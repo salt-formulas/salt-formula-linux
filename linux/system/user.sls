@@ -4,7 +4,7 @@
 include:
   - linux.system.group
 
-{%- for name, user in system.user.iteritems() %}
+{%- for name, user in system.user.items() %}
 
 {%- if user.enabled %}
 
