@@ -73,6 +73,15 @@ linux_network_dpdk_ovs_option_{{ option }}:
 
 {%- endfor %}
 
+openvswitch_dpdk_ovs_alternative:
+  alternatives.remove:
+  - name: ovs-vswitchd
+  - path: /usr/lib/openvswitch-switch/ovs-vswitchd
+  - require:
+    - pkg: openvswitch_dpdk_pkgs
+  - watch_in:
+    - service: service_openvswitch
+
 service_openvswitch:
   service.running:
   - name: openvswitch-switch
