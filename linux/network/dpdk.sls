@@ -9,6 +9,7 @@ linux_dpdk_pkgs:
 linux_dpdk_kernel_module:
   kmod.present:
   - name: {{ network.dpdk.driver }}
+  - persist: true
   - require:
     - pkg: linux_dpdk_pkgs
   - require_in:
