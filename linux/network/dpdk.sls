@@ -9,6 +9,7 @@ linux_dpdk_pkgs:
 linux_dpdk_kernel_module:
   kmod.present:
   - name: {{ network.dpdk.driver }}
+  - persist: true
   - require:
     - pkg: linux_dpdk_pkgs
   - require_in:
@@ -72,6 +73,15 @@ linux_network_dpdk_ovs_option_{{ option }}:
       ovs-vsctl get Open_vSwitch . other_config | grep '{{ option }}'
 
 {%- endfor %}
+
+openvswitch_dpdk_ovs_alternative:
+  alternatives.remove:
+  - name: ovs-vswitchd
+  - path: /usr/lib/openvswitch-switch/ovs-vswitchd
+  - require:
+    - pkg: openvswitch_dpdk_pkgs
+  - watch_in:
+    - service: service_openvswitch
 
 service_openvswitch:
   service.running:

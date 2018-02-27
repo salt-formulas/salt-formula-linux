@@ -29,6 +29,13 @@ hugepages_mount_{{ hugepages_type }}:
     - mkmnt: true
     - opts: mode=775,pagesize={{ hugepages.size }}
 
+# Make hugepages available right away with a temporary systctl write
+# This will be handled via krn args after reboot, so don't use `sysctl.present`
+hugepages_sysctl_vm_nr_hugepages:
+  cmd.run:
+    - name: "sysctl vm.nr_hugepages={{ hugepages.count }}"
+    - unless: "sysctl vm.nr_hugepages | grep -qE '{{ hugepages.count }}'"
+
 {%- endif %}
 
 {%- endfor %}
