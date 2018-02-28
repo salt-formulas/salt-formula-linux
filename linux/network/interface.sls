@@ -2,6 +2,11 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if network.enabled %}
 
+{%- if network.get('dpdk', {}).get('enabled', False) %}
+include:
+- linux.network.dpdk
+{%- endif %}
+
 {%- macro set_param(param_name, param_dict) -%}
 {%- if param_dict.get(param_name, False) -%}
 - {{ param_name }}: {{ param_dict[param_name] }}
@@ -93,7 +98,11 @@ ovs_port_{{ interface_name }}:
   - name: {{ interface_name }}
   - bridge: {{ interface.bridge }}
   - require:
+    {%- if network.interface.get(interface.bridge, {}).get('type', 'ovs_bridge') == 'dpdk_ovs_bridge' %}
+    - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
+    {%- else %}
     - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}
+    {%- endif %}
 
 ovs_port_set_type_{{ interface_name }}:
   cmd.run:
