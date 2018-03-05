@@ -29,9 +29,9 @@ verifier:
   sudo: true
 
 platforms:
-  - name: <%=ENV['PLATFORM'] || 'ubuntu-xenial-2017.7'%>
+  - name: <%=ENV['PLATFORM'] ||  'saltstack-ubuntu-xenial-salt-stable' %>
     driver_config:
-      image: <%=ENV['PLATFORM'] || 'trevorj/salty-whales:xenial-2017.7'%>
+      image: <%=ENV['PLATFORM'] || 'epcim/salt-formulas:saltstack-ubuntu-xenial-salt-stable'%>
       platform: ubuntu
 
 

@@ -204,10 +204,10 @@ linux:
         key_url: http://apt-mk.mirantis.com/public.gpg
         architectures: amd64
     locale:
-      en_US.UTF-8:
+      en_US:
         enabled: true
         default: true
-      "cs_CZ.UTF-8 UTF-8":
+      cs_CZ:
         enabled: true
     autoupdates:
       enabled: true
