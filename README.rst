@@ -1496,6 +1496,25 @@ If VXLAN is used as tenant segmentation then ip address must be set on br-prv
             tag: 101
             mtu: 9000
 
+
+
+**DPDK OVS bridge with Linux network interface**
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        ...
+        interface:
+          eth0:
+            type: eth
+            ovs_bridge: br-prv
+            ...
+          br-prv:
+            enabled: true
+            type: dpdk_ovs_bridge
+            ...
+
 Linux storage
 -------------
 

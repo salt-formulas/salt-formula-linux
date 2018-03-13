@@ -20,6 +20,11 @@ linux:
         name: "openvswitch-vhost"
         path: "/run/openvswitch-vhost"
     interface:
+      eth0:
+        enabled: true
+        type: eth
+        proto: manual
+        ovs_bridge: br-prv
       dpdk0:
         name: enp5s0f1
         pci: "0000:05:00.1"

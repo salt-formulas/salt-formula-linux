@@ -62,6 +62,25 @@ remove_cloud_init_file:
 
 {%- set interface_name = interface.get('name', interface_name) %}
 
+{# add linux network interface into OVS dpdk bridge #}
+
+{%- if interface.type == 'dpdk_ovs_bridge' %}
+
+{%- for int_name, int in network.interface.items() %}
+
+{%- set int_name = int.get('name', int_name) %}
+
+{%- if int.ovs_bridge is defined and interface_name == int.ovs_bridge %}
+
+add_int_{{ int_name }}_to_ovs_dpdk_bridge_{{ interface_name }}:
+  cmd.run:
+    - unless: ovs-vsctl show | grep -w {{ int_name }}
+    - name: ovs-vsctl add-port {{ interface_name }} {{ int_name }}
+
+{%- endif %}
+{%- endfor %}
+{%- endif %}
+
 {# it is not used for any interface with type preffix dpdk,eg. dpdk_ovs_port #}
 {%- if interface.get('managed', True) and not 'dpdk' in interface.type %}
 
