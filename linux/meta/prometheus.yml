@@ -142,3 +142,25 @@ server:
       annotations:
         summary: 'Swap output throughput too high on {{ $labels.host }}'
         description: 'The rate of swap output bytes is too high on node {{ $labels.host }} (current value={{ $value }}b/s, threshold={% endraw %}{{ swap_out_threshold }}b/s).'
+{%- if monitoring.bond_status.interfaces is defined and monitoring.bond_status.interfaces %}
+    BondInterfaceDown:
+      if: 'bond_status < 1'
+      {% raw %}
+      labels:
+        severity: critical
+        service: system
+      annotations:
+        summary: 'Bond status interface {{ $labels.bond }} is DOWN on {{ $labels.host }}'
+        description: 'The bond interface ({{ $labels.bond }) has all ifaces in a down state on {{ $labels.host }}.'
+      {% endraw %}
+    BondSlaveInterfaceStatus:
+      if: 'bond_slave_status < 1'
+      {% raw %}
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: 'Bond slave interface {{ $labels.interface }} is DOWN on {{ $labels.host }} for {{ $labels.bond }}'
+        description: 'The bond slave interface ({{ $labels.interface }) is in DOWN state for {{ $labels.bond }} on {{ $labels.host }}.'
+      {% endraw %}
+{%- endif %}
