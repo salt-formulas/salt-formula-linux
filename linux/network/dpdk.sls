@@ -111,7 +111,7 @@ linux_network_dpdk_bond_interface_{{ interface_name }}:
 
 linux_network_dpdk_bond_mode_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl set port {{ interface_name }} bond_mode={{ interface.mode }}"
+    - name: "ovs-vsctl set port {{ interface_name }} bond_mode={{ interface.mode }}{%- if interface.mode == 'balance-slb' %} lacp=active{%- endif %}"
     - unless: "ovs-appctl bond/show {{ interface_name }} | grep {{ interface.mode }}"
     - require:
         - cmd: linux_network_dpdk_bond_interface_{{ interface_name }}

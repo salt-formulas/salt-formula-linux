@@ -1478,6 +1478,60 @@ DPDK OVS interfaces
             enabled: true
             type: dpdk_ovs_bridge
 
+**DPDK OVS LACP Bond with vlan tag**
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        bridge: openvswitch
+        dpdk:
+          enabled: true
+          driver: uio
+        openvswitch:
+          pmd_cpu_mask: "0x6"
+          dpdk_socket_mem: "1024,1024"
+          dpdk_lcore_mask: "0x400"
+          memory_channels: "2"
+        interface:
+          eth3:
+            enabled: true
+            type: eth
+            proto: manual
+            name: ${_param:tenant_first_nic}
+          eth4:
+            enabled: true
+            type: eth
+            proto: manual
+            name: ${_param:tenant_second_nic}
+          dpdk0:
+            name: ${_param:tenant_first_nic}
+            pci: "0000:81:00.0"
+            driver: igb_uio
+            bond: bond1
+            enabled: true
+            type: dpdk_ovs_port
+            n_rxq: 2
+          dpdk1:
+            name: ${_param:tenant_second_nic}
+            pci: "0000:81:00.1"
+            driver: igb_uio
+            bond: bond1
+            enabled: true
+            type: dpdk_ovs_port
+            n_rxq: 2
+          bond1:
+            enabled: true
+            bridge: br-prv
+            type: dpdk_ovs_bond
+            mode: balance-slb
+          br-prv:
+            enabled: true
+            type: dpdk_ovs_bridge
+            tag: ${_param:tenant_vlan}
+            address: ${_param:tenant_address}
+            netmask: ${_param:tenant_network_netmask}
+
 **DPDK OVS bridge for VXLAN**
 
 If VXLAN is used as tenant segmentation then ip address must be set on br-prv

@@ -34,14 +34,39 @@ linux:
         bond: dpdkbond0
         enabled: true
         type: dpdk_ovs_port
+      dpdk2:
+        name: enp6s0f1
+        pci: "0000:06:00.1"
+        driver: igb_uio
+        bond: dpdkbond1
+        enabled: true
+        type: dpdk_ovs_port
+      dpdk3:
+        name: enp6s0f2
+        pci: "0000:06:00.2"
+        driver: igb_uio
+        bond: dpdkbond1
+        enabled: true
+        type: dpdk_ovs_port
       dpdkbond0:
         enabled: true
         bridge: br-prv
         type: dpdk_ovs_bond
         mode: active-backup
+      dpdkbond1:
+        enabled: true
+        bridge: br-mesh
+        type: dpdk_ovs_bond
+        mode: balance-slb
       br-prv:
         enabled: true
         type: dpdk_ovs_bridge
+      br-mesh:
+        tag: 1302
+        enabled: true
+        type: dpdk_ovs_bridge
+        address: 1.2.3.4
+        netmask: 255.255.255.252
       dummy0:
         enabled: true
         name: dummy0
