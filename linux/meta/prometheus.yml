@@ -153,6 +153,16 @@ server:
         summary: 'Bond status interface {{ $labels.bond }} is DOWN on {{ $labels.host }}'
         description: 'The bond interface ({{ $labels.bond }) has all ifaces in a down state on {{ $labels.host }}.'
       {% endraw %}
+    BondSlaveInterfacesMinimum:
+      if: '(sum(bond_slave_status) BY (bond,host)) / (count(bond_slave_status) BY (bond,host)) <= 0.5'
+      {% raw %}
+      labels:
+        severity: critical
+        service: system
+      annotations:
+        summary: 'At least half of Bond slave interfaces {{ $labels.bond }} are DOWN on {{ $labels.host }}'
+        description: 'The bond interface ({{ $labels.bond }) has at least half of slave ifaces in a down state on {{ $labels.host }}.'
+      {% endraw %}
     BondSlaveInterfaceStatus:
       if: 'bond_slave_status < 1'
       {% raw %}
