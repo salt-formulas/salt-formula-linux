@@ -1,3 +1,4 @@
+{%- from "linux/map.jinja" import monitoring with context %}
 dashboard:
   linux_prometheus:
     datasource: prometheus
@@ -7,3 +8,9 @@ dashboard:
     datasource: influxdb
     format: json
     template: linux/files/grafana_dashboards/system_influxdb.json
+{%- if monitoring.bond_status.interfaces is defined and monitoring.bond_status.interfaces %}
+  linux_bond:
+    datasource: prometheus
+    format: json
+    template: linux/files/grafana_dashboards/bond_prometheus.json
+{%- endif %}
