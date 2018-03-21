@@ -64,7 +64,7 @@ linux_network_dpdk_ovs_service:
 
 linux_network_dpdk_ovs_option_{{ option }}:
   cmd.run:
-  - name: 'ovs-vsctl set Open_vSwitch . other_config:{{ option }}'
+  - name: 'ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set Open_vSwitch . other_config:{{ option }}'
   - watch_in:
     - service: service_openvswitch
   - require:
@@ -104,14 +104,14 @@ service_openvswitch:
 
 linux_network_dpdk_bond_interface_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl add-bond {{ interface.bridge }} {{ interface_name }} {{ bond_interfaces.keys()|join(' ') }} {% for iface_name, iface in bond_interfaces.items() %}-- set Interface {{ iface_name }} type=dpdk options:dpdk-devargs={{ iface.pci }} {% endfor %}"
+    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-bond {{ interface.bridge }} {{ interface_name }} {{ bond_interfaces.keys()|join(' ') }} {% for iface_name, iface in bond_interfaces.items() %}-- set Interface {{ iface_name }} type=dpdk options:dpdk-devargs={{ iface.pci }} {% endfor %}"
     - unless: "ovs-vsctl show | grep {{ interface_name }}"
     - require:
         - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
 
 linux_network_dpdk_bond_mode_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl set port {{ interface_name }} bond_mode={{ interface.mode }}{%- if interface.mode == 'balance-slb' %} lacp=active{%- endif %}"
+    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set port {{ interface_name }} bond_mode={{ interface.mode }}{%- if interface.mode == 'balance-slb' %} lacp=active{%- endif %}"
     - unless: "ovs-appctl bond/show {{ interface_name }} | grep {{ interface.mode }}"
     - require:
         - cmd: linux_network_dpdk_bond_interface_{{ interface_name }}
@@ -120,7 +120,7 @@ linux_network_dpdk_bond_mode_{{ interface_name }}:
 
 linux_network_dpdk_bridge_interface_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl add-br {{ interface_name }} -- set bridge {{ interface_name }} datapath_type=netdev{% if interface.tag is defined %} -- set port {{ interface_name }} tag={{ interface.tag }}{% endif %}"
+    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-br {{ interface_name }} -- set bridge {{ interface_name }} datapath_type=netdev{% if interface.tag is defined %} -- set port {{ interface_name }} tag={{ interface.tag }}{% endif %}"
     - unless: "ovs-vsctl show | grep {{ interface_name }}"
 
     {# OVS dpdk needs ip address for vxlan termination on bridge br-prv #}
@@ -157,7 +157,7 @@ linux_network_dpdk_bridge_interface_{{ interface_name }}:
 
 linux_network_dpdk_bridge_port_interface_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl add-port {{ interface.bridge }} dpdk0 -- set Interface dpdk0 type=dpdk options:dpdk-devargs={{ interface.pci }}"
+    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-port {{ interface.bridge }} dpdk0 -- set Interface dpdk0 type=dpdk options:dpdk-devargs={{ interface.pci }}"
     - unless: "ovs-vsctl show | grep dpdk0"
     - require:
       - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
@@ -171,7 +171,7 @@ linux_network_dpdk_bridge_port_interface_{{ interface_name }}:
 
 linux_network_dpdk_bridge_port_interface_n_rxq_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl set Interface {{ interface_name }} options:n_rxq={{ interface.n_rxq }} "
+    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set Interface {{ interface_name }} options:n_rxq={{ interface.n_rxq }} "
     - unless: |
         ovs-vsctl get Interface {{ interface_name }} options | grep 'n_rxq="{{ interface.n_rxq }}"'
 
@@ -181,7 +181,7 @@ linux_network_dpdk_bridge_port_interface_n_rxq_{{ interface_name }}:
 
 linux_network_dpdk_bridge_port_interface_pmd_rxq_affinity_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl set Interface {{ interface_name }} other_config:pmd-rxq-affinity={{ interface.pmd_rxq_affinity }} "
+    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set Interface {{ interface_name }} other_config:pmd-rxq-affinity={{ interface.pmd_rxq_affinity }} "
     - unless: |
         ovs-vsctl get Interface {{ interface_name }} other_config | grep 'pmd-rxq-affinity="{{ interface.pmd_rxq_affinity }}"'
 
@@ -192,7 +192,7 @@ linux_network_dpdk_bridge_port_interface_pmd_rxq_affinity_{{ interface_name }}:
 {# MTU ovs dpdk setup on interfaces #}
 linux_network_dpdk_bridge_port_interface_mtu_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl set Interface {{ interface_name }} mtu_request={{ interface.mtu }} "
+    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set Interface {{ interface_name }} mtu_request={{ interface.mtu }} "
     - unless: "ovs-vsctl get Interface {{ interface_name }} mtu_request | grep {{ interface.mtu }}"
 
   {%- endif %}

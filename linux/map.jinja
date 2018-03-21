@@ -177,6 +177,7 @@
         'host': {},
         'mine_dns_records': False,
         'dhclient_config': '/etc/dhcp/dhclient.conf',
+        'ovs_nowait': False,
     },
     'Debian': {
         'pkgs': ['ifenslave'],
@@ -195,6 +196,7 @@
         'host': {},
         'mine_dns_records': False,
         'dhclient_config': '/etc/dhcp/dhclient.conf',
+        'ovs_nowait': False,
     },
     'RedHat': {
         'pkgs': ['iputils'],
@@ -212,6 +214,7 @@
         'host': {},
         'mine_dns_records': False,
         'dhclient_config': '/etc/dhcp/dhclient.conf',
+        'ovs_nowait': False,
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:network')) %}
 

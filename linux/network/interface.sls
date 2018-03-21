@@ -75,7 +75,7 @@ remove_cloud_init_file:
 add_int_{{ int_name }}_to_ovs_dpdk_bridge_{{ interface_name }}:
   cmd.run:
     - unless: ovs-vsctl show | grep -w {{ int_name }}
-    - name: ovs-vsctl add-port {{ interface_name }} {{ int_name }}
+    - name: ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-port {{ interface_name }} {{ int_name }}
 
 {%- endif %}
 {%- endfor %}
@@ -102,7 +102,7 @@ ovs_bridge_{{ interface_name }}:
 add_int_{{ int_name }}_to_ovs_bridge_{{ interface_name }}:
   cmd.run:
     - unless: ovs-vsctl show | grep {{ int_name }}
-    - name: ovs-vsctl add-port {{ interface_name }} {{ int_name }}
+    - name: ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-port {{ interface_name }} {{ int_name }}
 
 {%- endif %}
 
@@ -125,12 +125,12 @@ ovs_port_{{ interface_name }}:
 
 ovs_port_set_type_{{ interface_name }}:
   cmd.run:
-  - name: ovs-vsctl set interface {{ interface_name }} type=patch
+  - name: ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set interface {{ interface_name }} type=patch
   - unless: ovs-vsctl show | grep -A 1 'Interface {{ interface_name }}' | grep patch
 
 ovs_port_set_peer_{{ interface_name }}:
   cmd.run:
-  - name: ovs-vsctl set interface {{ interface_name }} options:peer={{ interface.peer }}
+  - name: ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set interface {{ interface_name }} options:peer={{ interface.peer }}
   - unless: ovs-vsctl show | grep -A 2 'Interface {{ interface_name }}' | grep {{ interface.peer }}
 
 {%- else %}
