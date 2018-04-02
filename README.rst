@@ -825,8 +825,27 @@ default).
 Message of the day
 ~~~~~~~~~~~~~~~~~~
 
-``pam_motd`` from package ``update-motd`` is used for dynamic messages of the
+``pam_motd`` from package ``libpam-modules`` is used for dynamic messages of the
 day. Setting custom motd will cleanup existing ones.
+
+Setting static motd will replace existing ``/etc/motd`` and remove scripts from
+``/etc/update-motd.d``.
+
+Setting static motd:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        motd: |
+          UNAUTHORIZED ACCESS TO THIS SYSTEM IS PROHIBITED
+
+          You must have explicit, authorized permission to access or configure this
+          device. Unauthorized attempts and actions to access or use this system may
+          result in civil and/or criminal penalties.
+          All activities performed on this system are logged and monitored.
+
+Setting dynamic motd:
 
 .. code-block:: yaml
 
