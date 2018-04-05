@@ -7,6 +7,10 @@
 
 {%- if grains.os_family == 'Debian' %}
 
+linux_auth_ldap_debconf_package:
+  pkg.installed:
+  - pkgs: [ 'debconf-utils' ]
+
 linux_auth_debconf_libnss-ldapd:
   debconf.set:
     - name: libnss-ldapd
@@ -19,6 +23,8 @@ linux_auth_debconf_libnss-ldapd:
           value: 'false'
     - require_in:
       - pkg: linux_auth_ldap_packages
+    - require:
+      - pkg: linux_auth_ldap_debconf_package
 
 linux_auth_debconf_libpam-ldapd:
   debconf.set:
