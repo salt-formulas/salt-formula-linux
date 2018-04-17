@@ -159,7 +159,7 @@
     'arp_ip_target',
     'primary',
 ] %}
-
+{% set debian_headers = "linux-headers-" + grains.get('kernelrelease')|string %}
 {% set network = salt['grains.filter_by']({
     'Arch': {
         'pkgs': ['wpa_supplicant', 'dhclient', 'wireless_tools', 'ifenslave'],
@@ -184,7 +184,7 @@
         'hostname_file': '/etc/hostname',
         'bridge_pkgs': ['bridge-utils'],
         'ovs_pkgs': ['openvswitch-switch', 'bridge-utils'],
-        'dpdk_pkgs': ['dpdk', 'dpdk-dev', 'dpdk-igb-uio-dkms', 'dpdk-rte-kni-dkms'],
+        'dpdk_pkgs': ['dpdk', 'dpdk-dev', 'dpdk-igb-uio-dkms', 'dpdk-rte-kni-dkms', debian_headers.encode('utf8') ],
         'network_manager': False,
         'systemd': {},
         'interface': {},
