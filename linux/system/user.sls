@@ -29,7 +29,7 @@ system_user_{{ name }}:
   - password: {{ user.password }}
   - hash_password: {{ user.get('hash_password', False) }}
   {% endif %}
-  - gid_from_name: true
+  - gid_from_name: false
   {%- if user.groups is defined %}
   - groups: {{ user.groups }}
   {%- endif %}
