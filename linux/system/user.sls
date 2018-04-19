@@ -15,6 +15,14 @@ include:
   {%- endif %}
 {%- endfor %}
 
+{%- if user.gid is not defined %}
+system_group_{{ name }}:
+  group.present:
+  - name: {{ name }}
+  - require_in:
+    - user: system_user_{{ name }}
+{%- endif %}
+
 system_user_{{ name }}:
   user.present:
   - name: {{ name }}
@@ -29,7 +37,7 @@ system_user_{{ name }}:
   - password: {{ user.password }}
   - hash_password: {{ user.get('hash_password', False) }}
   {% endif %}
-  - gid_from_name: false
+  - gid_from_name: true
   {%- if user.groups is defined %}
   - groups: {{ user.groups }}
   {%- endif %}
@@ -71,7 +79,7 @@ system_user_home_{{ user.home }}:
 
 /etc/sudoers.d/90-salt-user-{{ name|replace('.', '-') }}:
   file.absent
-  
+
 {%- endif %}
 
 {%- else %}
