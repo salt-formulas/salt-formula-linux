@@ -1,26 +1,18 @@
 {%- from "linux/map.jinja" import system with context %}
-{%- if system.enabled %}
+{%- if system.enabled and system.motd|length > 0 %}
 
-{%- if grains.os_family == 'RedHat' %}
+/etc/update-motd.d:
+  file.directory:
+    - clean: true
 
-{#- update-motd is not available in RedHat, so support only static motd #}
+{%- if system.motd is string %}
+
+{#- Set static motd only #}
 /etc/motd:
   file.managed:
     - contents_pillar: linux:system:motd
 
 {%- else %}
-
-{%- if grains.os == 'Ubuntu' %}
-package_update_motd:
-  pkg.installed:
-    - name: update-motd
-    - require_in:
-      - file: /etc/update-motd.d
-{%- endif %}
-
-/etc/update-motd.d:
-  file.directory:
-    - clean: true
 
 {%- if grains.oscodename == "jessie" %}
 motd_fix_pam_sshd:
