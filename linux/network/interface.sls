@@ -249,25 +249,6 @@ linux_interface_{{ interface_name }}:
   - mode: {{ interface.mode }}
   {%- endif %}
 
-{%- if interface.get('ipflush_onchange', False) %}
-
-linux_interface_ipflush_onchange_{{ interface_name }}:
-  cmd.run:
-  - name: "/sbin/ip address flush dev {{ interface_name }}"
-  - onchanges:
-    - network: linux_interface_{{ interface_name }}
-
-{%- if interface.get('restart_on_ipflush', False) %}
-
-linux_interface_restart_on_ipflush_{{ interface_name }}:
-  cmd.run:
-  - name: "ifdown {{ interface_name }}; ifup {{ interface_name }};"
-  - onchanges:
-    - cmd: linux_interface_ipflush_onchange_{{ interface_name }}
-
-{%- endif %}
-
-{%- endif %}
 
 {%- if salt['grains.get']('saltversion') < '2017.7' %}
 # TODO(ddmitriev): Remove this 'if .. endif' block completely when
@@ -376,6 +357,34 @@ linux_network_{{ interface_name }}_routes:
       gateway: {{ route.gateway }}
       {%- endif %}
     {%- endfor %}
+
+{%- endif %}
+
+{%- if interface.type in ('eth','ovs_port') %}
+{%- if interface.get('ipflush_onchange', False) %}
+
+linux_interface_ipflush_onchange_{{ interface_name }}:
+  cmd.run:
+  - name: "/sbin/ip address flush dev {{ interface_name }}"
+{%- if interface.type == 'eth' %}
+  - onchanges:
+    - network: linux_interface_{{ interface_name }}
+{%- elif interface.type == 'ovs_port' %}
+  - onchanges:
+    - file: ovs_port_{{ interface_name }}
+{%- endif %}
+
+{%- if interface.get('restart_on_ipflush', False) %}
+
+linux_interface_restart_on_ipflush_{{ interface_name }}:
+  cmd.run:
+  - name: "ifdown {{ interface_name }}; ifup {{ interface_name }};"
+  - onchanges:
+    - cmd: linux_interface_ipflush_onchange_{{ interface_name }}
+
+{%- endif %}
+
+{%- endif %}
 
 {%- endif %}
 
