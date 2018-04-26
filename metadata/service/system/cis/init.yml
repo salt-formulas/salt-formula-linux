@@ -1,6 +1,11 @@
 classes:
 - service.linux.system.cis.cis-1-5-1
 - service.linux.system.cis.cis-1-5-3
+- service.linux.system.cis.cis-1-5-4
+- service.linux.system.cis.cis-2-3-1
+- service.linux.system.cis.cis-2-3-2
+- service.linux.system.cis.cis-2-3-3
+- service.linux.system.cis.cis-2-3-4
 - service.linux.system.cis.cis-3-1-2
 - service.linux.system.cis.cis-3-2-1
 - service.linux.system.cis.cis-3-2-2
