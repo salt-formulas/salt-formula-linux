@@ -85,6 +85,12 @@
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:system')) %}
 
+{% set banner = salt['grains.filter_by']({
+    'BaseDefaults': {
+        'enabled': false,
+    },
+}, grain='os_family', merge=salt['pillar.get']('linux:system:banner'), base='BaseDefaults') %}
+
 {% set auth = salt['grains.filter_by']({
     'Arch': {
         'enabled': false,

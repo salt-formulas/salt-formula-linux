@@ -114,3 +114,6 @@ include:
 {%- if system.auth is defined %}
 - linux.system.auth
 {%- endif %}
+{%- if system.banner is defined %}
+- linux.system.banner
+{%- endif %}

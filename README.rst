@@ -822,6 +822,30 @@ default).
         bash:
           preserve_history: true
 
+Login banner message
+~~~~~~~~~~~~~~~~~~~~
+
+/etc/issue is a text file which contains a message or system
+identification to be printed before the login prompt.  It may contain
+various @char and \char sequences, if supported by the getty-type
+program employed on the system.
+
+Setting logon banner message is easy:
+
+.. code-block:: yaml
+
+    liunx:
+      system:
+        banner:
+          enabled: true
+          contents: |
+            UNAUTHORIZED ACCESS TO THIS SYSTEM IS PROHIBITED
+
+            You must have explicit, authorized permission to access or configure this
+            device. Unauthorized attempts and actions to access or use this system may
+            result in civil and/or criminal penalties.
+            All activities performed on this system are logged and monitored.
+
 Message of the day
 ~~~~~~~~~~~~~~~~~~
 
