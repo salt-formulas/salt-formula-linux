@@ -603,7 +603,7 @@ with memory allocation/deallocation by decreasing memory fragmentation.
               size: 2M
               count: 107520
               mount_point: /mnt/hugepages_2MB
-              mount: false/true # default false
+              mount: false/true # default is true (mount immediately) / false (just save in the fstab)
             large:
               default: true # default automatically mounted
               size: 1G
