@@ -273,6 +273,9 @@
 
 {% set monitoring = salt['grains.filter_by']({
     'default': {
+        'bond_status': {
+            'interfaces': False
+        },
         'zombie': {
             'warn': 3,
             'crit': 7,
@@ -298,30 +301,43 @@
             'interface_regex': '^[a-z0-9]+$',
             'ignore_selected': False,
         },
-        'bond_status': {
-            'interfaces': False
+        'cpu_usage_percentage': {
+              'warn': 90.0,
         },
-        'cpu_idle_percentage': {
-              'warn': 10.0,
+        'memory_usage_percentage': {
+            'warn': 90.0,
+            'major': 95.0,
         },
-        'free_memory_percentage': {
-              'warn': 10.0,
-              'crit': 5.0,
+        'disk_usage_percentage': {
+            'warn': 85.0,
+            'major': 95.0,
         },
-        'load_5': {
-              'warn': 3,
+        'swap_usage_percentage': {
+            'warn': 50.0,
+            'minor': 90.0,
         },
-        'rx_packets_dropped_rate': {
-              'warn': 100,
+        'inodes_usage_percentage': {
+            'warn': 85.0,
+            'major': 95.0,
         },
-        'tx_packets_dropped_rate': {
-              'warn': 100,
+        'system_load_threshold': {
+            'warn': 1,
+            'crit': 2,
+        },
+        'rx_packets_dropped_threshold': {
+            'warn': 100,
+        },
+        'tx_packets_dropped_threshold': {
+            'warn': 100,
         },
         'swap_in_rate': {
-              'warn': 1024 * 1024,
+            'warn': 1024 * 1024,
         },
         'swap_out_rate': {
-              'warn': 1024 * 1024,
+            'warn': 1024 * 1024,
+        },
+        'failed_auths_threshold': {
+            'warn': 5,
         },
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:monitoring')) %}
