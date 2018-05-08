@@ -2,8 +2,6 @@
 blacklist {{ module_name }}
 {%- else -%}
 
-{%- for option, value in module_content.get('option', {}) | dictsort -%}
-options {{ module_name }} {{ option }}={{ value }}
-{%- endfor %}
+options {{ module_name }}{% for option, value in module_content.get('option', {}) | dictsort %} {{ option }}={{ value }}{% endfor %}
 
 {%- endif %}
