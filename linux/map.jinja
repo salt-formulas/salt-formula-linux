@@ -274,8 +274,11 @@
              'service': 'multipath'
          },
     },
-}, grain='os_family', merge=salt['pillar.get']('linux:storage')) %}
-
+}, merge=salt['grains.filter_by']({
+    'trusty': {
+        'lvm_services': ['udev'],
+    },
+}, grain='oscodename', merge=salt['pillar.get']('linux:storage'))) %}
 
 {% set monitoring = salt['grains.filter_by']({
     'default': {
