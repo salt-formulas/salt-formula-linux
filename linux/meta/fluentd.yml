@@ -109,4 +109,64 @@ agent:
             tag: 'metric.**'
             type: relabel
             label: default_metric
+{%- else %}
+agent:
+  config:
+    label:
+      default_metric:
+        filter:
+          metric_hdd_errors_parse:
+            tag: metric.hdd_errors
+            type: parser
+            key_name: Payload
+            parser:
+              type: regexp
+              format: '/(?<device>[sv]d[a-z]+\d*)/'
+          metric_hdd_errors:
+            tag: metric.hdd_errors
+            require:
+              - metric_hdd_errors_parse
+            type: prometheus
+            metric:
+              - name: hdd_errors_total
+                type: counter
+                desc: The total number of hdd errors.
+            label:
+              - name: host
+                value: ${Hostname}
+              - name: device
+                value: ${device}
+      syslog:
+        input:
+          syslog_file:
+            type: tail
+            tag: linux.syslog
+            path: /var/log/syslog
+            pos_file: {{ pillar.fluentd.agent.dir.positiondb }}/linux_syslog.pos
+            suppress_parse_error_log: true
+            parser:
+              type: regexp
+              format: >-
+                '/(?<Payload>.*(?<device>[sv]d[a-z]{1,2}\d{0,3}).*)/'
+        match:
+          push_to_default:
+            tag: 'linux.**'
+            type: copy
+            store:
+              - type: relabel
+                label: default_output
+              - type: rewrite_tag_filter
+                rule:
+                  - name: Payload
+                    regexp: >-
+                      'error.*\b[sv]d[a-z]{1,2}\d{0,3}\b.*'
+                    result: metric.hdd_errors
+                  - name: Payload
+                    regexp: >-
+                      '\b[sv]d[a-z]{1,2}\d{0,3}\b.*error'
+                    result: metric.hdd_errors
+          push_to_metric:
+            tag: 'metric.**'
+            type: relabel
+            label: default_metric
 {%- endif %}
