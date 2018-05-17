@@ -16,6 +16,9 @@ include:
 {%- if network.systemd|length > 0 %}
 - linux.network.systemd
 {%- endif %}
+{%- if network.openvswitch is defined %}
+- linux.network.openvswitch
+{%- endif %}
 {%- if network.interface|length > 0 %}
 - linux.network.interface
 {%- endif %}
