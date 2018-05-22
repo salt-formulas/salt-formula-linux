@@ -918,6 +918,18 @@ Linux with atop service:
           logpath: "/var/log/atop"
           outfile: "/var/log/atop/daily.log"
 
+Linux with mcelog service:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        mcelog:
+          enabled: true
+          logging:
+            syslog: true
+            syslog_error: true
+
 RHEL / CentOS
 ^^^^^^^^^^^^^
 

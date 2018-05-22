@@ -117,3 +117,6 @@ include:
 {%- if system.banner is defined %}
 - linux.system.banner
 {%- endif %}
+{%- if system.mcelog is defined %}
+- linux.system.mcelog
+{%- endif %}

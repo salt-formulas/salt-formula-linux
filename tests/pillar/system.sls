@@ -369,3 +369,8 @@ linux:
       interval: 20
       logpath: "/var/mylog/atop"
       outfile: "/var/mylog/atop/daily.log"
+    mcelog:
+      enabled: true
+      logging:
+        syslog: true
+        syslog_error: true
