@@ -357,6 +357,9 @@ linux_network_{{ interface_name }}_routes:
       gateway: {{ route.gateway }}
       {%- endif %}
     {%- endfor %}
+  {%- if interface.noifupdown is defined %}
+  - require_reboot: {{ interface.noifupdown }}
+  {%- endif %}
 
 {%- endif %}
 
