@@ -142,7 +142,7 @@ linux_repo_{{ name }}:
 linux_repo_{{ name }}_key:
   cmd.run:
     - name: "echo '{{ repo.key }}' | apt-key add -"
-    - unless: "apt-key finger --with-colons | grep -qF $(echo '{{ repo-key }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
+    - unless: "apt-key finger --with-colons | grep -qF $(echo '{{ repo.key }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
     - require_in:
       - pkgrepo: linux_repo_{{ name }}
 
