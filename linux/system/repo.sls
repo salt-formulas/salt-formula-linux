@@ -142,7 +142,8 @@ linux_repo_{{ name }}:
 linux_repo_{{ name }}_key:
   cmd.run:
     - name: "echo '{{ repo.key }}' | apt-key add -"
-    - onchange:
+    - unless: "apt-key finger --with-colons | grep -qF $(echo '{{ repo-key }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
+    - require_in:
       - pkgrepo: linux_repo_{{ name }}
 
 {%- elif repo.key_url|default(False) %}
@@ -150,7 +151,8 @@ linux_repo_{{ name }}_key:
 linux_repo_{{ name }}_key:
   cmd.run:
     - name: "curl -s {{ repo.key_url }} | apt-key add -"
-    - onchange:
+    - unless: "apt-key finger --with-colons | grep -qF $(curl -s {{ repo.key_url }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
+    - require_in:
       - pkgrepo: linux_repo_{{ name }}
 
 {%- endif %}
