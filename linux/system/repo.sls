@@ -85,7 +85,7 @@ linux_repo_{{ name }}_pin:
 
 linux_repo_{{ name }}_key:
   cmd.wait:
-    - name: echo -e '{{ repo.key|replace('\n', '\\n') }}' | apt-key add -
+    - name: "echo -e '{{ repo.key|replace('\n', '\\n') }}' | apt-key add -"
     - watch:
       - file: default_repo_list
 
@@ -141,8 +141,8 @@ linux_repo_{{ name }}:
 
 linux_repo_{{ name }}_key:
   cmd.run:
-    - name: echo -e '{{ repo.key|replace('\n', '\\n') }}' | apt-key add -
-    - unless: apt-key finger --with-colons | grep -qF $(echo -e '{{ repo.key|replace('\n', '\\n') }}' | gpg --with-fingerprint --with-colons | grep -E '^fpr')
+    - name: "echo -e '{{ repo.key|replace('\n', '\\n') }}' | apt-key add -"
+    - unless: "apt-key finger --with-colons | grep -qF $(echo -e '{{ repo.key|replace('\n', '\\n') }}' | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
     - require_in:
       - pkgrepo: linux_repo_{{ name }}
 
