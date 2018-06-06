@@ -33,7 +33,7 @@ linux_repo_prereq_pkgs:
 
 purge_sources_list_d_repos:
    file.directory:
-   - name: /etc/apt/sources.list.d/           
+   - name: /etc/apt/sources.list.d/
    - clean: True
 
 {%- endif %}
@@ -77,29 +77,32 @@ linux_repo_{{ name }}_pin:
 
 {%- endif %}
 
-{%- if repo.get('default', False) %}
-
-{%- do default_repos.update({name: repo}) %}
-
-{%- if repo.get('key') %}
+{%- if repo.get('key') %} {# 2 #}
 
 linux_repo_{{ name }}_key:
-  cmd.wait:
-    - name: "echo -e '{{ repo.key|replace('\n', '\\n') }}' | apt-key add -"
-    - watch:
-      - file: default_repo_list
+  cmd.run:
+    - name: |
+            echo "{{ repo.key | indent(12) }}" | apt-key add -
+    - unless: |
+            apt-key finger --with-colons | grep -qF $(echo "{{ repo.key| indent(12) }}" | gpg --with-fingerprint --with-colons | grep -E '^fpr')
+    - require_in:
+      - pkgrepo: linux_repo_{{ name }}
 
 {%- elif repo.key_url|default(False) %}
 
 linux_repo_{{ name }}_key:
-  cmd.wait:
+  cmd.run:
     - name: "curl -sL {{ repo.key_url }} | apt-key add -"
-    - watch:
-      - file: default_repo_list
+    - unless: "apt-key finger --with-colons | grep -qF $(curl -sL {{ repo.key_url }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
+    - require_in:
+      - pkgrepo: linux_repo_{{ name }}
 
-{%- endif %}
+{%- endif %} {# 2 #}
 
-{%- else %}
+{%- if repo.get('default', False) %}   {# 1 #}
+  {%- do default_repos.update({name: repo}) %}  {# for 'default' repos #}
+
+{%- else %} {# for all others repos #}
 
 {%- if repo.get('enabled', True) %}
 
@@ -137,26 +140,6 @@ linux_repo_{{ name }}:
   {%- endif %}
   {%- endif %}
 
-{%- if repo.get('key') %}
-
-linux_repo_{{ name }}_key:
-  cmd.run:
-    - name: "echo -e '{{ repo.key|replace('\n', '\\n') }}' | apt-key add -"
-    - unless: "apt-key finger --with-colons | grep -qF $(echo -e '{{ repo.key|replace('\n', '\\n') }}' | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
-    - require_in:
-      - pkgrepo: linux_repo_{{ name }}
-
-{%- elif repo.key_url|default(False) %}
-
-linux_repo_{{ name }}_key:
-  cmd.run:
-    - name: "curl -sL {{ repo.key_url }} | apt-key add -"
-    - unless: "apt-key finger --with-colons | grep -qF $(curl -sL {{ repo.key_url }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
-    - require_in:
-      - pkgrepo: linux_repo_{{ name }}
-
-{%- endif %}
-
 {%- else %}
 
 linux_repo_{{ name }}_absent:
@@ -177,7 +160,7 @@ linux_repo_{{ name }}_absent:
 
 {%- endif %}
 
-{%- endif %}
+{%- endif %} {# 1 #}
 
 {#- os_family Debian #}
 {%- endif %}
