@@ -93,7 +93,7 @@ linux_repo_{{ name }}_key:
 
 linux_repo_{{ name }}_key:
   cmd.wait:
-    - name: "curl -s {{ repo.key_url }} | apt-key add -"
+    - name: "curl -sL {{ repo.key_url }} | apt-key add -"
     - watch:
       - file: default_repo_list
 
@@ -150,8 +150,8 @@ linux_repo_{{ name }}_key:
 
 linux_repo_{{ name }}_key:
   cmd.run:
-    - name: "curl -s {{ repo.key_url }} | apt-key add -"
-    - unless: "apt-key finger --with-colons | grep -qF $(curl -s {{ repo.key_url }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
+    - name: "curl -sL {{ repo.key_url }} | apt-key add -"
+    - unless: "apt-key finger --with-colons | grep -qF $(curl -sL {{ repo.key_url }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
     - require_in:
       - pkgrepo: linux_repo_{{ name }}
 
