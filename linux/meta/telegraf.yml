@@ -23,6 +23,12 @@ agent:
     processes:
     swap:
     system:
+    procstat:
+      process:
+        sshd:
+          exe: sshd
+        cron:
+          exe: cron
     linux_sysctl_fs:
 {%- if monitoring.bond_status.interfaces is defined and monitoring.bond_status.interfaces %}
     bond:
