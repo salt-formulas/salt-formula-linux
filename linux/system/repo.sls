@@ -85,7 +85,7 @@ linux_repo_{{ name }}_pin:
 
 linux_repo_{{ name }}_key:
   cmd.wait:
-    - name: "echo '{{ repo.key }}' | apt-key add -"
+    - name: "echo -e '{{ repo.key|replace('\n', '\\n') }}' | apt-key add -"
     - watch:
       - file: default_repo_list
 
@@ -93,7 +93,7 @@ linux_repo_{{ name }}_key:
 
 linux_repo_{{ name }}_key:
   cmd.wait:
-    - name: "curl -s {{ repo.key_url }} | apt-key add -"
+    - name: "curl -sL {{ repo.key_url }} | apt-key add -"
     - watch:
       - file: default_repo_list
 
@@ -121,9 +121,6 @@ linux_repo_{{ name }}:
   {%- if repo.key_server is defined %}
   - keyserver: {{ repo.key_server }}
   {%- endif %}
-  {%- if repo.key_url is defined %}
-  - key_url: {{ repo.key_url }}
-  {%- endif %}
   - consolidate: {{ repo.get('consolidate', False) }}
   - clean_file: {{ repo.get('clean_file', False) }}
   - refresh_db: {{ repo.get('refresh_db', True) }}
@@ -139,6 +136,26 @@ linux_repo_{{ name }}:
     - file: purge_sources_list_d_repos
   {%- endif %}
   {%- endif %}
+
+{%- if repo.get('key') %}
+
+linux_repo_{{ name }}_key:
+  cmd.run:
+    - name: "echo -e '{{ repo.key|replace('\n', '\\n') }}' | apt-key add -"
+    - unless: "apt-key finger --with-colons | grep -qF $(echo -e '{{ repo.key|replace('\n', '\\n') }}' | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
+    - require_in:
+      - pkgrepo: linux_repo_{{ name }}
+
+{%- elif repo.key_url|default(False) %}
+
+linux_repo_{{ name }}_key:
+  cmd.run:
+    - name: "curl -sL {{ repo.key_url }} | apt-key add -"
+    - unless: "apt-key finger --with-colons | grep -qF $(curl -sL {{ repo.key_url }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
+    - require_in:
+      - pkgrepo: linux_repo_{{ name }}
+
+{%- endif %}
 
 {%- else %}
 
