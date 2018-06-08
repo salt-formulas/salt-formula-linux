@@ -12,7 +12,7 @@ server:
         service: system
       annotations:
         summary: "{%- endraw %}{{ cpu_usage_threshold }}{%- raw %}% CPU usage"
-        description: "The average CPU usage on the {{ $labels.host }} node is {{ $value }}% for at least 2 minutes."
+        description: "The average CPU usage on the {{ $labels.host }} node is {{ $value }}% for 2 minutes."
     SystemLoadTooHighWarning:
       {%- endraw %}
       {%- set load_threshold = monitoring.system_load_threshold.warn|float %}
@@ -25,7 +25,7 @@ server:
         service: system
       annotations:
         summary: "System load is {%- endraw %}{{ load_threshold }}{%- raw %}"
-        description: "System load per CPU on the {{ $labels.host }} node is {{ $value }} for at least 5 minutes."
+        description: "The system load per CPU on the {{ $labels.host }} node is {{ $value }} for 5 minutes."
     SystemLoadTooHighCritical:
       {%- endraw %}
       {%- set load_threshold = monitoring.system_load_threshold.crit|float %}
@@ -38,7 +38,7 @@ server:
         service: system
       annotations:
         summary: "System load is {%- endraw %}{{ load_threshold }}{%- raw %}"
-        description: "System load per CPU on the {{ $labels.host }} node is {{ $value }} for at least 5 minutes."
+        description: "The system load per CPU on the {{ $labels.host }} node is {{ $value }} for 5 minutes."
     SystemDiskFullWarning:
       {%- endraw %}
       {%- set disk_threshold = monitoring.disk_usage_percentage.warn|float %}
@@ -51,7 +51,7 @@ server:
         service: system
       annotations:
         summary: "Disk partition {{ $labels.path }} is {%- endraw %} {{ disk_threshold }}{%- raw %}% full"
-        description: "The disk partition ({{ $labels.path }}) on the {{ $labels.host }} node is {{ $value }}% full for at least 2 minutes."
+        description: "The disk partition ({{ $labels.path }}) on the {{ $labels.host }} node is {{ $value }}% full for 2 minutes."
     SystemDiskFullMajor:
       {%- endraw %}
       {%- set disk_threshold = monitoring.disk_usage_percentage.major|float %}
@@ -64,7 +64,7 @@ server:
         service: system
       annotations:
         summary: "Disk partition {{ $labels.path }} is {%- endraw %} {{ disk_threshold }}{%- raw %}% full"
-        description: "The disk partition ({{ $labels.path }}) on the {{ $labels.host }} node is {{ $value }}% full for at least 2 minutes."
+        description: "The disk partition ({{ $labels.path }}) on the {{ $labels.host }} node is {{ $value }}% full for 2 minutes."
     SystemDiskInodesFullWarning:
       {%- endraw %}
       {%- set inodes_threshold = monitoring.inodes_usage_percentage.warn|float %}
@@ -76,7 +76,7 @@ server:
         service: system
       annotations:
         summary: "{{ inodes_threshold }}{%- raw %}% of inodes for {{ $labels.path }} are used"
-        description: "The {{ $labels.host }} node uses {{ $value }}% of disk inodes in the {{ $labels.path }} volume for at least 2 minutes."
+        description: "The {{ $labels.host }} node uses {{ $value }}% of disk inodes in the {{ $labels.path }} volume for 2 minutes."
     SystemDiskInodesFullMajor:
       {%- endraw %}
       {%- set inodes_threshold = monitoring.inodes_usage_percentage.major|float %}
@@ -88,7 +88,7 @@ server:
         service: system
       annotations:
         summary: "{{ inodes_threshold }}{%- raw %}% of inodes for {{ $labels.path }} are used"
-        description: "The {{ $labels.host }} node uses {{ $value }}% of disk inodes in the {{ $labels.path }} volume for at least 2 minutes."
+        description: "The {{ $labels.host }} node uses {{ $value }}% of disk inodes in the {{ $labels.path }} volume for 2 minutes."
     SystemDiskErrorsTooHigh:
       if: >-
         increase(hdd_errors_total[1m]) > 0
@@ -98,7 +98,7 @@ server:
         service: system
       annotations:
         summary: "Disk {{ $labels.device }} is failing"
-        description: "The {{ $labels.device }} disk on the {{ $labels.host }} node is reporting errors for at least 5 minutes."
+        description: "The {{ $labels.device }} disk on the {{ $labels.host }} node is reporting errors for 5 minutes."
     SystemMemoryFullWarning:
       {%- endraw %}
       {%- set mem_threshold = monitoring.memory_usage_percentage.warn|float %}
@@ -110,7 +110,7 @@ server:
         service: system
       annotations:
         summary: "{{ mem_threshold }}{%- raw %}% of memory is used"
-        description: "The {{ $labels.host }} node uses {{ $value }}% of memory for at least 2 minutes."
+        description: "The {{ $labels.host }} node uses {{ $value }}% of memory for 2 minutes."
     SystemMemoryFullMajor:
       {%- endraw %}
       {%- set mem_threshold = monitoring.memory_usage_percentage.major|float %}
@@ -122,7 +122,7 @@ server:
         service: system
       annotations:
         summary: "{{ mem_threshold }}{%- raw %}% of memory is used"
-        description: "The {{ $labels.host }} node uses {{ $value }}% of memory for at least 2 minutes."
+        description: "The {{ $labels.host }} node uses {{ $value }}% of memory for 2 minutes."
     SystemSwapFullWarning:
       {%- endraw %}
       {%- set swap_threshold = monitoring.swap_usage_percentage.warn|float %}
@@ -134,7 +134,7 @@ server:
         service: system
       annotations:
         summary: "{{ swap_threshold }}{%- raw %}% of swap is used"
-        description: "The swap on the {{ $labels.host }} node is {{ $value }}% used for at least 2 minutes."
+        description: "The swap on the {{ $labels.host }} node is {{ $value }}% used for 2 minutes."
     SystemSwapFullMinor:
       {%- endraw %}
       {%- set swap_threshold = monitoring.swap_usage_percentage.minor|float %}
@@ -146,7 +146,7 @@ server:
         service: system
       annotations:
         summary: "{{ swap_threshold }}{%- raw %}% of swap is used"
-        description: "The swap on the {{ $labels.host }} node is {{ $value }}% used for at least 2 minutes."
+        description: "The swap on the {{ $labels.host }} node is {{ $value }}% used for 2 minutes."
     SystemRxPacketsDroppedTooHigh:
       {%- endraw %}
       {%- set net_rx_dropped_threshold = monitoring.rx_packets_dropped_threshold.warn %}
