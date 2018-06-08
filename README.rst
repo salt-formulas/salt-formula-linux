@@ -389,6 +389,20 @@ Ensure presence of file by specifying it's contents:
           /tmp/test.txt:
             contents_grains: motd
 
+Ensure presence of file to be serialized through one of the serializer modules
+(see: https://docs.saltstack.com/en/latest/ref/serializers/all/index.html):
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        file:
+          /tmp/test.json:
+            serialize: json
+            contents:
+              foo: 1
+              bar: 'bar'
+
 Kernel
 ~~~~~~
 
