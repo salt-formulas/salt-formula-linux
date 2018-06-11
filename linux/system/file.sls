@@ -8,7 +8,7 @@ linux_file_{{ file_name }}:
   file.serialize:
     - formatter: {{ file.serialize }}
   {%- if file.contents is defined  %}
-    - dataset: {{ file.contents|yaml }}
+    - dataset: {{ file.contents|json }}
   {%- elif file.contents_pillar is defined %}
     - dataset_pillar: {{ file.contents_pillar }}
   {%- endif %}
@@ -22,7 +22,7 @@ linux_file_{{ file_name }}:
     - skip_verify: True
     {%- endif %}
     {%- elif file.contents is defined %}
-    - contents: {{ file.contents|yaml }}
+    - contents: {{ file.contents|json }}
     {%- elif file.contents_pillar is defined %}
     - contents_pillar: {{ file.contents_pillar }}
     {%- elif file.contents_grains is defined %}
