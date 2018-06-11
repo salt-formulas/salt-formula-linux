@@ -92,7 +92,7 @@ linux_repo_{{ name }}_key:
       - pkgrepo: linux_repo_{{ name }}
     {% endif %}
 
-{%- elif repo.key_url|default(False) %}
+{%- elif repo.key_url|default(False) and not repo.key_url.startswith('salt://') %}
 
 linux_repo_{{ name }}_key:
   cmd.run:
@@ -131,6 +131,9 @@ linux_repo_{{ name }}:
   {%- endif %}
   {%- if repo.key_server is defined %}
   - keyserver: {{ repo.key_server }}
+  {%- endif %}
+  {%- if repo.key_url is defined and repo.key_url.startswith('salt://') %}
+  - key_url: {{ repo.key_url }}
   {%- endif %}
   - consolidate: {{ repo.get('consolidate', False) }}
   - clean_file: {{ repo.get('clean_file', False) }}
