@@ -140,7 +140,7 @@ linux_repo_{{ name }}:
   {%- if repo.key_server is defined %}
   - keyserver: {{ repo.key_server }}
   {%- endif %}
-  {%- if repo.key_url is defined and grains['saltversioninfo'] >= [2017, 7] %}
+  {%- if repo.key_url is defined and (grains['saltversioninfo'] >= [2017, 7] or repo.key_url.startswith('salt://')) %}
   - key_url: {{ repo.key_url }}
   {%- endif %}
   - consolidate: {{ repo.get('consolidate', False) }}
