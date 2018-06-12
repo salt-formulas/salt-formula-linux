@@ -92,7 +92,14 @@ linux_repo_{{ name }}_key:
       - pkgrepo: linux_repo_{{ name }}
     {% endif %}
 
-{%- elif repo.key_url|default(False) %}
+{# key_url fetch by curl when salt <2017.7, higher version of salt has fixed bug for using a proxy_host/port specified at minion.conf #}
+{#
+   NOTE: curl/cmd.run usage to fetch gpg key has limited functionality behind proxy. Environments with salt >= 2017.7 shoul use
+         key_url specified at pkgrepo.manage state (which uses properly configured http_host at minion.conf). Older versions of
+         salt require to have proxy set at ENV and curl way to fetch gpg key here can have a sense for backward compatibility.
+#}
+{%- if grains['saltversioninfo'] < [2017, 7] %}
+{%- elif repo.key_url|default(False) and not repo.key_url.startswith('salt://') %}
 
 linux_repo_{{ name }}_key:
   cmd.run:
@@ -104,6 +111,7 @@ linux_repo_{{ name }}_key:
     {% else %}
       - pkgrepo: linux_repo_{{ name }}
     {% endif %}
+{%- endif %} {# key_url fetch by curl when salt <2017.7 #}
 
 {%- endif %} {# 2 #}
 
@@ -131,6 +139,9 @@ linux_repo_{{ name }}:
   {%- endif %}
   {%- if repo.key_server is defined %}
   - keyserver: {{ repo.key_server }}
+  {%- endif %}
+  {%- if repo.key_url is defined and grains['saltversioninfo'] >= [2017, 7] %}
+  - key_url: {{ repo.key_url }}
   {%- endif %}
   - consolidate: {{ repo.get('consolidate', False) }}
   - clean_file: {{ repo.get('clean_file', False) }}
