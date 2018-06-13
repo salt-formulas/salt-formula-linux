@@ -1146,6 +1146,7 @@ OpenVswitch Bridges
             bridge: br-ens7
             port_type: patch
             peer: prv-ens7
+            tag: 109 # [] to unset a tag
             mtu: 65000
           patch-br-prv-br-ens7:
             enabled: true
@@ -1155,6 +1156,7 @@ OpenVswitch Bridges
             type: ovs_port
             port_type: patch
             peer: ens7-prv
+            tag: 109
             mtu: 65000
           ens7:
             enabled: true
