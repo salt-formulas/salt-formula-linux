@@ -40,3 +40,9 @@ hugepages_sysctl_vm_nr_hugepages:
 {%- endfor %}
 
 {%- endif %}
+
+# systemd always creates default mount point at /dev/hugepages
+# we have to disable it, as we configure our own mount point for DPDK.
+mask_dev_hugepages:
+  cmd.run:
+    - name: "systemctl mask dev-hugepages.mount"
