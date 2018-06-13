@@ -83,9 +83,8 @@ linux_repo_{{ name }}_key:
   cmd.run:
     - name: |
             echo "{{ repo.key | indent(12) }}" | apt-key add -
-{#    - unless: |
-            apt-key finger --with-colons | grep -qF $(echo "{{ repo.key| indent(12) }}" | gpg --with-fingerprint --with-colons | grep -E '^fpr')
-#}
+    - unless: |
+            echo "key"; apt-key finger --with-colons | grep -qF $(echo "{{ repo.key| indent(12) }}" | gpg --with-fingerprint --with-colons | grep -E '^fpr')
     - require_in:
     {%- if repo.get('default', False) %}
       - file: default_repo_list
@@ -98,7 +97,7 @@ linux_repo_{{ name }}_key:
 linux_repo_{{ name }}_key:
   cmd.run:
     - name: "curl -sL {{ repo.key_url }} | apt-key add -"
-    - unless: "apt-key finger --with-colons | grep -qF $(curl -sL {{ repo.key_url }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
+    - unless: "echo key_url ; apt-key finger --with-colons | grep -qF $(curl -sL {{ repo.key_url }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
     - require_in:
     {%- if repo.get('default', False) %}
       - file: default_repo_list
