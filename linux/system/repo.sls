@@ -83,8 +83,6 @@ linux_repo_{{ name }}_key:
   cmd.run:
     - name: |
             echo "{{ repo.key | indent(12) }}" | apt-key add -
-    - unless: |
-            apt-key finger --with-colons | grep -qF $(echo "{{ repo.key| indent(12) }}" | gpg --with-fingerprint --with-colons | grep -E '^fpr')
     - require_in:
     {%- if repo.get('default', False) %}
       - file: default_repo_list
@@ -92,12 +90,20 @@ linux_repo_{{ name }}_key:
       - pkgrepo: linux_repo_{{ name }}
     {% endif %}
 
-{%- elif repo.key_url|default(False) %}
+{# key_url fetch by curl when salt <2017.7, higher version of salt has fixed bug for using a proxy_host/port specified at minion.conf #}
+{#
+   NOTE: curl/cmd.run usage to fetch gpg key has limited functionality behind proxy. Environments with salt >= 2017.7 should use
+         key_url specified at pkgrepo.manage state (which uses properly configured http_host at minion.conf). Older versions of
+         salt require to have proxy set at ENV and curl way to fetch gpg key here can have a sense for backward compatibility.
+
+         Be aware that as of salt 2018.3 no_proxy option is not implemented at all.
+#}
+{%- elif repo.key_url|default(False) and grains['saltversioninfo'] < [2017, 7] and not repo.key_url.startswith('salt://') %}
+
 
 linux_repo_{{ name }}_key:
   cmd.run:
-    - name: "curl -sL {{ repo.key_url }} | apt-key add -"
-    - unless: "apt-key finger --with-colons | grep -qF $(curl -sL {{ repo.key_url }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
+    - name: "no_proxy=${no_proxy:-{{ system.proxy.get('noproxy', []) |join(',') }}} http_proxy=${http_proxy:-{{ system.proxy.get('http', '') }}} https_proxy=${https_proxy:-{{ system.proxy.get('https', '') }}} curl -sL {{ repo.key_url }} | apt-key add -"
     - require_in:
     {%- if repo.get('default', False) %}
       - file: default_repo_list
@@ -131,6 +137,9 @@ linux_repo_{{ name }}:
   {%- endif %}
   {%- if repo.key_server is defined %}
   - keyserver: {{ repo.key_server }}
+  {%- endif %}
+  {%- if repo.key_url is defined and (grains['saltversioninfo'] >= [2017, 7] or repo.key_url.startswith('salt://')) %}
+  - key_url: {{ repo.key_url }}
   {%- endif %}
   - consolidate: {{ repo.get('consolidate', False) }}
   - clean_file: {{ repo.get('clean_file', False) }}
