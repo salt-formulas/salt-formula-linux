@@ -83,8 +83,9 @@ linux_repo_{{ name }}_key:
   cmd.run:
     - name: |
             echo "{{ repo.key | indent(12) }}" | apt-key add -
-    - unless: |
+{#    - unless: |
             apt-key finger --with-colons | grep -qF $(echo "{{ repo.key| indent(12) }}" | gpg --with-fingerprint --with-colons | grep -E '^fpr')
+#}
     - require_in:
     {%- if repo.get('default', False) %}
       - file: default_repo_list
