@@ -18,7 +18,7 @@ install:
     gem 'kitchen-docker'
     gem 'kitchen-inspec'
     gem 'inspec'
-    gem 'kitchen-salt', :git => 'https://github.com/salt-formulas/kitchen-salt.git'
+    gem 'kitchen-salt' #, :git => 'https://github.com/salt-formulas/kitchen-salt.git'
   - bundle install
 
 env:
@@ -35,7 +35,7 @@ env:
 
 before_script:
   - set -o pipefail
-  - make test | tail
+  - make test > /dev/null || make test
 
 script:
   - test ! -e .kitchen.yml || bundle exec kitchen converge ${SUITE} || true
