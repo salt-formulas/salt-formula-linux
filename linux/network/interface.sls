@@ -133,6 +133,13 @@ ovs_port_set_peer_{{ interface_name }}:
   - name: ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set interface {{ interface_name }} options:peer={{ interface.peer }}
   - unless: ovs-vsctl show | grep -A 2 'Interface {{ interface_name }}' | grep {{ interface.peer }}
 
+{% if interface.tag is defined %}
+ovs_port_set_tag_{{ interface_name }}:
+  cmd.run:
+  - name: ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set port {{ interface_name }} tag={{ interface.tag }}
+  - unless: ovs-vsctl get Port {{ interface_name }} tag | grep -Fx {{ interface.tag }}
+{%- endif %}
+
 {%- else %}
 
 linux_interfaces_include_{{ interface_name }}:
