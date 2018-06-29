@@ -250,11 +250,36 @@ linux_interface_{{ interface_name }}:
     {%- for network in interface.get('use_ovs_ports', []) %}
     - cmd: ovs_port_up_{{ network }}
     {%- endfor %}
-  {%- endif %}
-  {%- if interface.type == 'bond' %}
-  - slaves: {{ interface.slaves }}
+  {%- elif interface.type == 'bond' %}
+  # It makes more sense to specify slaves in a list, but previously this was a string value.
+  # So for backwards compatibility, we allow both.
+  {%- set bond_slaves = interface.get('slaves', []) %}
+  {%- if interface.get('slaves', []) is string %}
+    {%- set bond_slaves = interface.get('slaves', '').split() %}
+  {% endif %}
+  - slaves: {{ bond_slaves | join(' ') }}
   - mode: {{ interface.mode }}
-  {%- endif %}
+  - require:
+    {%- for network in bond_slaves %}
+    - network: linux_interface_{{ network }}
+    {%- endfor %}
+  {%- elif interface.type == 'vlan' %}
+    {%- if interface.get('use_interfaces', []) %}
+  - use:
+    {%- for network in interface.use_interfaces %}
+    - network: linux_interface_{{ network }}
+    {%- endfor %}
+  - require:
+    {%- for network in interface.use_interfaces %}
+    - network: linux_interface_{{ network }}
+    {%- endfor %}
+    {%- endif %}
+  {%- elif interface.get('require_interfaces', []) %}
+  - require:
+    {%- for network in interface.require_interfaces %}
+    - network: linux_interface_{{ network }}
+    {%- endfor %}
+  {% endif %}
 
 
 {%- if salt['grains.get']('saltversion') < '2017.7' %}

@@ -429,7 +429,7 @@ Load kernel modules and add them to `/etc/modules`:
             - tp_smapi
             - 8021q
 
-Configure or blacklist kernel modules with additional options to `/etc/modprobe.d` following example 
+Configure or blacklist kernel modules with additional options to `/etc/modprobe.d` following example
 will add `/etc/modprobe.d/nf_conntrack.conf` file with line `options nf_conntrack hashsize=262144`:
 
 .. code-block:: yaml
@@ -1023,9 +1023,9 @@ Linux with bonded interfaces and disabled NetworkManager
             address: 192.168.0.102
             netmask: 255.255.255.0
             mtu: 1500
-            use_in:
-            - interface: ${linux:interface:eth0}
-            - interface: ${linux:interface:eth0}
+            slaves:
+            - eth0
+            - eth1
         network_manager:
           disable: true
 
@@ -1040,7 +1040,7 @@ Linux with vlan interface_params
           vlan69:
             type: vlan
             use_interfaces:
-            - interface: ${linux:interface:bond0}
+            - bond0
 
 Linux with wireless interface parameters
 
