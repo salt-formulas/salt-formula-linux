@@ -188,6 +188,15 @@ server:
       annotations:
         summary: "Cron process is down"
         description: "The cron process on the {{ $labels.host }} node is down."
+    CronJobFailure:
+      if: >-
+        min(cron_job_status) by (name, host) == 0
+      labels:
+        severity: major
+        service: system
+      annotations:
+        summary: "Cron job failure"
+        description: "The {{ $labels.name }} cron job on the {{ $labels.host }} node failed."
     SshdProcessDown:
       if: >-
         procstat_running{process_name="sshd"} == 0
