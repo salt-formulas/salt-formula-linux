@@ -169,8 +169,8 @@
 {% set network = salt['grains.filter_by']({
     'Arch': {
         'pkgs': ['wpa_supplicant', 'dhclient', 'wireless_tools', 'ifenslave'],
-        'bridge_pkgs': ['bridge-utils'],
-        'ovs_pkgs': ['openvswitch-switch'],
+        'bridge_pkgs': ['bridge-utils', 'vlan'],
+        'ovs_pkgs': ['openvswitch-switch', 'vlan'],
         'hostname_file': '/etc/hostname',
         'network_manager': False,
         'systemd': {},
@@ -188,8 +188,8 @@
     'Debian': {
         'pkgs': ['ifenslave'],
         'hostname_file': '/etc/hostname',
-        'bridge_pkgs': ['bridge-utils'],
-        'ovs_pkgs': ['openvswitch-switch', 'bridge-utils'],
+        'bridge_pkgs': ['bridge-utils', 'vlan'],
+        'ovs_pkgs': ['openvswitch-switch', 'bridge-utils', 'vlan'],
         'dpdk_pkgs': ['dpdk', 'dpdk-dev', 'dpdk-igb-uio-dkms', 'dpdk-rte-kni-dkms', debian_headers.encode('utf8') ],
         'network_manager': False,
         'systemd': {},
@@ -206,8 +206,8 @@
     },
     'RedHat': {
         'pkgs': ['iputils'],
-        'bridge_pkgs': ['bridge-utils'],
-        'ovs_pkgs': ['openvswitch-switch', 'bridge-utils'],
+        'bridge_pkgs': ['bridge-utils', 'vlan'],
+        'ovs_pkgs': ['openvswitch-switch', 'bridge-utils', 'vlan'],
         'hostname_file': '/etc/sysconfig/network',
         'network_manager': False,
         'systemd': {},
