@@ -80,9 +80,21 @@ linux_repo_{{ name }}_pin:
 {%- if repo.get('key') %} {# 2 #}
 
 linux_repo_{{ name }}_key:
+{% if grains['saltversioninfo'] < [2017, 7] %}
   cmd.run:
     - name: |
             echo "{{ repo.key | indent(12) }}" | apt-key add -
+    {%- if not grains.get('kitchen-test') %}
+    {# omitted from tests, as behaves inconsistently across CI/platforms #}
+    - unless: |
+            apt-key finger --with-colons | grep -qF $(echo "{{ repo.key| indent(12) }}" | gpg --with-fingerprint --with-colons | grep -E '^fpr')
+    {%- endif %}
+{%- else %}
+  module.run:
+    - name: pkg.add_repo_key
+    - text: |
+          {{ repo.key | indent(10) }}
+{%- endif %}
     - require_in:
     {%- if repo.get('default', False) %}
       - file: default_repo_list
@@ -100,10 +112,15 @@ linux_repo_{{ name }}_key:
 #}
 {%- elif repo.key_url|default(False) and grains['saltversioninfo'] < [2017, 7] and not repo.key_url.startswith('salt://') %}
 
+{% set _export_proxy = "export no_proxy=${no_proxy:-" + system.proxy.get('noproxy', []) |join(',') + "} http_proxy=${http_proxy:-" + system.proxy.get('http', '') + "} https_proxy=${https_proxy:-" + system.proxy.get('https', '') +"}; " %}
 
 linux_repo_{{ name }}_key:
   cmd.run:
-    - name: "curl -sL {{ repo.key_url }} | apt-key add -"
+    - name: "{{ _export_proxy }} curl -sL {{ repo.key_url }} | apt-key add -"
+    {%- if not grains.get('kitchen-test') %}
+    {# omitted from tests, as behaves inconsistently across CI/platforms #}
+    - unless: "apt-key finger --with-colons | grep -qF $({{ _export_proxy }} curl -sL {{ repo.key_url }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
+    {%- endif %}
     - require_in:
     {%- if repo.get('default', False) %}
       - file: default_repo_list
