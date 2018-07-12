@@ -429,7 +429,7 @@ Load kernel modules and add them to `/etc/modules`:
             - tp_smapi
             - 8021q
 
-Configure or blacklist kernel modules with additional options to `/etc/modprobe.d` following example 
+Configure or blacklist kernel modules with additional options to `/etc/modprobe.d` following example
 will add `/etc/modprobe.d/nf_conntrack.conf` file with line `options nf_conntrack hashsize=262144`:
 
 .. code-block:: yaml
@@ -554,7 +554,7 @@ Set additional shared library to Linux system library path
             java:
               - /usr/lib/jvm/jre-openjdk/lib/amd64/server
               - /opt/java/jre/lib/amd64/server
-    
+
 
 Certificates
 ~~~~~~~~~~~~
@@ -600,6 +600,22 @@ Install sysfsutils and set sysfs attributes:
             owner:
               power/state: "root:power"
             devices/system/cpu/cpu0/cpufreq/scaling_governor: powersave
+
+Optional: You can also use list that will ensure order of items.
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        sysfs:
+          scheduler:
+            block/sda/queue/scheduler: deadline
+          power:
+            - mode:
+                power/state: 0660
+            - owner:
+                power/state: "root:power"
+            - devices/system/cpu/cpu0/cpufreq/scaling_governor: powersave
 
 Huge Pages
 ~~~~~~~~~~~~
