@@ -106,7 +106,7 @@
 {% set ldap = salt['grains.filter_by']({
     'RedHat': {
         'enabled': false,
-        'pkgs': ['openldap-clients', 'nss-pam-ldapd', 'authconfig'],
+        'pkgs': ['openldap-clients', 'nss-pam-ldapd', 'authconfig', 'nscd'],
         'version': '3',
         'scope': 'sub',
         'uid': 'nslcd',
@@ -114,7 +114,7 @@
     },
     'Debian': {
         'enabled': false,
-        'pkgs': ['libnss-ldapd', 'libpam-ldapd'],
+        'pkgs': ['libnss-ldapd', 'libpam-ldapd', 'nscd'],
         'version': '3',
         'scope': 'sub',
         'uid': 'nslcd',
