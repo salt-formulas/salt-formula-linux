@@ -55,7 +55,7 @@ system_user_home_{{ user.home }}:
   file.directory:
   - name: {{ user.home }}
   - user: {{ name }}
-  - mode: 700
+  - mode: {{ user.get('home_dir_mode', 700) }}
   - makedirs: true
   - require:
     - user: system_user_{{ name }}

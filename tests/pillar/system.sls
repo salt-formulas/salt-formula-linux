@@ -79,6 +79,7 @@ linux:
         uid: 9991
         full_name: Salt User1
         home: /home/saltuser1
+        home_dir_mode: 755
       salt_user2:
         enabled: true
         name: saltuser2

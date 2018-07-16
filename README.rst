@@ -49,6 +49,7 @@ will be removed.
             shell: /bin/bash
             full_name: 'Jonh Doe'
             home: '/home/jdoe'
+            home_dir_mode: 755
             email: 'jonh@doe.com'
           jsmith:
             name: 'jsmith'
