@@ -33,11 +33,12 @@ linux_sysfs_package:
 {%- endif %}
 
 {%- for item in sysfs_list %}
+{%- set list_idx = loop.index %}
 {%- for key, value in item.items() %}
     {%- if key not in ["mode", "owner"] %}
       {%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
       {#- Sysfs cannot be set in docker, LXC, etc. #}
-linux_sysfs_write_{{ name }}_{{ key }}:
+linux_sysfs_write_{{ list_idx }}_{{ name }}_{{ key }}:
   module.run:
     - name: sysfs.write
     - key: {{ key }}
