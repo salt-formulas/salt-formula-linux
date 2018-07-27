@@ -711,6 +711,25 @@ Also pin it's packages with priority 900.
                priority: 900
                package: '*'
 
+.. note:: For old ubuntu releases (<xenial)
+          extra packages for apt transport, like ``apt-transport-https``
+          may be required to be installed manually.
+          (Chicken-eggs problem: we need to install packages to
+          reach repo from where they should be installed)
+          Otherwise, you still can try 'fortune' and install prereq.packages before
+          any repo configuration, using list of requires in map.jinja.
+
+
+Disabling any prerequirment packages installation:
+You can simply drop any package pre-installation (before system.linux.repo
+will be processed) via cluster lvl:
+
+.. code-block:: yaml
+
+   linux:
+     system:
+       pkgs: ~
+
 
 Package manager proxy setup globally:
 
@@ -778,6 +797,14 @@ Remove all repositories:
     linux:
       system:
         purge_repos: true
+
+Refresh repositories metada, after configuration:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        refresh_repos_meta: true
 
 Setup custom apt config options:
 

@@ -1,9 +1,11 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled %}
 
+  {% if system.pkgs %}
 linux_repo_prereq_pkgs:
   pkg.installed:
   - pkgs: {{ system.pkgs }}
+  {%- endif %}
 
   # global proxy setup
   {%- if system.proxy.get('pkg', {}).get('enabled', False) %}
@@ -110,6 +112,9 @@ linux_repo_{{ name }}_key:
         {%- if repo.get('enabled', True) %}
 linux_repo_{{ name }}:
   pkgrepo.managed:
+  - refresh_db: False
+  - require_in:
+    - refresh_db
           {%- if repo.ppa is defined %}
   - ppa: {{ repo.ppa }}
           {%- else %}
@@ -119,7 +124,7 @@ linux_repo_{{ name }}:
   - architectures: {{ repo.architectures }}
             {%- endif %}
   - file: /etc/apt/sources.list.d/{{ name }}.list
-  - clean_file: {{ repo.clean|default(True) }}
+  - clean_file: {{ repo.get('clean_file', True) }}
             {%- if repo.key_id is defined %}
   - keyid: {{ repo.key_id }}
             {%- endif %}
@@ -130,24 +135,25 @@ linux_repo_{{ name }}:
   - key_url: {{ repo.key_url }}
             {%- endif %}
   - consolidate: {{ repo.get('consolidate', False) }}
-  - clean_file: {{ repo.get('clean_file', False) }}
-  - refresh_db: {{ repo.get('refresh_db', True) }}
+            {%- if repo.get('proxy', {}).get('enabled', False) or system.proxy.get('pkg', {}).get('enabled', False) or system.purge_repos|default(False) %}
   - require:
-    # FIXME remove this usless part
-    - pkg: linux_repo_prereq_pkgs
-            {%- if repo.get('proxy', {}).get('enabled', False) %}
+              {%- if repo.get('proxy', {}).get('enabled', False) %}
     - file: /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
-            {%- endif %}
-            {%- if system.proxy.get('pkg', {}).get('enabled', False) %}
+              {%- endif %}
+              {%- if system.proxy.get('pkg', {}).get('enabled', False) %}
     - file: /etc/apt/apt.conf.d/99proxies-salt
-            {%- endif %}
-            {%- if system.purge_repos|default(False) %}
+              {%- endif %}
+              {%- if system.purge_repos|default(False) %}
     - file: purge_sources_list_d_repos
+              {%- endif %}
             {%- endif %}
           {%- endif %}
         {%- else %}
 linux_repo_{{ name }}_absent:
   pkgrepo.absent:
+    - refresh_db: False
+    - require_in:
+      - refresh_db
           {%- if repo.ppa is defined %}
     - ppa: {{ repo.ppa }}
             {%- if repo.key_id is defined %}
@@ -161,9 +167,10 @@ linux_repo_{{ name }}_absent:
           {%- endif %}
   file.absent:
     - name: /etc/apt/sources.list.d/{{ name }}.list
+  file.absent:
+    - name: /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
         {%- endif %}
-      {%- endif %} {# 1 #}
-
+      {%- endif %}
     {%- endif %}
 
   {%- if grains.os_family == "RedHat" %}
@@ -178,6 +185,9 @@ linux_repo_{{ name }}_absent:
       {%- if not repo.get('default', False) %}
 linux_repo_{{ name }}:
   pkgrepo.managed:
+  - refresh_db: False
+  - require_in:
+    - refresh_db
   - name: {{ name }}
   - humanname: {{ repo.get('humanname', name) }}
         {%- if repo.mirrorlist is defined %}
@@ -188,18 +198,16 @@ linux_repo_{{ name }}:
   - gpgcheck: {% if repo.get('gpgcheck', False) %}1{% else %}0{% endif %}
         {%- if repo.gpgkey is defined %}
   - gpgkey: {{ repo.gpgkey }}
+          {%- endif %}
         {%- endif %}
-  - require:
-    - pkg: linux_repo_prereq_pkgs
-      {%- endif %}
-
     {%- else %}
   pkgrepo.absent:
+    - refresh_db: False
+    - require_in:
+      - refresh_db
     - name: {{ repo.source }}
     {%- endif %}
-
   {%- endif %}
-
   {%- endfor %}
 
   {%- if default_repos|length > 0 and grains.os_family == 'Debian' %}
@@ -217,15 +225,15 @@ default_repo_list:
     {%- endif %}
     - defaults:
         default_repos: {{ default_repos }}
-    - require:
-      - pkg: linux_repo_prereq_pkgs
 
-refresh_default_repo:
-  module.wait:
+  {%- endif %}
+
+refresh_db:
+  {%- if system.get('refresh_repos_meta', True) %}
+  module.run:
     - name: pkg.refresh_db
-    - watch:
-      - file: default_repo_list
-
+  {%- else %}
+  test.succeed_without_changes
   {%- endif %}
 
 {%- endif %}
