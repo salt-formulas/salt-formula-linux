@@ -20,6 +20,10 @@ agent:
     kernel:
     net:
     mem:
+    nstat:
+      fieldpass:
+        - packet_drop
+        - time_squeeze
     processes:
     swap:
     system:

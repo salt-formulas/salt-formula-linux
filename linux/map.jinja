@@ -348,5 +348,13 @@
         'failed_auths_threshold': {
             'warn': 5,
         },
+        'net_rx_action_per_cpu_threshold': {
+            'warning': '0',
+            'minor': '100'
+        },
+        'packets_dropped_per_cpu_threshold': {
+            'minor': '0',
+            'major': '100'
+        }
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:monitoring')) %}

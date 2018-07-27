@@ -208,6 +208,50 @@ server:
       annotations:
         summary: "{{ threshold }}{%- raw %} failed SSH logins"
         description: "{{ $value }} failed SSH login attempts on the {{ $labels.host }} node during the last 5 minutes."
+    PacketsDroppedByCpuMinor:
+      {%- endraw %}
+      {%- set packets_dropped_minor_threshold = monitoring.packets_dropped_per_cpu_threshold.minor %}
+      if: >-
+        floor(increase(nstat_packet_drop[24h])) > {{ packets_dropped_minor_threshold }}
+      labels:
+        severity: minor
+        service: system
+      annotations:
+        summary: "CPU dropped {{ packets_dropped_minor_threshold }}{%- raw %} packets"
+        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node dropped {{ $value }} packets during the last 24 hours."
+    PacketsDroppedByCpuMajor:
+      {%- endraw %}
+      {%- set packets_dropped_major_threshold = monitoring.packets_dropped_per_cpu_threshold.major %}
+      if: >-
+        floor(increase(nstat_packet_drop[24h])) > {{ packets_dropped_major_threshold }}
+      labels:
+        severity: major
+        service: system
+      annotations:
+        summary: "CPU dropped {{ packets_dropped_major_threshold }}{%- raw %} packets"
+        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node dropped {{ $value }} packets during the last 24 hours."
+    NetRxActionByCpuWarning:
+      {%- endraw %}
+      {%- set net_rx_action_warning_threshold = monitoring.net_rx_action_per_cpu_threshold.warning %}
+      if: >-
+        floor(increase(nstat_time_squeeze[24h])) > {{ net_rx_action_warning_threshold }}
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: "CPU terminated {{ net_rx_action_warning_threshold }}{%- raw %} net_rx_action loops"
+        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node terminated {{ $value }} net_rx_action loops during the last 24 hours."
+    NetRxActionByCpuMinor:
+      {%- endraw %}
+      {%- set net_rx_action_minor_threshold = monitoring.net_rx_action_per_cpu_threshold.minor %}
+      if: >-
+        floor(increase(nstat_time_squeeze[24h])) > {{ net_rx_action_minor_threshold }}
+      labels:
+        severity: minor
+        service: system
+      annotations:
+        summary: "CPU terminated {{ net_rx_action_minor_threshold }}{%- raw %} net_rx_action loops"
+        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node terminated {{ $value }} net_rx_action loops during the last 24 hours."
 {%- endraw %}
 {%- if monitoring.bond_status.interfaces is defined and monitoring.bond_status.interfaces %}
 {%- raw %}
