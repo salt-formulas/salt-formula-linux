@@ -102,12 +102,32 @@ service_openvswitch:
       {%- do bond_interfaces.update({iface_name: iface}) %}
     {%- endfor %}
 
+
 linux_network_dpdk_bond_interface_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-bond {{ interface.bridge }} {{ interface_name }} {{ bond_interfaces.keys()|join(' ') }} {% for iface_name, iface in bond_interfaces.items() %}-- set Interface {{ iface_name }} type=dpdk options:dpdk-devargs={{ iface.pci }} {% endfor %}"
+    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-bond {{ interface.bridge }} {{ interface_name }} {{ bond_interfaces.keys()|join(' ') }}"
     - unless: "ovs-vsctl show | grep {{ interface_name }}"
     - require:
-        - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
+      - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
+
+    {% for iface_name, iface in bond_interfaces.items() %}
+linux_network_dpdk_bond_interface_{{ iface_name }}_activate:
+  cmd.run:
+    - name: "timeout 5 /bin/sh -c -- 'while true; do ovs-vsctl get Interface {{ iface_name }} name 1>/dev/null 2>&1 && break || sleep 1; done'"
+    - unless: "ovs-vsctl get Interface {{ iface_name }} name 1>/dev/null 2>&1"
+linux_network_dpdk_bond_interface_{{ iface_name }}_type:
+  cmd.run:
+    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set Interface {{ iface_name }} type=dpdk"
+    - unless: "ovs-vsctl get interface {{ iface_name }} type | grep -w dpdk"
+    - require:
+      - cmd: linux_network_dpdk_bond_interface_{{ iface_name }}_activate
+linux_network_dpdk_bond_interface_{{ iface_name }}_options:
+  cmd.run:
+    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set Interface {{ iface_name }} options:dpdk-devargs={{ iface.pci }}"
+    - unless: "ovs-vsctl get interface {{ iface_name }} options:dpdk-devargs | grep -w {{ iface.pci }}"
+    - require:
+      - cmd: linux_network_dpdk_bond_interface_{{ iface_name }}_activate
+    {% endfor %}
 
 linux_network_dpdk_bond_mode_{{ interface_name }}:
   cmd.run:
@@ -168,35 +188,47 @@ linux_network_dpdk_bridge_port_interface_{{ interface_name }}:
   {# Multiqueue n_rxq, pmd_rxq_affinity and mtu setup on interfaces #}
   {%- if interface.type == 'dpdk_ovs_port' %}
 
-  {%- if interface.n_rxq is defined %}
+    {%- if interface.n_rxq is defined %}
 
 linux_network_dpdk_bridge_port_interface_n_rxq_{{ interface_name }}:
   cmd.run:
     - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set Interface {{ interface_name }} options:n_rxq={{ interface.n_rxq }} "
     - unless: |
         ovs-vsctl get Interface {{ interface_name }} options | grep 'n_rxq="{{ interface.n_rxq }}"'
+      {%- if interface.get("bond", "") != "" %}
+    - require:
+      - cmd: linux_network_dpdk_bond_interface_{{ interface.get("bond", "") }}
+      {%- endif %}
 
-  {%- endif %}
+    {%- endif %}
 
-  {%- if interface.pmd_rxq_affinity is defined %}
+    {%- if interface.pmd_rxq_affinity is defined %}
 
 linux_network_dpdk_bridge_port_interface_pmd_rxq_affinity_{{ interface_name }}:
   cmd.run:
     - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set Interface {{ interface_name }} other_config:pmd-rxq-affinity={{ interface.pmd_rxq_affinity }} "
     - unless: |
         ovs-vsctl get Interface {{ interface_name }} other_config | grep 'pmd-rxq-affinity="{{ interface.pmd_rxq_affinity }}"'
+      {%- if interface.get("bond", "") != "" %}
+    - require:
+      - cmd: linux_network_dpdk_bond_interface_{{ interface.get("bond", "") }}
+      {%- endif %}
 
-  {%- endif %}
+    {%- endif %}
 
-  {%- if interface.mtu is defined %}
+    {%- if interface.mtu is defined %}
 
 {# MTU ovs dpdk setup on interfaces #}
 linux_network_dpdk_bridge_port_interface_mtu_{{ interface_name }}:
   cmd.run:
     - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} set Interface {{ interface_name }} mtu_request={{ interface.mtu }} "
     - unless: "ovs-vsctl get Interface {{ interface_name }} mtu_request | grep {{ interface.mtu }}"
+      {%- if interface.get("bond", "") != "" %}
+    - require:
+      - cmd: linux_network_dpdk_bond_interface_{{ interface.get("bond", "") }}
+      {%- endif %}
 
-  {%- endif %}
+    {%- endif %}
 
   {%- endif %}
 
