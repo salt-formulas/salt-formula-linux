@@ -1,5 +1,8 @@
 {% if module_content.get('blacklist', false) -%}
 blacklist {{ module_name }}
+
+{% elif module_content.get('disabled', false) -%}
+install {{ module_name }} /bin/true
 {%- else -%}
 
 options {{ module_name }}{% for option, value in module_content.get('option', {}) | dictsort %} {{ option }}={{ value }}{% endfor %}
