@@ -8,9 +8,8 @@ linux_repo_prereq_pkgs:
   {%- endif %}
 
   # global proxy setup
-  {%- if system.proxy.get('pkg', {}).get('enabled', False) %}
-    {%- if grains.os_family == 'Debian' %}
-
+  {%- if grains.os_family == 'Debian' %}
+    {%- if system.proxy.get('pkg', {}).get('enabled', False) %}
 /etc/apt/apt.conf.d/99proxies-salt:
   file.managed:
   - template: jinja
@@ -24,6 +23,8 @@ linux_repo_prereq_pkgs:
 /etc/apt/apt.conf.d/99proxies-salt:
   file.absent
     {%- endif %}
+  {%- else %}
+  # Implement grobal proxy configiration for non-debian OS.
   {%- endif %}
 
   {% set default_repos = {} %}
@@ -70,7 +71,7 @@ linux_repo_{{ name }}_pin:
     - name: /etc/apt/preferences.d/{{ name }}
       {%- endif %}
 
-      {%- if repo.get('key') %} {# 2 #}
+      {%- if repo.get('key') %}
 linux_repo_{{ name }}_key:
   cmd.run:
     - name: |
@@ -135,23 +136,19 @@ linux_repo_{{ name }}:
   - key_url: {{ repo.key_url }}
             {%- endif %}
   - consolidate: {{ repo.get('consolidate', False) }}
-            {%- if repo.get('proxy', {}).get('enabled', False) or system.proxy.get('pkg', {}).get('enabled', False) or system.purge_repos|default(False) %}
   - require:
-              {%- if repo.get('proxy', {}).get('enabled', False) %}
     - file: /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
-              {%- endif %}
-              {%- if system.proxy.get('pkg', {}).get('enabled', False) %}
     - file: /etc/apt/apt.conf.d/99proxies-salt
-              {%- endif %}
-              {%- if system.purge_repos|default(False) %}
+            {%- if system.purge_repos|default(False) %}
     - file: purge_sources_list_d_repos
-              {%- endif %}
             {%- endif %}
           {%- endif %}
         {%- else %}
-linux_repo_{{ name }}_absent:
+linux_repo_{{ name }}:
   pkgrepo.absent:
     - refresh_db: False
+    - require:
+      - file: /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
     - require_in:
       - refresh_db
           {%- if repo.ppa is defined %}
@@ -165,24 +162,19 @@ linux_repo_{{ name }}_absent:
     - keyid: {{ repo.key_id }}
             {%- endif %}
           {%- endif %}
-  file.absent:
-    - name: /etc/apt/sources.list.d/{{ name }}.list
-  file.absent:
-    - name: /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
         {%- endif %}
       {%- endif %}
     {%- endif %}
 
-  {%- if grains.os_family == "RedHat" %}
+    {%- if grains.os_family == "RedHat" %}
 
-    {%- if repo.get('enabled', True) %}
-
-      {%- if repo.get('proxy', {}).get('enabled', False) %}
+      {%- if repo.get('enabled', True) %}
+        {%- if repo.get('proxy', {}).get('enabled', False) %}
 # PLACEHOLDER
 # TODO, implement per proxy configuration for Yum
-      {%- endif %}
+        {%- endif %}
 
-      {%- if not repo.get('default', False) %}
+        {%- if not repo.get('default', False) %}
 linux_repo_{{ name }}:
   pkgrepo.managed:
   - refresh_db: False
@@ -190,24 +182,24 @@ linux_repo_{{ name }}:
     - refresh_db
   - name: {{ name }}
   - humanname: {{ repo.get('humanname', name) }}
-        {%- if repo.mirrorlist is defined %}
+          {%- if repo.mirrorlist is defined %}
   - mirrorlist: {{ repo.mirrorlist }}
-        {%- else %}
+          {%- else %}
   - baseurl: {{ repo.source }}
-        {%- endif %}
+          {%- endif %}
   - gpgcheck: {% if repo.get('gpgcheck', False) %}1{% else %}0{% endif %}
-        {%- if repo.gpgkey is defined %}
+          {%- if repo.gpgkey is defined %}
   - gpgkey: {{ repo.gpgkey }}
           {%- endif %}
         {%- endif %}
-    {%- else %}
+      {%- else %}
   pkgrepo.absent:
     - refresh_db: False
     - require_in:
       - refresh_db
     - name: {{ repo.source }}
+      {%- endif %}
     {%- endif %}
-  {%- endif %}
   {%- endfor %}
 
   {%- if default_repos|length > 0 and grains.os_family == 'Debian' %}

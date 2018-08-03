@@ -126,6 +126,15 @@ linux:
       htop:
         version: latest
     repo:
+      disabled_repo:
+        source: "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
+        enabled: false
+      disabled_repo_left_proxy:
+        source: "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
+        enabled: false
+        proxy:
+          enabled: true
+          https: https://127.0.5.1:443
       opencontrail:
         source: "deb http://ppa.launchpad.net/tcpcloud/contrail-3.0/ubuntu xenial main"
         keyid: E79EE90C
