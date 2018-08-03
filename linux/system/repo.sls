@@ -166,9 +166,9 @@ linux_repo_{{ name }}_absent:
             {%- endif %}
           {%- endif %}
   file.absent:
-    - name: /etc/apt/sources.list.d/{{ name }}.list
-  file.absent:
-    - name: /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
+    - names:
+      - /etc/apt/sources.list.d/{{ name }}.list
+      - /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
         {%- endif %}
       {%- endif %}
     {%- endif %}
