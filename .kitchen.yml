@@ -13,7 +13,8 @@ provisioner:
   log_level: error
   formula: linux
   grains:
-    noservices: true
+    noservices: True
+    kitchen-test: True
   state_top:
     base:
       "*":

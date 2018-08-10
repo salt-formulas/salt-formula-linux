@@ -73,9 +73,21 @@ linux_repo_{{ name }}_pin:
 
       {%- if repo.get('key') %}
 linux_repo_{{ name }}_key:
+{% if grains['saltversioninfo'] < [2017, 7] %}
   cmd.run:
     - name: |
             echo "{{ repo.key | indent(12) }}" | apt-key add -
+    {%- if not grains.get('kitchen-test') %}
+    {# omitted from tests, as behaves inconsistently across CI/platforms #}
+    - unless: |
+            apt-key finger --with-colons | grep -qF $(echo "{{ repo.key| indent(12) }}" | gpg --with-fingerprint --with-colons | grep -E '^fpr')
+    {%- endif %}
+{%- else %}
+  module.run:
+    - name: pkg.add_repo_key
+    - text: |
+          {{ repo.key | indent(10) }}
+{%- endif %}
     - require_in:
         {%- if repo.get('default', False) %}
       - file: default_repo_list
@@ -98,6 +110,10 @@ linux_repo_{{ name }}_key:
 linux_repo_{{ name }}_key:
   cmd.run:
     - name: "curl -sL {{ repo.key_url }} | apt-key add -"
+    {%- if not grains.get('kitchen-test') %}
+    {# omitted from tests, as behaves inconsistently across CI/platforms #}
+    - unless: "apt-key finger --with-colons | grep -qF $(curl -sL {{ repo.key_url }} | gpg --with-fingerprint --with-colons | grep -E '^fpr')"
+    {%- endif %}
     - require_in:
         {%- if repo.get('default', False) %}
       - file: default_repo_list
