@@ -439,6 +439,10 @@ Configure or blacklist kernel modules with additional options to
 ``/etc/modprobe.d/nf_conntrack.conf`` file with line
 ``options nf_conntrack hashsize=262144``:
 
+'option' can be a mapping (with 'enabled' and 'value' keys) or a scalar.
+
+Example for 'scalar' option value:
+
 .. code-block:: yaml
 
     linux:
@@ -448,6 +452,115 @@ Configure or blacklist kernel modules with additional options to
             nf_conntrack:
               option:
                 hashsize: 262144
+
+Example for 'mapping' option value:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              option:
+                hashsize:
+                  enabled: true
+                  value: 262144
+
+NOTE: 'enabled' key is optional and is True by default.
+
+Blacklist a module:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              blacklist: true
+
+A module can have a number of aliases, wildcards are allowed.
+Define an alias for a module:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              alias:
+                nfct:
+                  enabled: true
+                "nf_conn*":
+                  enabled: true
+
+NOTE: 'enabled' key is mandatory as there are no other keys exist.
+
+Execute custom command instead of 'insmod' when inserting a module:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              install:
+                enabled: true
+                command: /bin/true
+
+NOTE: 'enabled' key is optional and is True by default.
+
+Execute custom command instead of 'rmmod' when removing a module:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              remove:
+                enabled: true
+                command: /bin/true
+
+NOTE: 'enabled' key is optional and is True by default.
+
+Define module dependencies:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              softdep:
+                pre:
+                  1:
+                    enabled: true
+                    value: a
+                  2:
+                    enabled: true
+                    value: b
+                  3:
+                    enabled: true
+                    value: c
+                post:
+                  1:
+                    enabled: true
+                    value: x
+                  2:
+                    enabled: true
+                    value: y
+                  3:
+                    enabled: true
+                    value: z
+
+NOTE: 'enabled' key is optional and is True by default.
+
 
 Install specific kernel version and ensure all other kernel packages are
 not present. Also install extra modules and headers for this kernel:

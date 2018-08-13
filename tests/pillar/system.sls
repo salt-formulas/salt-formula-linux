@@ -25,6 +25,55 @@ linux:
       boot_options:
         - pti=off
         - spectre_v2=auto
+      module:
+        module_1:
+          install:
+            command: /bin/true
+          remove:
+            enabled: false
+            command: /bin/false
+        module_2:
+          install:
+            enabled: false
+            command: /bin/false
+          remove:
+            command: /bin/true
+        module_3:
+          blacklist: true
+        module_4:
+          blacklist: false
+          alias:
+            "module*":
+              enabled: true
+            "module_*":
+              enabled: false
+        module_5:
+          softdep:
+            pre:
+              1:
+                value: module_1
+              2:
+                value: module_2
+                enabled: false
+            post:
+              1:
+                value: module_3
+              2:
+                value: module_4
+                enabled: false
+        module_6:
+          option:
+            opt_1: 111
+            opt_2: 222
+        module_7:
+          option:
+            opt_3:
+              value: 333
+            opt_4:
+              enabled: true
+              value: 444
+            opt_5:
+              enabled: false
     cgroup:
       group:
         group_1:
