@@ -73,9 +73,10 @@ linux_repo_{{ name }}_pin:
 
       {%- if repo.get('key') %}
 linux_repo_{{ name }}_key:
+        {% set repo_key = salt['hashutil.base64_b64encode'](repo.key) %}
   cmd.run:
     - name: |
-            echo "{{ repo.key | indent(12) }}" | apt-key add -
+            echo '{{ repo_key }}' | base64 -d | apt-key add -
     - require_in:
         {%- if repo.get('default', False) %}
       - file: default_repo_list
