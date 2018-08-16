@@ -1,0 +1,39 @@
+# 3.2.6 Ensure bogus ICMP responses are ignored
+#
+# Description
+# ===========
+# Setting icmp_ignore_bogus_error_responses to 1 prevents the kernel from
+# logging bogus responses (RFC-1122 non-compliant) from broadcast reframes,
+# keeping file systems from filling up with useless log messages.
+#
+# Rationale
+# =========
+# Some routers (and some attackers) will send responses that violate RFC-1122
+# and attempt to fill up a log file system with many useless error messages.
+#
+# Audit
+# =====
+#
+# Run the following commands and verify output matches:
+#
+#   # sysctl net.ipv4.icmp_ignore_bogus_error_responses
+#   net.ipv4.icmp_ignore_bogus_error_responses = 1
+#
+# Remediation
+# ===========
+#
+# Set the following parameter in the /etc/sysctl.conf file:
+#
+#   net.ipv4.icmp_ignore_bogus_error_responses = 1
+#
+# Run the following commands to set the active kernel parameters:
+#
+#   # sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1
+#   # sysctl -w net.ipv4.route.flush=1
+
+parameters:
+  linux:
+    system:
+      kernel:
+        sysctl:
+          net.ipv4.icmp_ignore_bogus_error_responses: 1
