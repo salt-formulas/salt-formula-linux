@@ -1,8 +1,8 @@
 ---
 driver:
   name: docker
-  hostname: linux.ci.local
-  use_sudo: false
+  hostname: linux-formula
+  run_options: -v /dev/log:/dev/log:ro
 
 provisioner:
   name: salt_solo

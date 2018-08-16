@@ -1,11 +1,14 @@
 linux:
+  network:
+    enabled: true
+    hostname: linux
+    fqdn: linux.ci.local
   system:
     enabled: true
     cluster: default
     name: linux
-    domain: local
+    domain: ci.local
     environment: prd
-    hostname: system.pillar.local
     purge_repos: true
     directory:
       /tmp/test:

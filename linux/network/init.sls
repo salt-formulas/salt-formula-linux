@@ -1,6 +1,8 @@
 {%- from "linux/map.jinja" import network with context %}
 include:
+{%- if network.hostname is defined %}
 - linux.network.hostname
+{%- endif %}
 {%- if network.host|length > 0 or network.get('purge_hosts', True) %}
 - linux.network.host
 {%- endif %}
