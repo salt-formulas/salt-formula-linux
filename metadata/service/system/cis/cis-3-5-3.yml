@@ -1,0 +1,37 @@
+# 3.5.3 Ensure RDS is disabled
+#
+# Description
+# ===========
+# The Reliable Datagram Sockets (RDS) protocol is a transport layer protocol
+# designed to provide low-latency, high-bandwidth communications between
+# cluster nodes. It was developed by the Oracle Corporation.
+#
+# Rationale
+# =========
+# If the protocol is not being used, it is recommended that kernel module
+# not be loaded, disabling the service to reduce the potential attack surface.
+#
+# Audit
+# =====
+# Run the following commands and verify the output is as indicated:
+#
+#   # modprobe -n -v rds
+#   install /bin/true
+#   # lsmod | grep rds
+#   <No output>
+#
+# Remediation
+# ===========
+# Edit or create the file /etc/modprobe.d/CIS.conf and add the following line:
+#
+#   install rds /bin/true
+#
+parameters:
+  linux:
+    system:
+      kernel:
+        module:
+          rds:
+            install:
+              command: /bin/true
+
