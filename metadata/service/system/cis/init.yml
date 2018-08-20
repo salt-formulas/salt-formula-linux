@@ -1,14 +1,2 @@
 classes:
-- service.linux.system.cis.cis-1-1-1-1.yml
-- service.linux.system.cis.cis-1-1-1-2.yml
-- service.linux.system.cis.cis-1-1-1-3.yml
-- service.linux.system.cis.cis-1-1-1-4.yml
-- service.linux.system.cis.cis-1-1-1-5.yml
-- service.linux.system.cis.cis-1-1-1-6.yml
-- service.linux.system.cis.cis-1-1-1-7.yml
-- service.linux.system.cis.cis-1-1-1-8.yml
 - service.linux.system.cis.cis-3-3-3
-- service.linux.system.cis.cis-3-5-1
-- service.linux.system.cis.cis-3-5-2
-- service.linux.system.cis.cis-3-5-3
-- service.linux.system.cis.cis-3-5-4
