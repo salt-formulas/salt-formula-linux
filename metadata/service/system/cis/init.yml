@@ -10,4 +10,5 @@ classes:
 - service.linux.system.cis.cis-3-2-6
 - service.linux.system.cis.cis-3-2-7
 - service.linux.system.cis.cis-3-2-8
-- service.linux.system.cis.cis-3-3-3
+# Temp. disable PROD-22520
+#- service.linux.system.cis.cis-3-3-3
