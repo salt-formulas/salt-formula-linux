@@ -1,0 +1,38 @@
+# 3.5.2 Ensure DCCP is disabled
+#
+# Description
+# ===========
+# The Datagram Congestion Control Protocol (DCCP) is a transport layer protocol
+# that supports streaming media and telephony. DCCP provides a way to gain
+# access to congestion control, without having to do it at the application
+# layer, but does not provide in-sequence delivery.
+#
+# Rationale
+# =========
+# If the protocol is not required, it is recommended that the drivers not be
+# installed to reduce the potential attack surface.
+#
+# Audit
+# =====
+# Run the following commands and verify the output is as indicated:
+#
+#   # modprobe -n -v dccp
+#   install /bin/true
+#   # lsmod | grep dccp
+#   <No output>
+#
+# Remediation
+# ===========
+# Edit or create the file /etc/modprobe.d/CIS.conf and add the following line:
+#
+#   install dccp /bin/true
+#
+parameters:
+  linux:
+    system:
+      kernel:
+        module:
+          dccp:
+            install:
+              command: /bin/true
+

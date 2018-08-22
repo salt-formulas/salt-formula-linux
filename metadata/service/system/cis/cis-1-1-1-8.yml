@@ -1,0 +1,50 @@
+# 1.1.1.8 Ensure mounting of FAT filesystems is disabled
+#
+# Description
+# ===========
+# The FAT filesystem format is primarily used on older windows systems and
+# portable USB drives or flash modules. It comes in three types FAT12, FAT16,
+# and FAT32 all of which are supported by the vfat kernel module.
+#
+# Rationale
+# =========
+# Removing support for unneeded filesystem types reduces the local attack
+# surface of the server. If this filesystem type is not needed, disable it.
+#
+# Audit
+# =====
+# Run the following commands and verify the output is as indicated:
+#
+#   # modprobe -n -v vfat
+#   install /bin/true
+#   # lsmod | grep vfat
+#   <No output>
+#
+# Remediation
+# ===========
+#
+# Edit or create the file /etc/modprobe.d/CIS.conf and add the following line:
+#
+#   install vfat /bin/true
+#
+# Impact
+# ======
+# FAT filesystems are often used on portable USB sticks and other flash
+# media are commonly used to transfer files between workstations, removing
+# VFAT support may prevent the ability to transfer files in this way.
+#
+# NOTE
+# ====
+# In Ubuntu 16.04 vfat is built into kernel, and 'install' command
+# from modprobe.d dir has no effect. However, this is still checked by
+# CIS-CAT in Ubuntu 16.04 benchmark v.1.0.0. This was removed in v.1.1.0.
+#
+parameters:
+  linux:
+    system:
+      kernel:
+        module:
+          vfat:
+            install:
+              command: /bin/true
+

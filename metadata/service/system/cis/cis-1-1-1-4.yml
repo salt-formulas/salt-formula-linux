@@ -1,0 +1,36 @@
+# 1.1.1.4 Ensure mounting of hfs filesystems is disabled
+#
+# Description
+# ===========
+# The hfs filesystem type is a hierarchical filesystem that allows
+# you to mount Mac OS filesystems.
+#
+# Rationale
+# =========
+# Removing support for unneeded filesystem types reduces the local attack
+# surface of the system. If this filesystem type is not needed, disable it.
+#
+# Audit
+# =====
+# Run the following commands and verify the output is as indicated:
+#
+#   # modprobe -n -v hfs
+#   install /bin/true
+#   # lsmod | grep hfs
+#   <No output>
+#
+# Remediation
+# ===========
+# Edit or create the file /etc/modprobe.d/CIS.conf and add the following line:
+#
+#   install hfs /bin/true
+#
+parameters:
+  linux:
+    system:
+      kernel:
+        module:
+          hfs:
+            install:
+              command: /bin/true
+

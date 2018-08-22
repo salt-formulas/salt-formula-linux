@@ -1,0 +1,36 @@
+# 1.1.1.5 Ensure mounting of hfsplus filesystems is disabled
+#
+# Description
+# ===========
+# The hfsplus filesystem type is a hierarchical filesystem designed to
+# replace hfs that allows you to mount Mac OS filesystems.
+#
+# Rationale
+# =========
+# Removing support for unneeded filesystem types reduces the local attack
+# surface of the system. If this filesystem type is not needed, disable it.
+#
+# Audit
+# =====
+# Run the following commands and verify the output is as indicated:
+#
+#   # modprobe -n -v hfsplus
+#   install /bin/true
+#   # lsmod | grep hfsplus
+#   <No output>
+#
+# Remediation
+# ===========
+# Edit or create the file /etc/modprobe.d/CIS.conf and add the following line:
+#
+#   install hfsplus /bin/true
+#
+parameters:
+  linux:
+    system:
+      kernel:
+        module:
+          hfsplus:
+            install:
+              command: /bin/true
+
