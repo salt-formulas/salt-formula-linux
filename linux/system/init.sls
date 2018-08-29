@@ -3,6 +3,8 @@
 include:
 - linux.system.env
 - linux.system.profile
+- linux.system.at
+- linux.system.cron
 {%- if system.repo|length > 0 %}
 - linux.system.repo
 {%- endif %}

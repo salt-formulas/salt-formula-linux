@@ -235,7 +235,54 @@ updates):
           automatic_reboot: true
           automatic_reboot_time: "02:00"
 
-Linux with cron jobs
+Managing cron tasks
+-------------------
+
+There are two data structures that are related to managing cron itself and
+cron tasks:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        cron:
+
+and
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        job:
+
+`linux:system:cron` manages cron packages, services, and '/etc/cron.allow' file.
+
+'deny' files are managed the only way - we're ensuring they are absent, that's
+a requirement from CIS 5.1.8
+
+'cron' pillar structure is the following:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        cron:
+          enabled: true
+          pkgs: [ <cron packages> ]
+          services: [ <cron services> ]
+          user:
+            <username>:
+              enabled: true
+
+To add user to '/etc/cron.allow' use 'enabled' key as shown above.
+
+'/etc/cron.deny' is not managed as CIS 5.1.8 requires it was removed.
+
+A user would be ignored if any of the following is true:
+* user is disabled in `linux:system:user:<username>`
+* user is disabled in `linux:system:cron:user:<username>`
+
+`linux:system:job` manages individual cron tasks.
 
 By default, it will use name as an identifier, unless identifier key is
 explicitly set or False (then it will use Salt's default behavior which is
@@ -254,6 +301,32 @@ identifier same as command resulting in not being able to change it):
             user: 'root'
             hour: 2
             minute: 0
+
+Managing 'at' tasks
+-------------------
+
+Pillar for managing `at` tasks is similar to one for `cron` tasks:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        at:
+          enabled: true
+          pkgs: [ <at packages> ]
+          services: [ <at services> ]
+          user:
+            <username>:
+              enabled: true
+
+To add a user to '/etc/at.allow' use 'enabled' key as shown above.
+
+'/etc/at.deny' is not managed as CIS 5.1.8 requires it was removed.
+
+A user will be ignored if any of the following is true:
+* user is disabled in `linux:system:user:<username>`
+* user is disabled in `linux:system:at:user:<username>`
+
 
 Linux security limits (limit sensu user memory usage to max 1GB):
 

@@ -5,6 +5,20 @@ linux:
     fqdn: linux.ci.local
   system:
     enabled: true
+    at:
+      enabled: true
+      user:
+        root:
+          enabled: true
+        testuser:
+          enabled: true
+    cron:
+      enabled: true
+      user:
+        root:
+          enabled: true
+        testuser:
+          enabled: true
     cluster: default
     name: linux
     domain: ci.local

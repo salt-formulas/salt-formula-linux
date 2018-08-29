@@ -85,6 +85,24 @@
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:system')) %}
 
+{% set at = salt['grains.filter_by']({
+    'Debian': {
+        'enabled': false,
+        'pkgs': ['at'],
+        'services': ['atd'],
+        'user': {}
+    },
+}, grain='os_family', merge=salt['pillar.get']('linux:system:at')) %}
+
+{% set cron = salt['grains.filter_by']({
+    'Debian': {
+        'enabled': false,
+        'pkgs': ['cron'],
+        'services': ['cron'],
+        'user': {}
+    },
+}, grain='os_family', merge=salt['pillar.get']('linux:system:cron')) %}
+
 {% set banner = salt['grains.filter_by']({
     'BaseDefaults': {
         'enabled': false,
