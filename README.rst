@@ -1961,6 +1961,22 @@ into ``/mnt/data``.
                   size: 40G
                   mount: ${linux:storage:mount:data}
 
+Create File System during mount using lvm. For EXT and XFS there is ability to add block size. For XFS you must define if you want ``size`` or ``log``, so for size is ``block_size: size=2048``.
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        storage:
+          mount:
+            data:
+              enabled: true
+              device: /dev/vg1/data
+              file_system: ext4
+              block_size: 2048
+              path: /mnt/data
+
+
 Create partitions on disk. Specify size in MB. It expects empty
 disk without any existing partitions.
 Set ``startsector=1`` if you want to start partitions from ``2048``.

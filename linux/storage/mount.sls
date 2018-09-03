@@ -5,22 +5,51 @@
 
 {%- if mount.enabled %}
 
-{%- if not mount.file_system in ['nfs', 'nfs4', 'cifs', 'tmpfs'] %}
+{%- if not mount.file_system in ['nfs', 'nfs4', 'cifs', 'tmpfs', 'none'] %}
 
+{%- if mount.file_system == 'xfs' %}
+create_xfs_{{ mount.device }}:
+  module.run:
+    - name: xfs.mkfs
+    - device: {{ mount.device }}
+    - label: {{ name }}
+{%- if mount.block_size is defined %}
+    - bso: {{ mount.block_size }}
+{%- endif %}
+    - onlyif: "test `blkid {{ mount.device }} >/dev/null;echo $?` -eq 2"
+    - require:
+      - pkg: xfs_packages_{{ mount.device }}
+    - require_in:
+      - mount: {{ mount.path }}
+
+xfs_packages_{{ mount.device }}:
+  pkg.installed:
+    - name: xfsprogs
+
+{%- elif mount.file_system in ['ext2', 'ext3', 'ext4'] %}
+create_extfs_{{ mount.device }}:
+  module.run:
+    - name: extfs.mkfs
+    - device: {{ mount.device }}
+    - kwargs: {
+{%- if mount.block_size is defined %}
+        block_size: {{ mount.block_size }},
+{%- endif %}
+        label: {{ name }}
+    }
+    - fs_type: {{ mount.file_system }}
+    - onlyif: "test `blkid {{ mount.device }} >/dev/null;echo $?` -eq 2"
+    - require_in:
+      - mount: {{ mount.path }}
+
+{%- else %}
 mkfs_{{ mount.device}}:
   cmd.run:
   - name: "mkfs.{{ mount.file_system }} -L {{ name }} {{ mount.device }}"
   - onlyif: "test `blkid {{ mount.device }} | grep -q TYPE;echo $?` -eq 1"
   - require_in:
     - mount: {{ mount.path }}
-  {%- if mount.file_system == 'xfs' %}
-  - require:
-    - pkg: xfs_packages_{{ mount.device }}
-
-xfs_packages_{{ mount.device }}:
-  pkg.installed:
-    - name: xfsprogs
-  {%- endif %}
+{%- endif %}
 
 {%- endif %}
 

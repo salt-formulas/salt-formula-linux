@@ -49,6 +49,9 @@ system_user_{{ name }}:
   {%- if user.uid is defined and user.uid %}
   - uid: {{ user.uid }}
   {%- endif %}
+  {%- if user.gid is defined and user.gid %}
+  - gid: {{ user.gid }}
+  {%- endif %}
   - require: {{ requires|yaml }}
 
 system_user_home_{{ user.home }}:
