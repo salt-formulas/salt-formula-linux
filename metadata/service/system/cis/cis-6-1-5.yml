@@ -1,0 +1,39 @@
+# CIS 6.1.5 Ensure permissions on /etc/gshadow are configured
+#
+# Description
+# ===========
+# The /etc/gshadow file is used to store the information about groups that
+# is critical to the security of those accounts, such as the hashed password
+# and other security information.
+#
+# Rationale
+# =========
+# If attackers can gain read access to the /etc/gshadow file, they can easily
+# run a password cracking program against the hashed password to break it.
+# Other security information that is stored in the /etc/gshadow file (such as
+# group administrators) could also be useful to subvert the group.
+#
+# Audit
+# =====
+# Run the following command and verify verify Uid is 0/root ,
+# Gid is <gid>/shadow , and Access is 640 or more restrictive:
+#
+#   # stat /etc/gshadow
+#   Access: (0640/-rw-r-----) Uid: (0/root) Gid: (42/shadow)
+#
+# Remediation
+# ===========
+# Run the following commands to set permissions on /etc/gshadow :
+#
+#   # chown root:shadow /etc/gshadow
+#   # chmod o-rwx,g-rw /etc/gshadow
+#
+parameters:
+  linux:
+    system:
+      file:
+        /etc/gshadow:
+          user: 'root'
+          group: 'shadow'
+          mode: '0640'
+

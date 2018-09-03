@@ -1,0 +1,38 @@
+# CIS 6.1.7 Ensure permissions on /etc/shadow- are configured
+#
+# Description
+# ===========
+# The /etc/shadow- file is used to store backup information about user
+# accounts that is critical to the security of those accounts, such as the
+# hashed password and other security information.
+#
+# Rationale
+# =========
+# It is critical to ensure that the /etc/shadow- file is protected from
+# unauthorized access. Although it is protected by default, the file
+# permissions could be changed either inadvertently or through malicious actions.
+#
+# Audit
+# =====
+# Run the following command and verify Uid and Gid are both 0/root and
+# Access is 600 or more restrictive:
+#
+#   # stat /etc/shadow-
+#   Access: (0600/-rw-------) Uid: (0/root) Gid: (0/root)
+#
+# Remediation
+# ===========
+# Run the following command to set permissions on /etc/shadow- :
+#
+#   # chown root:root /etc/shadow-
+#   # chmod 600 /etc/shadow-
+#
+parameters:
+  linux:
+    system:
+      file:
+        /etc/shadow-:
+          user: 'root'
+          group: 'root'
+          mode: '0600'
+

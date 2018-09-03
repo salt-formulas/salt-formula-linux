@@ -1,0 +1,38 @@
+# CIS 6.1.4 Ensure permissions on /etc/group are configured
+#
+# Description
+# ===========
+# The /etc/group file contains a list of all the valid groups defined in the
+# system. The command below allows read/write access for root and read access
+# for everyone else.
+#
+# Rationale
+# =========
+# The /etc/group file needs to be protected from unauthorized changes by
+# non-privileged users, but needs to be readable as this information is used
+# with many non-privileged programs.
+#
+# Audit
+# =====
+# Run the following command and verify Uid and Gid are both 0/root and
+# Access is 644 :
+#
+#   # stat /etc/group
+#   Access: (0644/-rw-r--r--) Uid: (0/root) Gid: (0/root)
+#
+# Remediation
+# ===========
+# Run the following command to set permissions on /etc/group :
+#
+#   # chown root:root /etc/group
+#   # chmod 644 /etc/group
+#
+parameters:
+  linux:
+    system:
+      file:
+        /etc/group:
+          user: 'root'
+          group: 'root'
+          mode: '0644'
+

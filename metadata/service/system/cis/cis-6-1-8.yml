@@ -1,0 +1,37 @@
+# CIS 6.1.8 Ensure permissions on /etc/group- are configured
+#
+# Description
+# ===========
+# The /etc/group- file contains a backup list of all the valid groups defined
+# in the system.
+#
+# Rationale
+# =========
+# It is critical to ensure that the /etc/group- file is protected from
+# unauthorized access. Although it is protected by default, the file
+# permissions could be changed either inadvertently or through malicious actions.
+#
+# Audit
+# =====
+# Run the following command and verify Uid and Gid are both 0/root and
+# Access is 600 or more restrictive:
+#
+#   # stat /etc/group-
+#   Access: (0600/-rw-------) Uid: (0/root) Gid: (0/root)
+#
+# Remediation
+# ===========
+# Run the following command to set permissions on /etc/group- :
+#
+#   # chown root:root /etc/group-
+#   # chmod 600 /etc/group-
+#
+parameters:
+  linux:
+    system:
+      file:
+        /etc/group-:
+          user: 'root'
+          group: 'root'
+          mode: '0600'
+
