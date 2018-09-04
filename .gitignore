@@ -1,5 +1,8 @@
 .kitchen
+.bundle
+bundle/
 tests/build/
 *.swp
 *.pyc
 .ropeproject
+Gemfile*

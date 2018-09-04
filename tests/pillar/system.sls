@@ -407,6 +407,9 @@ linux:
         - .local
       LANG: C
       LC_ALL: C
+    login_defs:
+      PASS_MAX_DAYS:
+        value: 99
     profile:
       vi_flavors.sh: |
         export PAGER=view

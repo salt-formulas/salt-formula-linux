@@ -140,6 +140,70 @@
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:system:auth:ldap')) %}
 
+{%- load_yaml as login_defs_defaults %}
+Debian:
+    CHFN_RESTRICT:
+        value: 'rwh'
+    DEFAULT_HOME:
+        value: 'yes'
+    ENCRYPT_METHOD:
+        value: 'SHA512'
+    ENV_PATH:
+        value: 'PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games'
+    ENV_SUPATH:
+        value: 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+    ERASECHAR:
+        value: '0177'
+    FAILLOG_ENAB:
+        value: 'yes'
+    FTMP_FILE:
+        value: '/var/log/btmp'
+    GID_MAX:
+        value: '60000'
+    GID_MIN:
+        value: '1000'
+    HUSHLOGIN_FILE:
+        value: '.hushlogin'
+    KILLCHAR:
+        value: '025'
+    LOGIN_RETRIES:
+        value: '5'
+    LOGIN_TIMEOUT:
+        value: '60'
+    LOG_OK_LOGINS:
+        value: 'no'
+    LOG_UNKFAIL_ENAB:
+        value: 'no'
+    MAIL_DIR:
+        value: '/var/mail'
+    PASS_MAX_DAYS:
+        value: '99999'
+    PASS_MIN_DAYS:
+        value: '0'
+    PASS_WARN_AGE:
+        value: '7'
+    SU_NAME:
+        value: 'su'
+    SYSLOG_SG_ENAB:
+        value: 'yes'
+    SYSLOG_SU_ENAB:
+        value: 'yes'
+    TTYGROUP:
+        value: 'tty'
+    TTYPERM:
+        value: '0600'
+    UID_MAX:
+        value: '60000'
+    UID_MIN:
+        value: '1000'
+    UMASK:
+        value: '022'
+    USERGROUPS_ENAB:
+        value: 'yes'
+{%- endload %}
+{%- set login_defs = salt['grains.filter_by'](login_defs_defaults,
+    grain='os_family', merge=salt['pillar.get']('linux:system:login_defs')) %}
+
 {#    'network_name', #}
 
 {% set interface_params = [
