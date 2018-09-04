@@ -410,6 +410,9 @@ linux:
     login_defs:
       PASS_MAX_DAYS:
         value: 99
+    shell:
+      umask: '027'
+      timeout: 900
     profile:
       vi_flavors.sh: |
         export PAGER=view
