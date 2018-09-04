@@ -43,6 +43,7 @@ system_user_{{ name }}:
   {%- endif %}
   {%- if user.system is defined and user.system %}
   - system: True
+  - shell: {{ user.get('shell', '/bin/false') }}
   {%- else %}
   - shell: {{ user.get('shell', '/bin/bash') }}
   {%- endif %}
