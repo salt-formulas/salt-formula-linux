@@ -113,7 +113,7 @@ linux_repo_{{ name }}_key:
         {%- if repo.get('enabled', True) %}
 linux_repo_{{ name }}:
   pkgrepo.managed:
-  - refresh_db: False
+  - refresh: False
   - require_in:
     - refresh_db
           {%- if repo.ppa is defined %}
@@ -146,7 +146,7 @@ linux_repo_{{ name }}:
         {%- else %}
 linux_repo_{{ name }}:
   pkgrepo.absent:
-    - refresh_db: False
+    - refresh: False
     - require:
       - file: /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
     - require_in:
@@ -177,7 +177,7 @@ linux_repo_{{ name }}:
         {%- if not repo.get('default', False) %}
 linux_repo_{{ name }}:
   pkgrepo.managed:
-  - refresh_db: False
+  - refresh: False
   - require_in:
     - refresh_db
   - name: {{ name }}
@@ -194,7 +194,7 @@ linux_repo_{{ name }}:
         {%- endif %}
       {%- else %}
   pkgrepo.absent:
-    - refresh_db: False
+    - refresh: False
     - require_in:
       - refresh_db
     - name: {{ repo.source }}
