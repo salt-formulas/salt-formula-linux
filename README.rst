@@ -1629,6 +1629,23 @@ settings in ``/etc/environment``.
             export FTP_PROXY=ftp://127.0.3.3:2121
             export NO_PROXY='.local'
 
+
+Configure login.defs parameters
+-------------------------------
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        login_defs:
+          <opt_name>:
+            enabled: true
+            value: <opt_value>
+
+<opt_name> is a configurational option defined in 'man login.defs'.
+<opt_name> is case sensitive, should be UPPERCASE only!
+
+
 Linux with hosts
 
 Parameter ``purge_hosts`` will enforce whole ``/etc/hosts file``,

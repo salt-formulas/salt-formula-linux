@@ -3,6 +3,9 @@
 include:
 - linux.system.env
 - linux.system.profile
+{%- if system.login_defs is defined %}
+- linux.system.login_defs
+{%- endif %}
 - linux.system.at
 - linux.system.cron
 {%- if system.repo|length > 0 %}
