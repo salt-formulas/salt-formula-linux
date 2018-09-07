@@ -21,6 +21,9 @@ linux_file_{{ file_name }}:
     {%- else %}
     - skip_verify: True
     {%- endif %}
+    {%- if file.template is defined %}
+    - template: {{ file.template }}
+    {%- endif %}
     {%- elif file.contents is defined %}
     - contents: {{ file.contents|yaml }}
     {%- elif file.contents_pillar is defined %}
@@ -28,6 +31,7 @@ linux_file_{{ file_name }}:
     {%- elif file.contents_grains is defined %}
     - contents_grains: {{ file.contents_grains }}
     {%- endif %}
+
 {%- endif %}
     {%- if file.name is defined %}
     - name: {{ file.name }}
