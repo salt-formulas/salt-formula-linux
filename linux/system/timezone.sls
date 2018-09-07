@@ -5,6 +5,9 @@
 
 {{ system.timezone }}:
   timezone.system:
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - utc: {{ system.utc }}
 
 {%- endif %}
