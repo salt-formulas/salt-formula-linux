@@ -467,6 +467,14 @@ Ensure presence of file by specifying its source:
             name: /tmp/test.txt
             source: http://example.com/test.txt
 
+    linux:
+      system:
+        file:
+          test2:
+            name: /tmp/test2.txt
+            source: http://example.com/test2.jinja
+            template: jinja
+
 Ensure presence of file by specifying its contents:
 
 .. code-block:: yaml

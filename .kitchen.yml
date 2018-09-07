@@ -63,4 +63,12 @@ suites:
       pillars-from-files:
         linux.sls: tests/pillar/system.sls
 
+  - name: system_file
+    provisioner:
+      pillars-from-files:
+        linux.sls: tests/pillar/system_file.sls
+      pillars_from_directories:
+        - source: tests/example
+          dest: srv/salt/linux/files/test
+
 # vim: ft=yaml sw=2 ts=2 sts=2 tw=125
