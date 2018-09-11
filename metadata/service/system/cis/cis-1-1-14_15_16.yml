@@ -1,0 +1,95 @@
+# CIS 1.1.14 Ensure nodev option set on /dev/shm partition (Scored)
+#
+# Description
+# ===========
+# The nodev mount option specifies that the filesystem cannot contain special
+# devices.
+#
+# Rationale
+# =========
+# Since the /run/shm filesystem is not intended to support devices, set this
+# option to ensure that users cannot attempt to create special devices in
+# /dev/shm partitions.
+#
+# Audit
+# =====
+# Run the following command and verify that the nodev option is set on /dev/shm .
+#
+#   # mount | grep /dev/shm
+#   shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime)
+#
+# Remediation
+# ===========
+#
+# Edit the /etc/fstab file and add nodev to the fourth field (mounting options)
+# for the /dev/shm partition. See the fstab(5) manual page for more information.
+# Run the following command to remount /dev/shm :
+#
+#   # mount -o remount,nodev /dev/shm
+#
+# CIS 1.1.15 Ensure nosuid option set on /dev/shm partition (Scored)
+#
+# Description
+# ===========
+# The nosuid mount option specifies that the filesystem cannot contain setuid
+# files.
+#
+# Rationale
+# =========
+# Setting this option on a file system prevents users from introducing
+# privileged programs onto the system and allowing non-root users to execute them.
+#
+# Audit
+# =====
+# Run the following command and verify that the no suid option is set on /dev/shm .
+#
+#   # mount | grep /dev/shm
+#   shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime)
+#
+# Remediation
+# ===========
+# Edit the /etc/fstab file and add nosuid to the fourth field (mounting options)
+# for the /dev/shm partition. See the fstab(5) manual page for more information.
+# Run the following command to remount /dev/shm :
+#
+#   # mount -o remount,nosuid /dev/shm
+#
+# 1.1.16 Ensure noexec option set on /dev/shm partition (Scored)
+#
+# Description
+# ===========
+# The noexec mount option specifies that the filesystem cannot contain
+# executable binaries.
+#
+# Rationale
+# =========
+# Setting this option on a file system prevents users from executing programs
+# from shared memory. This deters users from introducing potentially malicious
+# software on the system.
+#
+# Audit
+# =====
+# Run the following command and verify that the noexec option is set on /run/shm .
+#
+#   # mount | grep /dev/shm
+#   shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime)
+#
+# Remediation
+# ===========
+# Edit the /etc/fstab file and add noexec to the fourth field (mounting options)
+# for the /dev/shm partition. See the fstab(5) manual page for more information.
+# Run the following command to remount /dev/shm :
+#
+#   # mount -o remount,noexec /dev/shm
+#
+parameters:
+  linux:
+    storage:
+      mount:
+        ensure_dev_shm_mount_options:
+          enabled: true
+          file_system: tmpfs
+          device: shm
+          path: /dev/shm
+          opts: rw,nosuid,nodev,noexec,relatime
+
