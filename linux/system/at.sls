@@ -33,8 +33,8 @@ etc_at_allow:
     - template: jinja
     - source: salt://linux/files/cron_users.jinja
     - user: root
-    - group: root
-    - mode: 0600
+    - group: daemon
+    - mode: 0640
     - defaults:
         users: {{ allow_users | yaml }}
     - require:
