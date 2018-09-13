@@ -1,0 +1,36 @@
+# 1.1.1.2 Ensure mounting of freevxfs filesystems is disabled
+#
+# Description
+# ===========
+# The freevxfs filesystem type is a free version of the Veritas type
+# filesystem. This is the primary filesystem type for HP-UX operating systems.
+#
+# Rationale
+# =========
+# Removing support for unneeded filesystem types reduces the local attack
+# surface of the system. If this filesystem type is not needed, disable it.
+#
+# Audit
+# =====
+# Run the following commands and verify the output is as indicated:
+#
+#   # modprobe -n -v freevxfs
+#   install /bin/true
+#   # lsmod | grep freevxfs
+#   <No output>
+#
+# Remediation
+# ===========
+# Edit or create the file /etc/modprobe.d/CIS.conf and add the following line:
+#
+#   install freevxfs /bin/true
+#
+parameters:
+  linux:
+    system:
+      kernel:
+        module:
+          freevxfs:
+            install:
+              command: /bin/true
+
