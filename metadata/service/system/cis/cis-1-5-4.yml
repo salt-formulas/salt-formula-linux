@@ -1,0 +1,37 @@
+# CIS 1.5.4 Ensure prelink is disabled
+#
+# Description
+# ===========
+# prelink is a program that modifies ELF shared libraries and ELF dynamically
+# linked binaries in such a way that the time needed for the dynamic linker to
+# perform relocations at startup significantly decreases.
+#
+# Rationale
+# =========
+# The prelinking feature can interfere with the operation of AIDE, because it
+# changes binaries. Prelinking can also increase the vulnerability of the system
+# if a malicious user is able to compromise a common library such as libc.
+#
+# Audit
+# =====
+# Run the following command and verify prelink is not installed:
+#
+#   # dpkg -s prelink
+#
+# Remediation
+# ===========
+# Run the following command to restore binaries to normal:
+#
+#   # prelink -ua
+#
+# Run the following command to uninstall prelink :
+#
+#   # apt-get remove prelink
+#
+parameters:
+  linux:
+    system:
+      package:
+        prelink:
+          version: removed
+
