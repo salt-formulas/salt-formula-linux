@@ -805,6 +805,22 @@ Optional: You can also use list that will ensure order of items.
                 power/state: "root:power"
             - devices/system/cpu/cpu0/cpufreq/scaling_governor: powersave
 
+Sysfs definition with disabled automatic write. Attributes are saved
+to configuration, but are not applied during the run.
+Thay will be applied automatically after the reboot.
+
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        sysfs:
+          enable_apply: false
+          scheduler:
+            block/sda/queue/scheduler: deadline
+
+.. note:: The `enable_apply` parameter defaults to `True` if not defined.
+
 Huge Pages
 ~~~~~~~~~~~~
 
