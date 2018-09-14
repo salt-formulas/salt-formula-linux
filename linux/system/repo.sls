@@ -57,7 +57,7 @@ purge_sources_list_d_repos:
   file.absent
       {%- endif %}
 
-      {%- if repo.pin is defined %}
+      {%- if repo.pin is defined or repo.pinning is defined %}
 linux_repo_{{ name }}_pin:
   file.managed:
     - name: /etc/apt/preferences.d/{{ name }}

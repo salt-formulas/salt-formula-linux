@@ -201,6 +201,22 @@ linux:
         proxy:
           enabled: true
           https: https://127.0.5.1:443
+      saltstack:
+        source: "deb [arch=amd64] http://repo.saltstack.com/apt/ubuntu/16.04/amd64/2017.7/ xenial main"
+        key_url: "http://repo.saltstack.com/apt/ubuntu/16.04/amd64/2017.7/SALTSTACK-GPG-KEY.pub"
+        architectures: amd64
+        clean_file: true
+        pinning:
+          10:
+            enabled: true
+            pin: 'release o=SaltStack'
+            priority: 50
+            package: 'libsodium18'
+          20:
+            enabled: true
+            pin: 'release o=SaltStack'
+            priority: 1100
+            package: '*'
       opencontrail:
         source: "deb http://ppa.launchpad.net/tcpcloud/contrail-3.0/ubuntu xenial main"
         keyid: E79EE90C
