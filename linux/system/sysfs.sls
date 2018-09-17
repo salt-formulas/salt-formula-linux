@@ -11,6 +11,8 @@ linux_sysfs_package:
     - require:
       - pkg: linux_sysfs_package
 
+{% set apply = system.get('sysfs', {}).pop('enable_apply', True) %}
+
 {%- for name, sysfs in system.get('sysfs', {}).items() %}
 
 /etc/sysfs.d/{{ name }}.conf:
@@ -32,6 +34,8 @@ linux_sysfs_package:
 {%- set sysfs_list = sysfs %}
 {%- endif %}
 
+{%- if apply %}
+
 {%- for item in sysfs_list %}
 {%- set list_idx = loop.index %}
 {%- for key, value in item.items() %}
@@ -48,4 +52,7 @@ linux_sysfs_write_{{ list_idx }}_{{ name }}_{{ key }}:
   {%- endfor %}
 
 {%- endfor %}
+
+{%- endif %}
+
 {%- endfor %}

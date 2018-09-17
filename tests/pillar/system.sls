@@ -99,6 +99,7 @@ linux:
             subjects:
             - '@group1'
     sysfs:
+      enable_apply: true
       scheduler:
         block/sda/queue/scheduler: deadline
       power:
