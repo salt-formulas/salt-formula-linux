@@ -918,6 +918,31 @@ Also pin it's packages with priority ``900``:
                priority: 900
                package: '*'
 
+If you need to add multiple pin rules for one repo, please use new,ordered definition format
+('pinning' definition will be in priotity to use):
+
+.. code-block:: yaml
+
+  linux:
+    system:
+      repo:
+        mcp_saltstack:
+          source: "deb [arch=amd64] http://repo.saltstack.com/apt/ubuntu/16.04/amd64/2017.7/ xenial main"
+          architectures: amd64
+          clean_file: true
+          pinning:
+            10:
+              enabled: true
+              pin: 'release o=SaltStack'
+              priority: 50
+              package: 'libsodium18'
+            20:
+              enabled: true
+              pin: 'release o=SaltStack'
+              priority: 1100
+              package: '*'
+
+
 .. note:: For old Ubuntu releases (<xenial)
           extra packages for apt transport, like ``apt-transport-https``
           may be required to be installed manually.
