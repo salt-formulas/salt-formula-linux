@@ -53,6 +53,24 @@ linux_set_swap_file_status_{{ swap.device }}:
 
 {%- endif %}
 
+{%- else %}
+
+{{ swap.device }}:
+  module.run:
+    - name: mount.rm_fstab
+    - m_name: none
+    - device: {{ swap.device }}
+    - onlyif: grep -q {{ swap.device }} /etc/fstab
+
+linux_disable_swap_{{ swap.engine }}_{{ swap.device }}:
+  cmd.run:
+  {%- if swap.engine == 'partition' %}
+    - name: 'swapoff {{ swap.device }}'
+  {%- elif swap.engine == 'file' %}
+    - name: 'swapoff {{ swap.device }} && rm -f {{ swap.device }}'
+  {%- endif %}
+    - onlyif: file -L -s {{ swap.device }} | grep -q 'swap file'
+
 {%- endif %}
 
 {%- endfor %}
