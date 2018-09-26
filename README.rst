@@ -69,6 +69,16 @@ Linux with system users, some with password set:
             full_name: 'With hased password'
             home: '/home/elizabeth'
             password: "$6$nUI7QEz3$dFYjzQqK5cJ6HQ38KqG4gTWA9eJu3aKx6TRVDFh6BVJxJgFWg2akfAA7f1fCxcSUeOJ2arCO6EEI6XXnHXxG10"
+          someserv:
+            name: 'someservice'
+            enabled: true
+            full_name: 'Some super service owner'
+            home: '/usr/lib/someservice'
+            home_dir_mode: 700
+            system:true
+            unique: false
+            uid: 0
+            gid: 0
 
 Configure sudo for users and groups under ``/etc/sudoers.d/``.
 This ways ``linux.system.sudo`` pillar map to actual sudo attributes:
