@@ -77,6 +77,8 @@ agent:
             record:
               - name: severity_label
                 value: '${ {"TRACE"=>8,"DEBUG"=>7,"INFO"=>6,"NOTICE"=>5,"WARNING"=>4,"ERROR"=>3,"CRITICAL"=>2,"ALERT"=>1,"EMERGENCY"=>0}.key(record["Severity"].to_i) }'
+              - name: source
+                value: systemd
         match:
           rewrite_tag:
             tag: systemd.source
@@ -84,9 +86,9 @@ agent:
             rule:
               - name: ident
                 regexp: '^(.*)$'
-                result: __TAG__.$1
+                result: $1.systemd
           push_to_default:
-            tag: 'systemd.source.*'
+            tag: '*.systemd'
             type: copy
             store:
               - type: relabel
