@@ -50,6 +50,18 @@ system_user_{{ name }}:
   {%- if user.uid is defined and user.uid %}
   - uid: {{ user.uid }}
   {%- endif %}
+  {%- if user.maxdays is defined %}
+  - maxdays: {{ user.maxdays }}
+  {%- endif %}
+  {%- if user.mindays is defined %}
+  - mindays: {{ user.mindays }}
+  {%- endif %}
+  {%- if user.warndays is defined %}
+  - warndays: {{ user.warndays }}
+  {%- endif %}
+  {%- if user.inactdays is defined %}
+  - inactdays: {{ user.inactdays }}
+  {%- endif %}
   - require: {{ requires|yaml }}
 
 system_user_home_{{ user.home }}:

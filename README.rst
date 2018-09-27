@@ -70,6 +70,30 @@ Linux with system users, some with password set:
             home: '/home/elizabeth'
             password: "$6$nUI7QEz3$dFYjzQqK5cJ6HQ38KqG4gTWA9eJu3aKx6TRVDFh6BVJxJgFWg2akfAA7f1fCxcSUeOJ2arCO6EEI6XXnHXxG10"
 
+Configure password expiration parameters
+----------------------------------------
+The following login.defs parameters can be overridden per-user:
+
+* PASS_MAX_DAYS
+* PASS_MIN_DAYS
+* PASS_WARN_DAYS
+* INACTIVE
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        user:
+          jdoe:
+            name: 'jdoe'
+            enabled: true
+            ...
+            maxdays: <PASS_MAX_DAYS>
+            mindays: <PASS_MIN_DAYS>
+            warndays: <PASS_WARN_DAYS>
+            inactdays: <INACTIVE>
+
 Configure sudo for users and groups under ``/etc/sudoers.d/``.
 This ways ``linux.system.sudo`` pillar map to actual sudo attributes:
 

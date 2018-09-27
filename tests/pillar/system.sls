@@ -128,6 +128,7 @@ linux:
         enabled: true
         home: /root
         name: root
+        maxdays: 365
       testuser:
         enabled: true
         name: testuser
