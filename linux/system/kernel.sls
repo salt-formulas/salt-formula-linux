@@ -8,10 +8,10 @@
 {%- do kernel_boot_opts.append('elevator=' ~ system.kernel.elevator) if system.kernel.elevator is defined %}
 {%- do kernel_boot_opts.extend(system.kernel.boot_options) if system.kernel.boot_options is defined %}
 
-{%- if kernel_boot_opts %}
 include:
   - linux.system.grub
 
+{%- if kernel_boot_opts %}
 /etc/default/grub.d/99-custom-settings.cfg:
   file.managed:
     - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT {{ kernel_boot_opts|join(' ') }}"'
