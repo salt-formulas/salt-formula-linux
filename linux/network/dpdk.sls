@@ -178,8 +178,8 @@ linux_network_dpdk_bridge_interface_{{ interface_name }}:
 
 linux_network_dpdk_bridge_port_interface_{{ interface_name }}:
   cmd.run:
-    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-port {{ interface.bridge }} dpdk0 -- set Interface dpdk0 type=dpdk options:dpdk-devargs={{ interface.pci }}"
-    - unless: "ovs-vsctl show | grep dpdk0"
+    - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-port {{ interface.bridge }} {{ interface_name }} -- set Interface {{ interface_name }} type=dpdk options:dpdk-devargs={{ interface.pci }}"
+    - unless: "ovs-vsctl show | grep {{ interface_name }}"
     - require:
       - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
 
