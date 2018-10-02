@@ -3,6 +3,7 @@
 include:
 - linux.system.env
 - linux.system.profile
+- linux.system.shell
 {%- if system.login_defs is defined %}
 - linux.system.login_defs
 {%- endif %}
