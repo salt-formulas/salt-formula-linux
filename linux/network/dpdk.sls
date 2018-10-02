@@ -106,7 +106,7 @@ service_openvswitch:
 linux_network_dpdk_bond_interface_{{ interface_name }}:
   cmd.run:
     - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-bond {{ interface.bridge }} {{ interface_name }} {{ bond_interfaces.keys()|join(' ') }}"
-    - unless: "ovs-vsctl show | grep {{ interface_name }}"
+    - unless: "ovs-vsctl list-ports {{ interface.bridge }} | grep -w {{ interface_name }}"
     - require:
       - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
 
@@ -179,7 +179,7 @@ linux_network_dpdk_bridge_interface_{{ interface_name }}:
 linux_network_dpdk_bridge_port_interface_{{ interface_name }}:
   cmd.run:
     - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-port {{ interface.bridge }} {{ interface_name }} -- set Interface {{ interface_name }} type=dpdk options:dpdk-devargs={{ interface.pci }}"
-    - unless: "ovs-vsctl show | grep {{ interface_name }}"
+    - unless: "ovs-vsctl list-ports {{ interface.bridge }} | grep -w {{ interface_name }}"
     - require:
       - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
 
