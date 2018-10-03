@@ -2235,6 +2235,240 @@ and on-boot after an interface initialization.
                 interface: bond0
                 mac: "ff:ff:ff:ff:ff:ff" (optional)
 
+Check network params on the environment
+---------------------------------------
+
+Grab nics and nics states
+
+.. code-block:: bash
+
+   salt osd001\* net_checks.get_nics
+
+**Example of system output:**
+
+.. code-block:: bash
+
+   osd001.domain.com:
+       |_
+         - bond0
+         - None
+         - 1e:c8:64:42:23:b9
+         - 0
+         - 1500
+       |_
+         - bond1
+         - None
+         - 3c:fd:fe:27:3b:00
+         - 1
+         - 9100
+       |_
+         - fourty1
+         - None
+         - 3c:fd:fe:27:3b:00
+         - 1
+         - 9100
+       |_
+         - fourty2
+         - None
+         - 3c:fd:fe:27:3b:02
+         - 1
+         - 9100
+
+Grab 10G nics PCI addresses for hugepages setup
+
+.. code-block:: bash
+
+   salt cmp001\* net_checks.get_ten_pci
+
+**Example of system output:**
+
+.. code-block:: bash
+
+   cmp001.domain.com:
+       |_
+         - ten1
+         - 0000:19:00.0
+       |_
+         - ten2
+         - 0000:19:00.1
+       |_
+         - ten3
+         - 0000:19:00.2
+       |_
+         - ten4
+         - 0000:19:00.3
+
+Grab ip address for an interface
+
+.. code-block:: bash
+
+   salt cmp001\* net_checks.get_ip iface=one4
+
+**Example of system output:**
+
+.. code-block:: bash
+
+   cmp001.domain.com:
+       10.200.177.101
+
+Grab ip addresses map
+
+.. code-block:: bash
+
+   salt-call net_checks.nodes_addresses
+
+**Example of system output:**
+
+.. code-block:: bash
+
+   local:
+    |_
+      - cid01.domain.com
+      |_
+        |_
+          - pxe
+          - 10.200.177.91
+        |_
+          - control
+          - 10.200.178.91
+    |_
+      - cmn02.domain.com
+      |_
+        |_
+          - storage_access
+          - 10.200.181.67
+        |_
+          - pxe
+          - 10.200.177.67
+        |_
+          - control
+          - 10.200.178.67
+    |_
+      - cmp010.domain.com
+      |_
+        |_
+          - pxe
+          - 10.200.177.110
+        |_
+          - storage_access
+          - 10.200.181.110
+        |_
+          - control
+          - 10.200.178.110
+        |_
+          - vxlan
+          - 10.200.179.110
+
+Verify full mesh connectivity
+
+.. code-block:: bash
+
+   salt-call net_checks.ping_check
+
+**Example of positive system output:**
+
+.. code-block:: bash
+
+   ['PASSED']
+   [INFO    ] ['PASSED']
+   local:
+       True
+
+**Example of system output in case of failure:**
+
+.. code-block:: bash
+
+   FAILED
+   [ERROR   ] FAILED
+   ['control: 10.0.1.92 -> 10.0.1.224: Failed']
+   ['control: 10.0.1.93 -> 10.0.1.224: Failed']
+   ['control: 10.0.1.51 -> 10.0.1.224: Failed']
+   ['control: 10.0.1.102 -> 10.0.1.224: Failed']
+   ['control: 10.0.1.13 -> 10.0.1.224: Failed']
+   ['control: 10.0.1.81 -> 10.0.1.224: Failed']
+   local:
+       False
+
+For this feature to work, please mark addresses with some role.
+Otherwise 'default' role is assumed and mesh would consist of all
+addresses on the environment.
+
+Mesh mark is needed only for interfaces which are enabled and have
+ip address assigned.
+
+Checking dhcp pxe network meaningless, as it is used for salt
+master vs minion communications, therefore treated as checked.
+
+.. code-block:: yaml
+
+   parameters:
+     linux:
+       network:
+         interface:
+           ens3:
+             enabled: true
+             type: eth
+             proto: static
+             address: ${_param:deploy_address}
+             netmask: ${_param:deploy_network_netmask}
+             gateway: ${_param:deploy_network_gateway}
+             mesh: pxe
+
+Check pillars for ip address duplicates
+
+.. code-block:: bash
+
+   salt-call net_checks.verify_addresses
+
+**Example of positive system output:**
+
+.. code-block:: bash
+
+   ['PASSED']
+   [INFO    ] ['PASSED']
+   local:
+       True
+
+**Example of system output in case of failure:**
+
+.. code-block:: bash
+
+   FAILED. Duplicates found
+   [ERROR   ] FAILED. Duplicates found
+   ['gtw01.domain.com', 'gtw02.domain.com', '10.0.1.224']
+   [ERROR   ] ['gtw01.domain.com', 'gtw02.domain.com', '10.0.1.224']
+   local:
+       False
+
+Generate csv report for the env
+
+.. code-block:: bash
+
+   salt -C 'kvm* or cmp* or osd*' net_checks.get_nics_csv \
+     | grep '^\ ' | sed 's/\ *//g' | grep -Ev ^server \
+     | sed '1 i\server,nic_name,ip_addr,mac_addr,link,mtu,chassis_id,chassis_name,port_mac,port_descr'
+
+**Example of system output:**
+
+.. code-block:: bash
+
+   server,nic_name,ip_addr,mac_addr,link,mtu,chassis_id,chassis_name,port_mac,port_descr
+   cmp010.domain.com,bond0,None,b4:96:91:10:5b:3a,1,1500,,,,
+   cmp010.domain.com,bond0.21,10.200.178.110,b4:96:91:10:5b:3a,1,1500,,,,
+   cmp010.domain.com,bond0.22,10.200.179.110,b4:96:91:10:5b:3a,1,1500,,,,
+   cmp010.domain.com,bond1,None,3c:fd:fe:34:ad:22,0,1500,,,,
+   cmp010.domain.com,bond1.24,10.200.181.110,3c:fd:fe:34:ad:22,0,1500,,,,
+   cmp010.domain.com,fourty5,None,3c:fd:fe:34:ad:20,0,9000,,,,
+   cmp010.domain.com,fourty6,None,3c:fd:fe:34:ad:22,0,9000,,,,
+   cmp010.domain.com,one1,None,b4:96:91:10:5b:38,0,1500,,,,
+   cmp010.domain.com,one2,None,b4:96:91:10:5b:39,1,1500,f0:4b:3a:8f:75:40,exnfvaa18-20,548,ge-0/0/22
+   cmp010.domain.com,one3,None,b4:96:91:10:5b:3a,1,1500,f0:4b:3a:8f:75:40,exnfvaa18-20,547,ge-0/0/21
+   cmp010.domain.com,one4,10.200.177.110,b4:96:91:10:5b:3b,1,1500,f0:4b:3a:8f:75:40,exnfvaa18-20,546,ge-0/0/20
+   cmp011.domain.com,bond0,None,b4:96:91:13:6c:aa,1,1500,,,,
+   cmp011.domain.com,bond0.21,10.200.178.111,b4:96:91:13:6c:aa,1,1500,,,,
+   cmp011.domain.com,bond0.22,10.200.179.111,b4:96:91:13:6c:aa,1,1500,,,,
+   ...
+
 Usage
 =====
 
