@@ -2175,6 +2175,31 @@ PAM LDAP integration:
                 shadow: (&(&(objectClass=person)(uidNumber=*))(unixHomeDirectory=*))
                 group:  (&(objectClass=group)(gidNumber=*))
 
+PAM duo 2FA integration
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        system:
+          auth:
+            enabled: true
+            duo:
+              enabled: true
+              duo_host: localhost
+              duo_ikey: DUO-INTEGRATION-KEY
+              duo_skey: DUO-SECRET-KEY
+
+duo package version may be specified (optional)
+
+.. code-block:: yaml
+
+      linux:
+        system:
+          package:
+            duo-unix:
+              version: 1.10.1-0
+
 Disabled multipath (the default setup):
 
 .. code-block:: yaml

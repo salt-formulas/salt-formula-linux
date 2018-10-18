@@ -1,9 +1,13 @@
 {%- from "linux/map.jinja" import auth with context %}
 
 {%- if auth.enabled %}
-  {%- set pam_modules_enable = "" %}
-  {%- set pam_modules_disable = "" %}
-  {%- if grains.os_family == 'Debian' %}
+  {%- if auth.duo.enabled %}
+include:
+  - linux.system.auth.duo
+  {%- else %}
+    {%- set pam_modules_enable = "" %}
+    {%- set pam_modules_disable = "" %}
+    {%- if grains.os_family == 'Debian' %}
 linux_auth_pam_packages:
   pkg.installed:
   - pkgs: [ 'libpam-runtime' ]
@@ -15,11 +19,11 @@ linux_auth_pam_add_profile:
     - mode: 755
     - require:
       - pkg: linux_auth_pam_packages
-  {%- endif %}
+    {%- endif %}
 
-  {%- if auth.get('mkhomedir', {}).get('enabled', False) %}
-    {%- if grains.os_family == 'Debian' %}
-      {%- set pam_modules_enable = pam_modules_enable + ' mkhomedir' %}
+    {%- if auth.get('mkhomedir', {}).get('enabled', False) %}
+      {%- if grains.os_family == 'Debian' %}
+        {%- set pam_modules_enable = pam_modules_enable + ' mkhomedir' %}
 linux_auth_mkhomedir_debconf_package:
   pkg.installed:
   - pkgs: [ 'debconf-utils' ]
@@ -30,18 +34,18 @@ linux_auth_mkhomedir_config:
     - source: salt://linux/files/mkhomedir
     - template: jinja
 
+      {%- endif %}
+    {%- else %}
+      {%- if grains.os_family == 'Debian' %}
+        {%- set pam_modules_disable = pam_modules_disable + ' mkhomedir' %}
+      {%- endif %}
     {%- endif %}
-  {%- else %}
-    {%- if grains.os_family == 'Debian' %}
-      {%- set pam_modules_disable = pam_modules_disable + ' mkhomedir' %}
-    {%- endif %}
-  {%- endif %}
 
-  {%- if auth.get('ldap', {}).get('enabled', False) %}
-    {%- from "linux/map.jinja" import ldap with context %}
+    {%- if auth.get('ldap', {}).get('enabled', False) %}
+      {%- from "linux/map.jinja" import ldap with context %}
 
-    {%- if grains.os_family == 'Debian' %}
-      {%- set pam_modules_enable = pam_modules_enable + ' ldap' %}
+      {%- if grains.os_family == 'Debian' %}
+        {%- set pam_modules_enable = pam_modules_enable + ' ldap' %}
 
 linux_auth_ldap_debconf_package:
   pkg.installed:
@@ -69,16 +73,16 @@ linux_auth_debconf_libpam-ldapd:
         libpam-ldapd/enable_shadow:
           type: 'boolean'
           value: 'true'
+      {%- endif %}
+    {%- else %}
+      {%- if grains.os_family == 'Debian' %}
+        {%- set pam_modules_disable = pam_modules_disable + ' ldap' %}
+      {%- endif %}
     {%- endif %}
-  {%- else %}
-    {%- if grains.os_family == 'Debian' %}
-      {%- set pam_modules_disable = pam_modules_disable + ' ldap' %}
-    {%- endif %}
-  {%- endif %}
 
   {#- Setup PAM profiles #}
-  {%- if grains.os_family == 'Debian' %}
-    {%- if auth.get('mkhomedir', {}).get('enabled', False) %}
+    {%- if grains.os_family == 'Debian' %}
+      {%- if auth.get('mkhomedir', {}).get('enabled', False) %}
 linux_auth_pam_add_profiles_mkhomedir_enable:
   cmd.run:
     - name: /usr/local/bin/pam-add-profile {{ pam_modules_enable }}
@@ -92,19 +96,19 @@ linux_auth_pam_add_profiles_mkhomedir_update:
       - file: linux_auth_mkhomedir_config
     - require:
       - file: linux_auth_pam_add_profile
-      {%- if auth.get('ldap', {}).get('enabled', False) %}
+        {%- if auth.get('ldap', {}).get('enabled', False) %}
       - pkg: linux_auth_ldap_packages
-      {%- endif %}
-    {%- else %}
+        {%- endif %}
+      {%- else %}
 linux_auth_pam_remove_profiles_mkhomedir:
   cmd.run:
     - name: /usr/sbin/pam-auth-update --remove {{ pam_modules_disable }}
     - onlyif: "[[ `grep -c pam_mkhomedir.so /etc/pam.d/common-session` -ne 0 ]]"
     - require:
       - pkg: linux_auth_pam_packages
-    {%- endif %}
+      {%- endif %}
 
-    {%- if auth.get('ldap', {}).get('enabled', False) %}
+      {%- if auth.get('ldap', {}).get('enabled', False) %}
 linux_auth_pam_add_profiles_ldap:
   cmd.run:
     - name: /usr/local/bin/pam-add-profile {{ pam_modules_enable }}
@@ -112,49 +116,49 @@ linux_auth_pam_add_profiles_ldap:
     - require:
       - file: linux_auth_pam_add_profile
       - pkg: linux_auth_ldap_packages
-    {%- else %}
+      {%- else %}
 linux_auth_pam_remove_profiles_ldap:
   cmd.run:
     - name: /usr/sbin/pam-auth-update --remove {{ pam_modules_disable }}
     - onlyif: "[[ `debconf-get-selections | grep libpam-runtime/profiles | grep -c ldap` -ne 0 ]]"
     - require:
       - pkg: linux_auth_pam_packages
-    {%- endif %}
+      {%- endif %}
 
-  {%- elif grains.os_family == 'RedHat' %}
-    {%- if auth.get('mkhomedir', {}).get('enabled', False) %}
+    {%- elif grains.os_family == 'RedHat' %}
+      {%- if auth.get('mkhomedir', {}).get('enabled', False) %}
 linux_auth_config_enable_mkhomedir:
   cmd.run:
     - name: "authconfig --enablemkhomedir --update"
     - require:
-      {%- if auth.get('ldap', {}).get('enabled', False) %}
+        {%- if auth.get('ldap', {}).get('enabled', False) %}
       - pkg: linux_auth_ldap_packages
-      {%- endif %}
-    {%- else %}
+        {%- endif %}
+      {%- else %}
 linux_auth_config_disable_mkhomedir:
   cmd.run:
     - name: "authconfig --disablemkhomedir --update"
     - require:
       - pkg: linux_auth_ldap_packages
-    {%- endif %}
-    {%- if auth.get('ldap', {}).get('enabled', False) %}
+      {%- endif %}
+      {%- if auth.get('ldap', {}).get('enabled', False) %}
 linux_auth_config_enable_ldap:
   cmd.run:
     - name: "authconfig --enableldap --enableldapauth --update"
     - require:
-      {%- if auth.get('ldap', {}).get('enabled', False) %}
+        {%- if auth.get('ldap', {}).get('enabled', False) %}
       - pkg: linux_auth_ldap_packages
-      {%- endif %}
-    {%- else %}
+        {%- endif %}
+      {%- else %}
 linux_auth_config_disable_ldap:
   cmd.run:
     - name: "authconfig --disableldap --disableldapauth --update"
     - require:
       - pkg: linux_auth_ldap_packages
+      {%- endif %}
     {%- endif %}
-  {%- endif %}
 
-  {%- if auth.get('ldap', {}).get('enabled', False) %}
+    {%- if auth.get('ldap', {}).get('enabled', False) %}
 
 linux_auth_nsswitch_config_file:
   file.managed:
@@ -187,6 +191,6 @@ linux_auth_nslcd_service:
   - enable: true
   - name: nslcd
 
+    {%- endif %}
   {%- endif %}
-
 {%- endif %}
