@@ -50,6 +50,9 @@ system_user_{{ name }}:
   {%- if user.uid is defined and user.uid %}
   - uid: {{ user.uid }}
   {%- endif %}
+  {%- if user.unique is defined %}
+  - unique: {{ user.unique }}
+  {%- endif %}
   {%- if user.maxdays is defined %}
   - maxdays: {{ user.maxdays }}
   {%- endif %}

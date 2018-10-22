@@ -137,6 +137,7 @@ linux:
         uid: 9999
         full_name: Test User
         home: /home/test
+        unique: false
         groups:
           - db-ops
           - salt-ops

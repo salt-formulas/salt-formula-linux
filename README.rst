@@ -50,6 +50,7 @@ Linux with system users, some with password set:
             home: '/home/jdoe'
             home_dir_mode: 755
             email: 'jonh@doe.com'
+            unique: false
           jsmith:
             name: 'jsmith'
             enabled: true
