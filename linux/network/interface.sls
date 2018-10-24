@@ -109,6 +109,12 @@ add_int_{{ int_name }}_to_ovs_bridge_{{ interface_name }}:
 
 {%- endfor %}
 
+{%- elif interface.type == 'ovs_bond' %}
+ovs_bond_{{ interface_name }}:
+  cmd.run:
+  - name: ovs-vsctl add-bond {{ interface.bridge }} {{ interface_name }} {{ interface.slaves }} bond_mode={{ interface.mode }}
+  - unless: ovs-vsctl show | grep -A 2 'Port.*{{ interface_name }}.' 
+
 {%- elif interface.type == 'ovs_port' %}
 
 {%- if interface.get('port_type','internal') == 'patch' %}

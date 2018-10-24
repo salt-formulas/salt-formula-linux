@@ -1478,6 +1478,18 @@ Open vSwitch Bridges:
             ovs_bridge: br-ens7
             bridge: br-ens7
 
+Open vSwitch native bond:
+
+.. code-block:: yaml
+
+          bond1:
+            enabled: true
+            type: ovs_bond
+            mode: balance-slb
+            bridge: br-ex
+            slaves: ${_param:interface_3} ${_param:interface_4}
+
+
 Debian manual proto interfaces
 
 When you are changing interface proto from static in up state
