@@ -1487,7 +1487,7 @@ Open vSwitch native bond:
             type: ovs_bond
             mode: balance-slb
             bridge: br-ex
-            slaves: ${_param:interface_3} ${_param:interface_4}
+            slaves: eno3 eno4
 
 
 Debian manual proto interfaces
