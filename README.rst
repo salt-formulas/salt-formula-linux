@@ -70,6 +70,16 @@ Linux with system users, some with password set:
             full_name: 'With hased password'
             home: '/home/elizabeth'
             password: "$6$nUI7QEz3$dFYjzQqK5cJ6HQ38KqG4gTWA9eJu3aKx6TRVDFh6BVJxJgFWg2akfAA7f1fCxcSUeOJ2arCO6EEI6XXnHXxG10"
+          someserv:
+            name: 'someservice'
+            enabled: true
+            full_name: 'Some super service owner'
+            home: '/usr/lib/someservice'
+            home_dir_mode: 700
+            system:true
+            unique: false
+            uid: 0
+            gid: 0
 
 Configure password expiration parameters
 ----------------------------------------
@@ -1467,6 +1477,18 @@ Open vSwitch Bridges:
             type: ovs_port
             ovs_bridge: br-ens7
             bridge: br-ens7
+
+Open vSwitch native bond:
+
+.. code-block:: yaml
+
+          bond1:
+            enabled: true
+            type: ovs_bond
+            mode: balance-slb
+            bridge: br-ex
+            slaves: eno3 eno4
+
 
 Debian manual proto interfaces
 

@@ -113,7 +113,11 @@ linux_repo_{{ name }}_key:
         {%- if repo.get('enabled', True) %}
 linux_repo_{{ name }}:
   pkgrepo.managed:
+  {%- if salt['grains.get']('saltversion') < '2018.3' %}
   - refresh_db: False
+  {%- else %}
+  - refresh: False
+  {%- endif %}
   - require_in:
     - refresh_db
           {%- if repo.ppa is defined %}
@@ -146,7 +150,11 @@ linux_repo_{{ name }}:
         {%- else %}
 linux_repo_{{ name }}:
   pkgrepo.absent:
+    {%- if salt['grains.get']('saltversion') < '2018.3' %}
     - refresh_db: False
+    {%- else %}
+    - refresh: False
+    {%- endif %}
     - require:
       - file: /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
     - require_in:
@@ -177,7 +185,11 @@ linux_repo_{{ name }}:
         {%- if not repo.get('default', False) %}
 linux_repo_{{ name }}:
   pkgrepo.managed:
+  {%- if salt['grains.get']('saltversion') < '2018.3' %}
   - refresh_db: False
+  {%- else %}
+  - refresh: False
+  {%- endif %}
   - require_in:
     - refresh_db
   - name: {{ name }}
@@ -194,7 +206,11 @@ linux_repo_{{ name }}:
         {%- endif %}
       {%- else %}
   pkgrepo.absent:
+    {%- if salt['grains.get']('saltversion') < '2018.3' %}
     - refresh_db: False
+    {%- else %}
+    - refresh: False
+    {%- endif %}
     - require_in:
       - refresh_db
     - name: {{ repo.source }}
