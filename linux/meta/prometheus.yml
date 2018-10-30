@@ -234,24 +234,24 @@ server:
       {%- endraw %}
       {%- set net_rx_action_warning_threshold = monitoring.net_rx_action_per_cpu_threshold.warning %}
       if: >-
-        floor(increase(nstat_time_squeeze[24h])) > {{ net_rx_action_warning_threshold }}
+        floor(increase(nstat_time_squeeze[1d])) > {{ net_rx_action_warning_threshold }}
       labels:
         severity: warning
         service: system
       annotations:
         summary: "CPU terminated {{ net_rx_action_warning_threshold }}{%- raw %} net_rx_action loops"
-        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node terminated {{ $value }} net_rx_action loops during the last 24 hours."
+        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node terminated {{ $value }} net_rx_action loops during the last 24 hours. Modify the net.core.netdev_budget kernel parameter."
     NetRxActionByCpuMinor:
       {%- endraw %}
       {%- set net_rx_action_minor_threshold = monitoring.net_rx_action_per_cpu_threshold.minor %}
       if: >-
-        floor(increase(nstat_time_squeeze[24h])) > {{ net_rx_action_minor_threshold }}
+        floor(increase(nstat_time_squeeze[1d])) > {{ net_rx_action_minor_threshold }}
       labels:
         severity: minor
         service: system
       annotations:
         summary: "CPU terminated {{ net_rx_action_minor_threshold }}{%- raw %} net_rx_action loops"
-        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node terminated {{ $value }} net_rx_action loops during the last 24 hours."
+        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node terminated {{ $value }} net_rx_action loops during the last 24 hours. Modify the net.core.netdev_budget kernel parameter."
 {%- endraw %}
 {%- if monitoring.bond_status.interfaces is defined and monitoring.bond_status.interfaces %}
 {%- raw %}
