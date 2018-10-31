@@ -1284,6 +1284,13 @@ Linux with network manager:
         enabled: true
         network_manager: true
 
+Execute linux.network.interface state without ifupdown activity:
+
+.. code-block:: bash
+
+   salt-call linux.network.interface pillar='{"linux":{"network":{"noifupdown":True}}}'
+
+
 Linux with default static network interfaces, default gateway
 interface and DNS servers:
 

@@ -223,6 +223,9 @@ linux_interface_{{ interface_name }}:
   - wireless-psk: {{ interface.wireless.key }}
   {%- endif %}
   {%- endif %}
+  {%- if pillar.linux.network.noifupdown is defined %}
+  - noifupdown: {{ pillar.linux.network.noifupdown }}
+  {%- endif %}
   {%- for param in network.interface_params %}
   {{ set_param(param, interface) }}
   {%- endfor %}
