@@ -24,3 +24,9 @@ linux:
         dir_mode: 700
         encoding: utf-8
         makedirs: true
+      test3:
+        name: /tmp/test3.txt
+        source: salt://linux/files/test/file_template.jinja
+        template: jinja
+test:
+  example: "bar"
