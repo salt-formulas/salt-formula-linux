@@ -77,9 +77,45 @@ add_int_{{ int_name }}_to_ovs_dpdk_bridge_{{ interface_name }}:
   cmd.run:
     - unless: ovs-vsctl show | grep -w {{ int_name }}
     - name: ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-port {{ interface_name }} {{ int_name }}
-
 {%- endif %}
 {%- endfor %}
+
+linux_interfaces_include_{{ interface_name }}:
+  file.prepend:
+  - name: /etc/network/interfaces
+  - text: |
+      source /etc/network/interfaces.d/*
+      # Workaround for Upstream-Bug: https://github.com/saltstack/salt/issues/40262
+      source /etc/network/interfaces.u/*
+
+{# create override for openvswitch dependency for dpdk br-prv #}
+/etc/systemd/system/ifup@{{ interface_name }}.service.d/override.conf:
+  file.managed:
+    - makedirs: true
+    - require:
+      - cmd: linux_network_dpdk_bridge_interface_{{ interface_name }}
+    - contents: |
+        [Unit]
+        Requires=openvswitch-switch.service
+        After=openvswitch-switch.service
+
+dpdk_ovs_bridge_{{ interface_name }}:
+  file.managed:
+  - name: /etc/network/interfaces.u/ifcfg-{{ interface_name }}
+  - makedirs: True
+  - source: salt://linux/files/ovs_bridge
+  - defaults:
+      bridge: {{ interface|yaml }}
+      bridge_name: {{ interface_name }}
+  - template: jinja
+
+dpdk_ovs_bridge_up_{{ interface_name }}:
+  cmd.run:
+  - name: ifup {{ interface_name }}
+  - require:
+    - file: dpdk_ovs_bridge_{{ interface_name }}
+    - file: linux_interfaces_final_include
+
 {%- endif %}
 
 {# it is not used for any interface with type preffix dpdk,eg. dpdk_ovs_port #}
@@ -89,7 +125,7 @@ add_int_{{ int_name }}_to_ovs_dpdk_bridge_{{ interface_name }}:
 
 {%- if interface.type == 'ovs_bridge' %}
 
-ovs_bridge_{{ interface_name }}:
+ovs_bridge_{{ interface_name }}_present:
   openvswitch_bridge.present:
   - name: {{ interface_name }}
 
@@ -104,16 +140,41 @@ add_int_{{ int_name }}_to_ovs_bridge_{{ interface_name }}:
   cmd.run:
     - unless: ovs-vsctl show | grep {{ int_name }}
     - name: ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-port {{ interface_name }} {{ int_name }}
-
 {%- endif %}
-
 {%- endfor %}
+
+linux_interfaces_include_{{ interface_name }}:
+  file.prepend:
+  - name: /etc/network/interfaces
+  - text: |
+      source /etc/network/interfaces.d/*
+      # Workaround for Upstream-Bug: https://github.com/saltstack/salt/issues/40262
+      source /etc/network/interfaces.u/*
+
+ovs_bridge_{{ interface_name }}:
+  file.managed:
+  - name: /etc/network/interfaces.u/ifcfg-{{ interface_name }}
+  - makedirs: True
+  - source: salt://linux/files/ovs_bridge
+  - defaults:
+      bridge: {{ interface|yaml }}
+      bridge_name: {{ interface_name }}
+  - template: jinja
+
+ovs_bridge_up_{{ interface_name }}:
+  cmd.run:
+  - name: ifup {{ interface_name }}
+  - require:
+    - file: ovs_bridge_{{ interface_name }}
+    - file: linux_interfaces_final_include
+
+
 
 {%- elif interface.type == 'ovs_port' %}
 
 {%- if interface.get('port_type','internal') == 'patch' %}
 
-ovs_port_{{ interface_name }}:
+ovs_port_{{ interface_name }}_present:
   openvswitch_port.present:
   - name: {{ interface_name }}
   - bridge: {{ interface.bridge }}
@@ -121,7 +182,7 @@ ovs_port_{{ interface_name }}:
     {%- if dpdk_enabled and network.interface.get(interface.bridge, {}).get('type', 'ovs_bridge') == 'dpdk_ovs_bridge' %}
     - cmd: linux_network_dpdk_bridge_interface_{{ interface.bridge }}
     {%- else %}
-    - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}
+    - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}_present
     {%- endif %}
 
 ovs_port_set_type_{{ interface_name }}:
@@ -159,28 +220,16 @@ ovs_port_{{ interface_name }}:
   - defaults:
       port: {{ interface|yaml }}
       port_name: {{ interface_name }}
+      auto: ""
+      iface_inet: ""
   - template: jinja
-
-ovs_port_{{ interface_name }}_line1:
-  file.replace:
-  - name: /etc/network/interfaces
-  - pattern: auto {{ interface_name }}$
-  - repl: ""
-
-ovs_port_{{ interface_name }}_line2:
-  file.replace:
-  - name: /etc/network/interfaces
-  - pattern: 'iface {{ interface_name }} inet .*'
-  - repl: ""
 
 ovs_port_up_{{ interface_name }}:
   cmd.run:
   - name: ifup {{ interface_name }}
   - require:
     - file: ovs_port_{{ interface_name }}
-    - file: ovs_port_{{ interface_name }}_line1
-    - file: ovs_port_{{ interface_name }}_line2
-    - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}
+    - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}_present
     - file: linux_interfaces_final_include
 
 {%- endif %}

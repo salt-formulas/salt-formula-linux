@@ -1,0 +1,14 @@
+auto {{ bridge_name }}
+iface {{ bridge_name }} inet {{ bridge.get('proto', 'static' if bridge.address is defined else 'manual') }}
+ovs_type {{ bridge.get('ovs_bridge_type', 'OVSBridge') }}
+mtu {{ bridge.get('mtu', '1500') }}
+{%- if bridge.address is defined %}
+address {{ bridge.address }}
+netmask {{ bridge.netmask }}
+{%- endif %}
+{%- if bridge.gateway is defined %}
+gateway {{ bridge.gateway }}
+{%- endif %}
+{%- if bridge.ovs_options is defined %}
+ovs_options {{ bridge.ovs_options }}
+{%- endif %}
