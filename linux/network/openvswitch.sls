@@ -13,6 +13,17 @@ openvswitch_pkgs:
     - require:
       - pkg: openvswitch_pkgs
 
+/etc/systemd/system/openvswitch-switch.service:
+  file.managed:
+    - source: salt://linux/files/openvswitch-switch.systemd
+    - template: jinja
+    - require:
+      - pkg: openvswitch_pkgs
+  module.run:
+    - name: service.systemctl_reload
+    - onchanges:
+      - file: /etc/systemd/system/openvswitch-switch.service
+
 openvswitch_switch_service:
   service.running:
     - name: openvswitch-switch
