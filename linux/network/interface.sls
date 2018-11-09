@@ -168,7 +168,11 @@ ovs_bridge_up_{{ interface_name }}:
     - file: ovs_bridge_{{ interface_name }}
     - file: linux_interfaces_final_include
 
-
+{%- elif interface.type == 'ovs_bond' %}
+ovs_bond_{{ interface_name }}:
+  cmd.run:
+    - name: ovs-vsctl add-bond {{ interface.bridge }} {{ interface_name }} {{ interface.slaves }} bond_mode={{ interface.mode }}
+    - unless: ovs-vsctl show | grep -A 2 'Port.*{{ interface_name }}.'
 
 {%- elif interface.type == 'ovs_port' %}
 
