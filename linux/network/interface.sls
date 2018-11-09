@@ -173,6 +173,8 @@ ovs_bond_{{ interface_name }}:
   cmd.run:
     - name: ovs-vsctl add-bond {{ interface.bridge }} {{ interface_name }} {{ interface.slaves }} bond_mode={{ interface.mode }}
     - unless: ovs-vsctl show | grep -A 2 'Port.*{{ interface_name }}.'
+    - require: 
+      - ovs_bridge_{{ interface.bridge }}_present
 
 {%- elif interface.type == 'ovs_port' %}
 
