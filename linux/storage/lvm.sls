@@ -47,9 +47,11 @@ lvm_vg_{{ vg.get('name', vgname) }}:
 
 lvm_{{ vg.get('name', vgname) }}_lv_{{ volume.get('name', lvname) }}:
   lvm.lv_present:
+    - order: 1
     - name: {{ volume.get('name', lvname) }}
     - vgname: {{ vg.get('name', vgname) }}
     - size: {{ volume.size }}
+    - force: true
     - require:
       - lvm: lvm_vg_{{ vg.get('name', vgname) }}
     {%- if volume.mount is defined %}

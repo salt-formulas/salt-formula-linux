@@ -32,6 +32,7 @@ linux_storage_nfs_packages:
 
 {{ mount.path }}:
   mount.mounted:
+  - order: 1
   - device: {{ mount.device }}
   - fstype: {{ mount.file_system }}
   - mkmnt: True
