@@ -51,6 +51,7 @@ lvm_{{ vg.get('name', vgname) }}_lv_{{ volume.get('name', lvname) }}:
     - name: {{ volume.get('name', lvname) }}
     - vgname: {{ vg.get('name', vgname) }}
     - size: {{ volume.size }}
+    - force: true
     - require:
       - lvm: lvm_vg_{{ vg.get('name', vgname) }}
     {%- if volume.mount is defined %}
