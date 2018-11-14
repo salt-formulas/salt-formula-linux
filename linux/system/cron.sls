@@ -1,15 +1,15 @@
-{%- from "linux/map.jinja" import system, cron with context %}
+{%- from "linux/map.jinja" import system with context %}
 
-{%- if cron.get('enabled', false) %}
+{%- if system.cron.enabled is defined and system.cron.enabled %}
 
 cron_packages:
   pkg.installed:
-    - names: {{ cron.pkgs }}
+    - names: {{ system.cron.pkgs }}
 
 cron_services:
   service.running:
     - enable: true
-    - names: {{ cron.services }}
+    - names: {{ system.cron.services }}
     - require:
       - pkg: cron_packages
   {%- if grains.get('noservices') %}
@@ -17,7 +17,7 @@ cron_services:
   {%- endif %}
 
   {%- set allow_users = [] %}
-  {%- for user_name, user_params in cron.get('user', {}).items() %}
+  {%- for user_name, user_params in system.cron.get('user', {}).items() %}
     {%- set user_enabled = user_params.get('enabled', false) and
         system.get('user', {}).get(
           user_name, {'enabled': true}).get('enabled', true) %}
