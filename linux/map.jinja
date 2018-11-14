@@ -112,12 +112,30 @@
 {% set auth = salt['grains.filter_by']({
     'Arch': {
         'enabled': false,
+        'duo': {
+            'enabled': false,
+            'duo_host': 'localhost',
+            'duo_ikey': '',
+            'duo_skey': ''
+        }
     },
     'RedHat': {
         'enabled': false,
+        'duo': {
+            'enabled': false,
+            'duo_host': 'localhost',
+            'duo_ikey': '',
+            'duo_skey': ''
+        }
     },
     'Debian': {
         'enabled': false,
+        'duo': {
+            'enabled': false,
+            'duo_host': 'localhost',
+            'duo_ikey': '',
+            'duo_skey': ''
+        }
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:system:auth')) %}
 
@@ -440,3 +458,4 @@ Debian:
         }
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:monitoring')) %}
+

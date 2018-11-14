@@ -48,3 +48,10 @@ linux:
         type: ovs_port
         ovs_bridge: br-ens0
         bridge: br-ens0
+      bond1:
+        enabled: true
+        type: ovs_bond
+        mode: balance-slb
+        bridge: br-ex
+        slaves: eno3 eno4
+

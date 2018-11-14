@@ -143,37 +143,6 @@ linux_network_dpdk_bridge_interface_{{ interface_name }}:
     - name: "ovs-vsctl{%- if network.ovs_nowait %} --no-wait{%- endif %} add-br {{ interface_name }} -- set bridge {{ interface_name }} datapath_type=netdev{% if interface.tag is defined %} -- set port {{ interface_name }} tag={{ interface.tag }}{% endif %}"
     - unless: "ovs-vsctl show | grep {{ interface_name }}"
 
-    {# OVS dpdk needs ip address for vxlan termination on bridge br-prv #}
-    {%- if interface.address is defined %}
-
-{# create override for openvswitch dependency for dpdk br-prv #}
-/etc/systemd/system/ifup@{{ interface_name }}.service.d/override.conf:
-  file.managed:
-    - makedirs: true
-    - require:
-      - cmd: linux_network_dpdk_bridge_interface_{{ interface_name }}
-    - contents: |
-        [Unit]
-        Requires=openvswitch-switch.service
-        After=openvswitch-switch.service
-
-{# enforce ip address and mtu for ovs dpdk br-prv #}
-/etc/network/interfaces.u/ifcfg-{{ interface_name }}:
-  file.managed:
-    - contents: |
-        auto {{ interface_name }}
-        iface {{ interface_name }} inet static
-        address {{ interface.address }}
-        netmask {{ interface.netmask }}
-        {%- if interface.mtu is defined %}
-        mtu {{ interface.mtu }}
-        {%- endif %}
-    - makedirs: True
-    - require:
-      - file: /etc/systemd/system/ifup@{{ interface_name }}.service.d/override.conf
-
-    {%- endif %}
-
   {%- elif interface.type == 'dpdk_ovs_port' and interface.bridge is defined %}
 
 linux_network_dpdk_bridge_port_interface_{{ interface_name }}:
