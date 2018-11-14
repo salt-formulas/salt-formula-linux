@@ -1808,6 +1808,17 @@ Set up custom TX queue length for tap interfaces:
       network:
         tap_custom_txqueuelen: 10000
 
+Open vSwitch native bond:
+
+.. code-block:: yaml
+
+    bond1:
+      enabled: true
+      type: ovs_bond
+      mode: balance-slb
+      bridge: br-ex
+      slaves: eno3 eno4
+
 DPDK OVS interfaces
 
 **DPDK OVS NIC**
@@ -2174,6 +2185,31 @@ PAM LDAP integration:
                 passwd: (&(&(objectClass=person)(uidNumber=*))(unixHomeDirectory=*))
                 shadow: (&(&(objectClass=person)(uidNumber=*))(unixHomeDirectory=*))
                 group:  (&(objectClass=group)(gidNumber=*))
+
+PAM duo 2FA integration
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        system:
+          auth:
+            enabled: true
+            duo:
+              enabled: true
+              duo_host: localhost
+              duo_ikey: DUO-INTEGRATION-KEY
+              duo_skey: DUO-SECRET-KEY
+
+duo package version may be specified (optional)
+
+.. code-block:: yaml
+
+      linux:
+        system:
+          package:
+            duo-unix:
+              version: 1.10.1-0
 
 Disabled multipath (the default setup):
 

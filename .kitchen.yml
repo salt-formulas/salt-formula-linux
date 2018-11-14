@@ -71,4 +71,9 @@ suites:
         - source: tests/example
           dest: srv/salt/linux/files/test
 
+  - name: duo
+    provisioner:
+      pillars-from-files:
+        linux.sls: tests/pillar/system_duo.sls
+
 # vim: ft=yaml sw=2 ts=2 sts=2 tw=125
