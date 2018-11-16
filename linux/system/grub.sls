@@ -35,6 +35,7 @@ grub_cfg_permissions:
     - user: 'root'
     - owner: 'root'
     - mode: '400'
+    - replace: false
     - onlyif: test -f {{ boot_grub_cfg }}
     - require:
       - cmd: grub_update
