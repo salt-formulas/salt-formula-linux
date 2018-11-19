@@ -717,6 +717,16 @@ Enable cpufreq governor for every cpu:
         cpu:
           governor: performance
 
+SELinux
+~~~~~~~
+
+Set SELinux mode on System:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        selinux: permissive
 
 CGROUPS
 ~~~~~~~
