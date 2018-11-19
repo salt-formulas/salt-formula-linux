@@ -24,6 +24,7 @@ linux:
     domain: ci.local
     environment: prd
     purge_repos: true
+    selinux: permissive
     directory:
       /tmp/test:
         makedirs: true
