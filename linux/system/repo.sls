@@ -31,9 +31,9 @@ linux_repo_prereq_pkgs:
 
   {%- if system.purge_repos|default(False) %}
 purge_sources_list_d_repos:
-   file.directory:
-   - name: /etc/apt/sources.list.d/
-   - clean: True
+  file.directory:
+  - name: /etc/apt/sources.list.d/
+  - clean: True
   {%- endif %}
 
   {%- for name, repo in system.repo.items() %}
