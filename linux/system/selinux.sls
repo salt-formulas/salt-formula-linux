@@ -1,18 +1,19 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.selinux is defined %}
 
-include:
-- linux.system.repo
+  {% if system.selinux.pkgs %}
+linux_system_selinux_pkgs:
+  pkg.installed:
+  - pkgs: {{ system.selinux.pkgs }}
+  {%- endif %}
 
-{%- if grains.os_family == 'RedHat' %}
-  {%- set mode = system.selinux %}
+  {%- if grains.os_family == 'RedHat' %}
 
-{{ mode }}:
+{{ system.selinux.mode }}:
   selinux.mode:
     - require:
-      - pkg: linux_repo_prereq_pkgs
+      - pkg: linux_system_selinux_pkgs
 
-{%- endif %}
-
+  {%- endif %}
 {%- endif %}
 
