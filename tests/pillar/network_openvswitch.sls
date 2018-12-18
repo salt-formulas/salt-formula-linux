@@ -18,6 +18,7 @@ linux:
         enabled: true
         type: ovs_bridge
         proto: manual
+        ovs_ports: ens0
         mtu: 9000
         use_interfaces:
         - ens0
