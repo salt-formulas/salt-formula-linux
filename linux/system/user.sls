@@ -42,6 +42,9 @@ system_user_{{ name }}:
   - uid: {{ user.uid }}
   {%- endif %}
   - require: {{ requires|yaml }}
+  {%- if user.allow_uid_change is defined and user.allow_uid_change %}
+  - allow_uid_change: true
+  {%- endif %}
 
 system_user_home_{{ user.home }}:
   file.directory:
