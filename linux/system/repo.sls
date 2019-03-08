@@ -4,7 +4,7 @@
   {% if system.pkgs %}
 linux_repo_prereq_pkgs:
   pkg.installed:
-  - pkgs: {{ system.pkgs }}
+  - pkgs: {{ system.pkgs | json }}
   {%- endif %}
 
   # global proxy setup
