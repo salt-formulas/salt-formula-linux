@@ -3,7 +3,7 @@
 
 linux_lvm_pkgs:
   pkg.installed:
-  - pkgs: {{ storage.lvm_pkgs }}
+  - pkgs: {{ storage.lvm_pkgs | json }}
 
 
 /etc/lvm/lvm.conf:
