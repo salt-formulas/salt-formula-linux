@@ -15,8 +15,11 @@
         'package': {},
         'autoupdates': {
           'pkgs': []
-         },
-        'selinux': 'permissive',
+        },
+        'selinux': {
+             'pkgs': [],
+             'mode': 'permissive',
+        },
         'ca_certs_dir': '/usr/local/share/ca-certificates',
         'ca_certs_bin': 'update-ca-certificates',
         'atop': {
@@ -25,7 +28,7 @@
              'autostart': true,
              'logpath': '/var/log/atop',
              'outfile': '/var/log/atop/daily.log'
-         },
+        },
         'at': {
              'pkgs': [],
              'services': []
@@ -52,7 +55,10 @@
         'autoupdates': {
              'pkgs': ['unattended-upgrades']
          },
-        'selinux': 'permissive',
+        'selinux': {
+             'pkgs': [],
+             'mode': 'permissive',
+        },
         'ca_certs_dir': '/usr/local/share/ca-certificates',
         'ca_certs_bin': 'update-ca-certificates',
         'atop': {
@@ -74,7 +80,7 @@
          },
     },
     'RedHat': {
-        'pkgs': ['policycoreutils', 'policycoreutils-python', 'telnet', 'wget'],
+        'pkgs': ['telnet', 'wget'],
         'utc': true,
         'user': {},
         'group': {},
@@ -90,7 +96,10 @@
         'autoupdates': {
              'pkgs': []
          },
-        'selinux': 'permissive',
+        'selinux': {
+             'pkgs': ['policycoreutils','policycoreutils-python'],
+             'mode': 'permissive',
+        },
         'ca_certs_dir': '/etc/pki/ca-trust/source/anchors',
         'ca_certs_bin': 'update-ca-trust extract',
         'atop': {
@@ -381,6 +390,7 @@ Debian:
              'pkgs': [],
              'service': 'multipath'
          },
+        'lvm_pkgs': ['lvm2'],
     },
 }, merge=salt['grains.filter_by']({
     'trusty': {
