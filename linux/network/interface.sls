@@ -314,6 +314,9 @@ linux_interface_{{ interface_name }}:
   - slaves: {{ interface.slaves }}
   - mode: {{ interface.mode }}
   {%- endif %}
+  {%- if interface.firewalld_zone is defined %}
+  - zone: {{ interface.firewalld_zone }}
+  {%- endif %}
 
 
 {%- if salt['grains.get']('saltversion') < '2017.7' %}
