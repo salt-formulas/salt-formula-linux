@@ -1,0 +1,38 @@
+# CIS 6.1.2 Ensure permissions on /etc/passwd are configured
+#
+# Description
+# ===========
+# The /etc/passwd file contains user account information that is used by
+# many system utilities and therefore must be readable for these utilities
+# to operate.
+#
+# Rationale
+# =========
+# It is critical to ensure that the /etc/passwd file is protected from
+# unauthorized write access. Although it is protected by default, the file
+# permissions could be changed either inadvertently or through malicious actions.
+#
+# Audit
+# =====
+# Run the following command and verify Uid and Gid are both 0/root and
+# Access is 644 :
+#
+#   # stat /etc/passwd
+#   Access: (0644/-rw-r--r--) Uid: (0/root) Gid: (0/root)
+#
+# Remediation
+# ===========
+# Run the following command to set permissions on /etc/passwd :
+#
+#   # chown root:root /etc/passwd
+#   # chmod 644 /etc/passwd
+#
+parameters:
+  linux:
+    system:
+      file:
+        /etc/passwd:
+          user: 'root'
+          group: 'root'
+          mode: '0644'
+

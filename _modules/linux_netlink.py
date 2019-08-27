@@ -2,6 +2,8 @@
 
 import re
 
+def __virtual__():
+    return 'linux_netlink'
 
 def ls(regex):
     """

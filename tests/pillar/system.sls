@@ -1,12 +1,30 @@
 linux:
+  network:
+    enabled: true
+    hostname: linux
+    fqdn: linux.ci.local
   system:
     enabled: true
+    at:
+      enabled: true
+      user:
+        root:
+          enabled: true
+        testuser:
+          enabled: true
+    cron:
+      enabled: true
+      user:
+        root:
+          enabled: true
+        testuser:
+          enabled: true
     cluster: default
     name: linux
-    domain: local
+    domain: ci.local
     environment: prd
-    hostname: system.pillar.local
     purge_repos: true
+    selinux: permissive
     directory:
       /tmp/test:
         makedirs: true
@@ -19,9 +37,59 @@ linux:
     kernel:
       isolcpu: 1,2,3,4
       elevator: deadline
+      transparent_hugepage: always
       boot_options:
         - pti=off
         - spectre_v2=auto
+      module:
+        module_1:
+          install:
+            command: /bin/true
+          remove:
+            enabled: false
+            command: /bin/false
+        module_2:
+          install:
+            enabled: false
+            command: /bin/false
+          remove:
+            command: /bin/true
+        module_3:
+          blacklist: true
+        module_4:
+          blacklist: false
+          alias:
+            "module*":
+              enabled: true
+            "module_*":
+              enabled: false
+        module_5:
+          softdep:
+            pre:
+              1:
+                value: module_1
+              2:
+                value: module_2
+                enabled: false
+            post:
+              1:
+                value: module_3
+              2:
+                value: module_4
+                enabled: false
+        module_6:
+          option:
+            opt_1: 111
+            opt_2: 222
+        module_7:
+          option:
+            opt_3:
+              value: 333
+            opt_4:
+              enabled: true
+              value: 444
+            opt_5:
+              enabled: false
     cgroup:
       group:
         group_1:
@@ -33,6 +101,7 @@ linux:
             subjects:
             - '@group1'
     sysfs:
+      enable_apply: true
       scheduler:
         block/sda/queue/scheduler: deadline
       power:
@@ -61,6 +130,7 @@ linux:
         enabled: true
         home: /root
         name: root
+        maxdays: 365
       testuser:
         enabled: true
         name: testuser
@@ -69,6 +139,7 @@ linux:
         uid: 9999
         full_name: Test User
         home: /home/test
+        unique: false
         groups:
           - db-ops
           - salt-ops
@@ -79,6 +150,7 @@ linux:
         uid: 9991
         full_name: Salt User1
         home: /home/saltuser1
+        home_dir_mode: 755
       salt_user2:
         enabled: true
         name: saltuser2
@@ -125,6 +197,31 @@ linux:
       htop:
         version: latest
     repo:
+      disabled_repo:
+        source: "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
+        enabled: false
+      disabled_repo_left_proxy:
+        source: "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
+        enabled: false
+        proxy:
+          enabled: true
+          https: https://127.0.5.1:443
+      saltstack:
+        source: "deb [arch=amd64] http://repo.saltstack.com/apt/ubuntu/16.04/amd64/2017.7/ xenial main"
+        key_url: "http://repo.saltstack.com/apt/ubuntu/16.04/amd64/2017.7/SALTSTACK-GPG-KEY.pub"
+        architectures: amd64
+        clean_file: true
+        pinning:
+          10:
+            enabled: true
+            pin: 'release o=SaltStack'
+            priority: 50
+            package: 'libsodium18'
+          20:
+            enabled: true
+            pin: 'release o=SaltStack'
+            priority: 1100
+            package: '*'
       opencontrail:
         source: "deb http://ppa.launchpad.net/tcpcloud/contrail-3.0/ubuntu xenial main"
         keyid: E79EE90C
@@ -134,9 +231,10 @@ linux:
           enabled: true
           https: https://127.0.5.1:443
           #http: http://127.0.5.2:8080
-      apt-mk-salt:
-        source: "deb http://apt-mk.mirantis.com/xenial stable salt"
-        #key_url: http://apt-mk.mirantis.com/public.gpg
+      apt-salt:
+        source: "deb http://apt.mirantis.com/xenial stable salt"
+        #key_url: http://apt.mirantis.com/public.gpg
+        # pub   4096R/A76882D3 2015-06-17
         key: |
           -----BEGIN PGP PUBLIC KEY BLOCK-----
           Version: GnuPG v1
@@ -193,21 +291,21 @@ linux:
         architectures: amd64
         proxy:
           enabled: true
-      apt-mk-salt-nightly:
-        source: "deb http://apt-mk.mirantis.com/xenial nightly salt"
-        key_url: http://apt-mk.mirantis.com/public.gpg
+      apt-salt-nightly:
+        source: "deb http://apt.mirantis.com/xenial nightly salt"
+        key_url: http://apt.mirantis.com/public.gpg
         architectures: amd64
         proxy:
           enabled: false
-      apt-mk-extra-nightly:
-        source: "deb http://apt-mk.mirantis.com/xenial nightly extra"
-        key_url: http://apt-mk.mirantis.com/public.gpg
+      apt-extra-nightly:
+        source: "deb http://apt.mirantis.com/xenial nightly extra"
+        key_url: http://apt.mirantis.com/public.gpg
         architectures: amd64
     locale:
-      en_US.UTF-8:
+      en_US:
         enabled: true
         default: true
-      "cs_CZ.UTF-8 UTF-8":
+      cs_CZ:
         enabled: true
     autoupdates:
       enabled: true
@@ -330,6 +428,12 @@ linux:
         - .local
       LANG: C
       LC_ALL: C
+    login_defs:
+      PASS_MAX_DAYS:
+        value: 99
+    shell:
+      umask: '027'
+      timeout: 900
     profile:
       vi_flavors.sh: |
         export PAGER=view
@@ -369,3 +473,8 @@ linux:
       interval: 20
       logpath: "/var/mylog/atop"
       outfile: "/var/mylog/atop/daily.log"
+    mcelog:
+      enabled: true
+      logging:
+        syslog: true
+        syslog_error: true

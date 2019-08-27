@@ -1,8 +1,15 @@
 
 linux:
+  network:
+    enabled: true
+    hostname: linux
+    fqdn: linux.ci.local
   system:
     auth:
       enabled: true
+      mkhomedir:
+        enabled: true
+        umask: 0027
       ldap:
         enabled: true
         binddn: cn=bind,ou=service_users,dc=example,dc=com

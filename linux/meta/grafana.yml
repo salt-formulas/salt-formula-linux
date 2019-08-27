@@ -1,9 +1,24 @@
+{%- from "linux/map.jinja" import monitoring with context %}
 dashboard:
-  linux_prometheus:
+  linux_overview_prometheus:
     datasource: prometheus
     format: json
-    template: linux/files/grafana_dashboards/system_prometheus.json
+    template: linux/files/grafana_dashboards/system_overview_prometheus.json
+  linux_disk_prometheus:
+    datasource: prometheus
+    format: json
+    template: linux/files/grafana_dashboards/system_disk_prometheus.json
+  linux_network_prometheus:
+    datasource: prometheus
+    format: json
+    template: linux/files/grafana_dashboards/system_network_prometheus.json
   linux_influxdb:
     datasource: influxdb
     format: json
     template: linux/files/grafana_dashboards/system_influxdb.json
+{%- if monitoring.bond_status.interfaces is defined and monitoring.bond_status.interfaces %}
+  linux_bond:
+    datasource: prometheus
+    format: json
+    template: linux/files/grafana_dashboards/bond_prometheus.json
+{%- endif %}

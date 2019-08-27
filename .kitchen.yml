@@ -1,8 +1,8 @@
 ---
 driver:
   name: docker
-  hostname: linux.ci.local
-  use_sudo: false
+  hostname: linux-formula
+  run_options: -v /dev/log:/dev/log:ro
 
 provisioner:
   name: salt_solo
@@ -29,9 +29,9 @@ verifier:
   sudo: true
 
 platforms:
-  - name: <%=ENV['PLATFORM'] || 'ubuntu-xenial-2017.7'%>
+  - name: <%=ENV['PLATFORM'] ||  'saltstack-ubuntu-xenial-salt-stable' %>
     driver_config:
-      image: <%=ENV['PLATFORM'] || 'trevorj/salty-whales:xenial-2017.7'%>
+      image: <%=ENV['PLATFORM'] || 'epcim/salt:saltstack-ubuntu-xenial-salt-stable'%>
       platform: ubuntu
 
 
@@ -62,5 +62,18 @@ suites:
     provisioner:
       pillars-from-files:
         linux.sls: tests/pillar/system.sls
+
+  - name: system_file
+    provisioner:
+      pillars-from-files:
+        linux.sls: tests/pillar/system_file.sls
+      pillars_from_directories:
+        - source: tests/example
+          dest: srv/salt/linux/files/test
+
+  - name: duo
+    provisioner:
+      pillars-from-files:
+        linux.sls: tests/pillar/system_duo.sls
 
 # vim: ft=yaml sw=2 ts=2 sts=2 tw=125

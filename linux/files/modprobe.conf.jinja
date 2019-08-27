@@ -1,9 +1,51 @@
-{% if module_content.get('blacklist', false) -%}
+{%- from "linux/map.jinja" import system with context -%}
+# This file is managed by Salt, do not edit.
+{%- set module_content = system.kernel.module.get(module_name) %}
+{%- if module_content.get('blacklist', false) %}
 blacklist {{ module_name }}
-{%- else -%}
-
-{%- for option, value in module_content.get('option', {}) | dictsort -%}
-options {{ module_name }} {{ option }}={{ value }}
+{%- endif %}
+{%- for alias, params in module_content.get('alias', {}) | dictsort %}
+  {%- if params.get('enabled', true) %}
+alias {{ alias }} {{ module_name }}
+  {%- endif %}
 {%- endfor %}
-
+{%- set options = [] %}
+{%- for option, params in module_content.get('option', {}) | dictsort %}
+  {%- if params is mapping %}
+    {%- if params.get('enabled', true) and params.value is defined %}
+      {%- do options.append(option ~ '=' ~ params.value) %}
+    {%- endif %}
+  {%- else %}
+    {%- do options.append(option ~ '=' ~ params) %}
+  {%- endif %}
+{%- endfor %}
+{%- if options | length > 0 %}
+options {{ module_name }} {{ options | join(' ')}}
+{%- endif %}
+{%- if module_content.install is defined %}
+  {%- if module_content.install.get('enabled', true) and module_content.install.command is defined %}
+install {{ module_name }} {{ module_content.install.command }}
+  {%- endif %}
+{%- endif %}
+{%- if module_content.remove is defined %}
+  {%- if module_content.remove.get('enabled', true) and module_content.remove.command is defined %}
+remove {{ module_name }} {{ module_content.remove.command }}
+  {%- endif %}
+{%- endif %}
+{%- if module_content.softdep is defined %}
+  {%- set pre = [] %}
+  {%- set post = [] %}
+  {%- for pos, params in module_content.softdep.get('pre', {}) | dictsort %}
+    {%- if params.get('enabled', true) and params.value is defined %}
+      {%- do pre.append(params.value) %}
+    {%- endif %}
+  {%- endfor %}
+  {%- for pos, params in module_content.softdep.get('post', {}) | dictsort %}
+    {%- if params.get('enabled', true) and params.value is defined %}
+      {%- do post.append(params.value) %}
+    {%- endif %}
+  {%- endfor %}
+  {%- if pre | length + post | length > 0 %}
+softdep {{ module_name }}{% if pre | length > 0 %} pre: {{ pre | join(' ') }}{% endif %}{% if post | length > 0 %} post: {{ post | join(' ') }}{% endif %}
+  {%- endif %}
 {%- endif %}

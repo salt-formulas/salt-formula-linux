@@ -1,0 +1,43 @@
+# 1.1.1.6 Ensure mounting of squashfs filesystems is disabled
+#
+# Description
+# ===========
+# The squashfs filesystem type is a compressed read-only Linux filesystem
+# embedded in small footprint systems (similar to cramfs). A squashfs image
+# can be used without having to first decompress the image.
+#
+# Rationale
+# =========
+# Removing support for unneeded filesystem types reduces the local attack
+# surface of the server. If this filesystem type is not needed, disable it.
+#
+# Audit
+# =====
+# Run the following commands and verify the output is as indicated:
+#
+#   # modprobe -n -v squashfs
+#   install /bin/true
+#   # lsmod | grep squashfs
+#   <No output>
+#
+# Remediation
+# ===========
+# Edit or create the file /etc/modprobe.d/CIS.conf and add the following line:
+#
+#   install squashfs /bin/true
+#
+# NOTE
+# ====
+# In Ubuntu 16.04 squashfs is built into kernel, and 'install' command
+# from modprobe.d dir has no effect. However, this is still checked by
+# CIS-CAT in Ubuntu 16.04 benchmark v.1.0.0. This was removed in v.1.1.0.
+#
+parameters:
+  linux:
+    system:
+      kernel:
+        module:
+          squashfs:
+            install:
+              command: /bin/true
+

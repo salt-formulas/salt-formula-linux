@@ -1,8 +1,10 @@
+{%- if pillar.get('fluentd', {}).get('agent', {}).get('enabled', False) %}
+{%- set positiondb = pillar.fluentd.agent.dir.positiondb %}
 {%- if grains.get('init') == 'systemd' %}
 agent:
   plugin:
     fluent-plugin-systemd:
-      gem: ['fluent-plugin-systemd']
+      deb: ['td-agent-additional-plugins']
   config:
     label:
       default_metric:
@@ -54,7 +56,7 @@ agent:
             type: systemd
             tag: systemd.source
             path: /run/log/journal
-            pos_file: {{ pillar.fluentd.agent.dir.positiondb }}/systemd.source.pos
+            pos_file: {{ positiondb }}/systemd.source.pos
             entry:
               field_map:
                 MESSAGE: 'Payload'
@@ -75,6 +77,8 @@ agent:
             record:
               - name: severity_label
                 value: '${ {"TRACE"=>8,"DEBUG"=>7,"INFO"=>6,"NOTICE"=>5,"WARNING"=>4,"ERROR"=>3,"CRITICAL"=>2,"ALERT"=>1,"EMERGENCY"=>0}.key(record["Severity"].to_i) }'
+              - name: source
+                value: systemd
         match:
           rewrite_tag:
             tag: systemd.source
@@ -82,9 +86,9 @@ agent:
             rule:
               - name: ident
                 regexp: '^(.*)$'
-                result: __TAG__.$1
+                result: $1.systemd
           push_to_default:
-            tag: 'systemd.source.*'
+            tag: '*.systemd'
             type: copy
             store:
               - type: relabel
@@ -109,4 +113,65 @@ agent:
             tag: 'metric.**'
             type: relabel
             label: default_metric
+{%- else %}
+agent:
+  config:
+    label:
+      default_metric:
+        filter:
+          metric_hdd_errors_parse:
+            tag: metric.hdd_errors
+            type: parser
+            key_name: Payload
+            parser:
+              type: regexp
+              format: '/(?<device>[sv]d[a-z]+\d*)/'
+          metric_hdd_errors:
+            tag: metric.hdd_errors
+            require:
+              - metric_hdd_errors_parse
+            type: prometheus
+            metric:
+              - name: hdd_errors_total
+                type: counter
+                desc: The total number of hdd errors.
+            label:
+              - name: host
+                value: ${Hostname}
+              - name: device
+                value: ${device}
+      syslog:
+        input:
+          syslog_file:
+            type: tail
+            tag: linux.syslog
+            path: /var/log/syslog
+            pos_file: {{ positiondb }}/linux_syslog.pos
+            suppress_parse_error_log: true
+            parser:
+              type: regexp
+              format: >-
+                '/(?<Payload>.*(?<device>[sv]d[a-z]{1,2}\d{0,3}).*)/'
+        match:
+          push_to_default:
+            tag: 'linux.**'
+            type: copy
+            store:
+              - type: relabel
+                label: default_output
+              - type: rewrite_tag_filter
+                rule:
+                  - name: Payload
+                    regexp: >-
+                      'error.*\b[sv]d[a-z]{1,2}\d{0,3}\b.*'
+                    result: metric.hdd_errors
+                  - name: Payload
+                    regexp: >-
+                      '\b[sv]d[a-z]{1,2}\d{0,3}\b.*error'
+                    result: metric.hdd_errors
+          push_to_metric:
+            tag: 'metric.**'
+            type: relabel
+            label: default_metric
+{%- endif %}
 {%- endif %}

@@ -3,6 +3,16 @@
 include:
 - linux.system.env
 - linux.system.profile
+- linux.system.shell
+{%- if system.login_defs is defined %}
+- linux.system.login_defs
+{%- endif %}
+{%- if system.at is defined %}
+- linux.system.at
+{%- endif %}
+{%- if system.cron is defined %}
+- linux.system.cron
+{%- endif %}
 {%- if system.repo|length > 0 %}
 - linux.system.repo
 {%- endif %}
@@ -113,4 +123,10 @@ include:
 {%- endif %}
 {%- if system.auth is defined %}
 - linux.system.auth
+{%- endif %}
+{%- if system.banner is defined %}
+- linux.system.banner
+{%- endif %}
+{%- if system.mcelog is defined %}
+- linux.system.mcelog
 {%- endif %}

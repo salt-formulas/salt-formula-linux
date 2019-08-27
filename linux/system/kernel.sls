@@ -6,12 +6,13 @@
 {%- set kernel_boot_opts = [] %}
 {%- do kernel_boot_opts.append('isolcpus=' ~ system.kernel.isolcpu) if system.kernel.isolcpu is defined %}
 {%- do kernel_boot_opts.append('elevator=' ~ system.kernel.elevator) if system.kernel.elevator is defined %}
+{%- do kernel_boot_opts.append('transparent_hugepage=' ~ system.kernel.transparent_hugepage) if system.kernel.transparent_hugepage is defined %}
 {%- do kernel_boot_opts.extend(system.kernel.boot_options) if system.kernel.boot_options is defined %}
 
-{%- if kernel_boot_opts %}
 include:
   - linux.system.grub
 
+{%- if kernel_boot_opts %}
 /etc/default/grub.d/99-custom-settings.cfg:
   file.managed:
     - contents: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT {{ kernel_boot_opts|join(' ') }}"'
@@ -56,7 +57,16 @@ linux_kernel_module_{{ module }}:
 
 {%- endfor %}
 
-{%- for module_name, module_content in system.kernel.get('module', {}).items() %}
+{%- if system.kernel.module is defined %}
+
+modprobe_d_directory:
+  file.directory:
+    - name: /etc/modprobe.d
+    - user: root
+    - group: root
+    - mode: 755
+
+  {%- for module_name in system.kernel.module %}
 
 /etc/modprobe.d/{{ module_name }}.conf:
   file.managed:
@@ -66,10 +76,12 @@ linux_kernel_module_{{ module }}:
     - template: jinja
     - source: salt://linux/files/modprobe.conf.jinja
     - defaults:
-       module_content: {{ module_content }}
        module_name: {{ module_name }}
+    - require:
+      - file: modprobe_d_directory
 
-{%- endfor %}
+  {%- endfor %}
+{%- endif %}
 
 {%- for sysctl_name, sysctl_value in system.kernel.get('sysctl', {}).items() %}
 

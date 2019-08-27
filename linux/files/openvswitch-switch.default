@@ -1,0 +1,44 @@
+{%- from "linux/map.jinja" import network with context %}
+{%- set openvswitch = network.openvswitch %}
+# This is a POSIX shell fragment                -*- sh -*-
+
+# FORCE_COREFILES: If 'yes' then core files will be enabled.
+# FORCE_COREFILES=yes
+
+# OVS_CTL_OPTS: Extra options to pass to ovs-ctl.  This is, for example,
+# a suitable place to specify --ovs-vswitchd-wrapper=valgrind.
+# OVS_CTL_OPTS=
+
+# OVS_VSWITCHD_OPTS: Extra options to pass to ovs-ctl.
+# Options to start Open vSwitch daemon with.
+# Example: '-vconsole:dbg -vsyslog:dbg -vfile:dbg -vFACILITY:clock2'
+# OVS_VSWITCHD_OPTS=
+{%- if openvswitch.get('logging', {}).vswitchd is defined %}
+  {%- set _vswitchd_opts = [] %}
+  {%- for opt in ['console', 'file', 'syslog'] %}
+    {%- if openvswitch.logging.vswitchd.get(opt)  %}
+      {%- do _vswitchd_opts.append("-v"+ opt + ":" + openvswitch.logging.vswitchd.get(opt)) %}
+    {%- endif %}
+  {%- endfor %}
+  {%- if openvswitch.logging.vswitchd.facility is defined  %}
+    {%- do _vswitchd_opts.append("-vFACILITY:" + openvswitch.logging.vswitchd.facility) %}
+  {%- endif %}
+OVS_VSWITCHD_OPTS="{{ ' '.join(_vswitchd_opts) }}"
+{%- endif %}
+
+# OVSDB_OPTS: Extra options to pass to ovs-ctl.
+# Options to start Open vSwitch DB daemon with.
+# Example: '-vconsole:dbg -vsyslog:dbg -vfile:dbg -vFACILITY:clock2'
+# OVSDB_OPTS=
+{%- if openvswitch.get('logging', {}).ovsdb is defined %}
+  {%- set _ovsdb_opts = [] %}
+  {%- for opt in ['console', 'file', 'syslog'] %}
+    {%- if openvswitch.logging.ovsdb.get(opt)  %}
+      {%- do _ovsdb_opts.append("-v" + opt + ":" + openvswitch.logging.ovsdb.get(opt)) %}
+    {%- endif %}
+  {%- endfor %}
+  {%- if openvswitch.logging.ovsdb.facility is defined  %}
+    {%- do _ovsdb_opts.append("-vFACILITY:" + openvswitch.logging.ovsdb.facility) %}
+  {%- endif %}
+OVSDB_OPTS="{{ ' '.join(_ovsdb_opts) }}"
+{%- endif %}

@@ -1,3 +1,6 @@
+language: python
+python:
+- "2.7.13"
 sudo: required
 services:
   - docker
@@ -17,24 +20,23 @@ install:
     gem 'test-kitchen'
     gem 'kitchen-docker'
     gem 'kitchen-inspec'
-    gem 'inspec'
+    gem 'inspec', '<3.0.0'
+    #Version was frozen, because of issues in the version of inspec >3.0.0 -- see https://mirantis.jira.com/browse/PROD-24324 for more info
     gem 'kitchen-salt', :git => 'https://github.com/salt-formulas/kitchen-salt.git'
   - bundle install
 
 env:
-  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=network
-  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=network
-  # - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=storage
-  # - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=storage
-  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=system
-  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=system
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=network
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=network
-  # - PLATFORM=trevorj/salty-whales:trusty SUITE=storage
-  # - PLATFORM=trevorj/salty-whales:xenial SUITE=storage
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=system
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=system
-## Test on both Salt version until there is new test policy accepted
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2016.3 SUITE=network
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2016.3 SUITE=system
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2017.7 SUITE=network
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2017.7 SUITE=system
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=network
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=system
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=duo
+  # - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2017.7 SUITE=network
+  # - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2017.7 SUITE=system
+  # - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2018.3 SUITE=network
+  # - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2018.3 SUITE=system
 
 before_script:
   - set -o pipefail

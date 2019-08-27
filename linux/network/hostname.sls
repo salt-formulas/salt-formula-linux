@@ -16,18 +16,21 @@ linux_hostname_file:
 
 {%- endif %}
 
+{# Change state to proper one, after releasing patch:
+   https://github.com/saltstack/salt/pull/45748/files/74599bbdfcf99f45d3a31296887097fade31cbf1
 linux_enforce_hostname:
-  cmd.wait:
+  network.system:
+    - enabled: True
+    - hostname: {{ network.hostname }}
+    - apply_hostname: True
+    - retain_settings: True
+#}
+linux_enforce_hostname:
+  cmd.run:
   - name: hostname {{ network.hostname }}
   - unless: test "$(hostname)" = "{{ network.hostname }}"
-
-{#
-linux_hostname_hosts:
-  host.present:
-  - ip: {{ grains.ip4_interfaces[network.get('default_interface', 'eth0')][0] }}
-  - names:
-    - {{ network.fqdn }}
-    - {{ network.hostname }}
-#}
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
 
 {%- endif %}

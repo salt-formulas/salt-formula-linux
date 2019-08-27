@@ -1,4 +1,12 @@
 linux:
+  system:
+    enabled: true
+    name: linux
+    domain: local
+  network:
+    enabled: true
+    hostname: linux
+    fqdn: linux.ci.local
   storage:
     enabled: true
     swap:

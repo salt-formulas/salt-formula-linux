@@ -1,0 +1,35 @@
+# CIS 3.3.3 Ensure IPv6 is disabled
+#
+# Description
+# ===========
+# Although IPv6 has many advantages over IPv4, few organizations have
+# implemented IPv6.
+#
+# Rationale
+# =========
+# If IPv6 is not to be used, it is recommended that it be disabled to
+# reduce the attack surface of the system.
+#
+# Audit
+# ======
+# Run the following command and verify that each linux line has
+# the 'ipv6.disable=1' parameter set:
+#
+#   # grep "^\s*linux" /boot/grub/grub.cfg
+#
+# Remediation
+# ===========
+# Edit /etc/default/grub and add 'ipv6.disable=1' to GRUB_CMDLINE_LINUX:
+#
+#   GRUB_CMDLINE_LINUX="ipv6.disable=1"
+#
+# Run the following command to update the grub2 configuration:
+#
+#   # update-grub
+#
+parameters:
+  linux:
+    system:
+      kernel:
+        boot_options:
+          - ipv6.disable=1

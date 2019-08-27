@@ -20,7 +20,7 @@ profile.d_script_{{ name  }}:
     - defaults:
           script: {{ script|yaml }}
     - require_in:
-      - service: profile.d_clean
+      - file: profile.d_clean
 {% endfor %}
 
 {%- endif %}

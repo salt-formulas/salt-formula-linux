@@ -2,7 +2,7 @@
 Linux Fomula
 ============
 
-Linux Operating Systems.
+Linux Operating Systems:
 
 * Ubuntu
 * CentOS
@@ -12,7 +12,6 @@ Linux Operating Systems.
 
 Sample Pillars
 ==============
-
 
 Linux System
 ------------
@@ -32,9 +31,9 @@ Basic Linux box
         utc: true
 
 Linux with system users, some with password set:
-.. WARNING::
-If no 'password' variable has been passed - any predifined password
-will be removed.
+
+.. warning:: If no ``password`` variable is passed,
+             any predifined password will be removed.
 
 .. code-block:: yaml
 
@@ -49,7 +48,9 @@ will be removed.
             shell: /bin/bash
             full_name: 'Jonh Doe'
             home: '/home/jdoe'
+            home_dir_mode: 755
             email: 'jonh@doe.com'
+            unique: false
           jsmith:
             name: 'jsmith'
             enabled: true
@@ -69,6 +70,30 @@ will be removed.
             full_name: 'With hased password'
             home: '/home/elizabeth'
             password: "$6$nUI7QEz3$dFYjzQqK5cJ6HQ38KqG4gTWA9eJu3aKx6TRVDFh6BVJxJgFWg2akfAA7f1fCxcSUeOJ2arCO6EEI6XXnHXxG10"
+
+Configure password expiration parameters
+----------------------------------------
+The following login.defs parameters can be overridden per-user:
+
+* PASS_MAX_DAYS
+* PASS_MIN_DAYS
+* PASS_WARN_DAYS
+* INACTIVE
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        user:
+          jdoe:
+            name: 'jdoe'
+            enabled: true
+            ...
+            maxdays: <PASS_MAX_DAYS>
+            mindays: <PASS_MIN_DAYS>
+            warndays: <PASS_WARN_DAYS>
+            inactdays: <INACTIVE>
 
 Configure sudo for users and groups under ``/etc/sudoers.d/``.
 This ways ``linux.system.sudo`` pillar map to actual sudo attributes:
@@ -181,7 +206,7 @@ This ways ``linux.system.sudo`` pillar map to actual sudo attributes:
             - '!SUPPORT_SHELLS'
             - '!SUPPORT_RESTRICTED'
 
-Linux with package, latest version
+Linux with package, latest version:
 
 .. code-block:: yaml
 
@@ -192,7 +217,7 @@ Linux with package, latest version
           package-name:
             version: latest
 
-Linux with package from certail repo, version with no upgrades
+Linux with package from certail repo, version with no upgrades:
 
 .. code-block:: yaml
 
@@ -205,7 +230,8 @@ Linux with package from certail repo, version with no upgrades
             repo: 'custom-repo'
             hold: true
 
-Linux with package from certail repo, version with no GPG verification
+Linux with package from certail repo, version with no GPG
+verification:
 
 .. code-block:: yaml
 
@@ -218,7 +244,8 @@ Linux with package from certail repo, version with no GPG verification
             repo: 'custom-repo'
             verify: false
 
-Linux with autoupdates (automatically install security package updates)
+Linux with autoupdates (automatically install security package
+updates):
 
 .. code-block:: yaml
 
@@ -233,10 +260,58 @@ Linux with autoupdates (automatically install security package updates)
           automatic_reboot: true
           automatic_reboot_time: "02:00"
 
-Linux with cron jobs
-By default it will use name as an identifier, unless identifier key is
+Managing cron tasks
+-------------------
+
+There are two data structures that are related to managing cron itself and
+cron tasks:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        cron:
+
+and
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        job:
+
+`linux:system:cron` manages cron packages, services, and '/etc/cron.allow' file.
+
+'deny' files are managed the only way - we're ensuring they are absent, that's
+a requirement from CIS 5.1.8
+
+'cron' pillar structure is the following:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        cron:
+          enabled: true
+          pkgs: [ <cron packages> ]
+          services: [ <cron services> ]
+          user:
+            <username>:
+              enabled: true
+
+To add user to '/etc/cron.allow' use 'enabled' key as shown above.
+
+'/etc/cron.deny' is not managed as CIS 5.1.8 requires it was removed.
+
+A user would be ignored if any of the following is true:
+* user is disabled in `linux:system:user:<username>`
+* user is disabled in `linux:system:cron:user:<username>`
+
+`linux:system:job` manages individual cron tasks.
+
+By default, it will use name as an identifier, unless identifier key is
 explicitly set or False (then it will use Salt's default behavior which is
-identifier same as command resulting in not being able to change it)
+identifier same as command resulting in not being able to change it):
 
 .. code-block:: yaml
 
@@ -251,6 +326,32 @@ identifier same as command resulting in not being able to change it)
             user: 'root'
             hour: 2
             minute: 0
+
+Managing 'at' tasks
+-------------------
+
+Pillar for managing `at` tasks is similar to one for `cron` tasks:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        at:
+          enabled: true
+          pkgs: [ <at packages> ]
+          services: [ <at services> ]
+          user:
+            <username>:
+              enabled: true
+
+To add a user to '/etc/at.allow' use 'enabled' key as shown above.
+
+'/etc/at.deny' is not managed as CIS 5.1.8 requires it was removed.
+
+A user will be ignored if any of the following is true:
+* user is disabled in `linux:system:user:<username>`
+* user is disabled in `linux:system:at:user:<username>`
+
 
 Linux security limits (limit sensu user memory usage to max 1GB):
 
@@ -268,7 +369,7 @@ Linux security limits (limit sensu user memory usage to max 1GB):
                 item: as
                 value: 1000000
 
-Enable autologin on tty1 (may work only for Ubuntu 14.04):
+Enable autologin on ``tty1`` (may work only for Ubuntu 14.04):
 
 .. code-block:: yaml
 
@@ -283,11 +384,12 @@ Enable autologin on tty1 (may work only for Ubuntu 14.04):
             rate: 115200
             term: xterm
 
-To disable set autologin to `false`.
+To disable set autologin to ``false``.
 
 Set ``policy-rc.d`` on Debian-based systems. Action can be any available
 command in ``while true`` loop and ``case`` context.
-Following will disallow dpkg to stop/start services for cassandra package automatically:
+Following will disallow dpkg to stop/start services for the Cassandra
+package automatically:
 
 .. code-block:: yaml
 
@@ -341,7 +443,7 @@ Ensure presence of directory:
             mode: 700
             makedirs: true
 
-Ensure presence of file by specifying it's source:
+Ensure presence of file by specifying its source:
 
 .. code-block:: yaml
 
@@ -365,7 +467,15 @@ Ensure presence of file by specifying it's source:
             name: /tmp/test.txt
             source: http://example.com/test.txt
 
-Ensure presence of file by specifying it's contents:
+    linux:
+      system:
+        file:
+          test2:
+            name: /tmp/test2.txt
+            source: http://example.com/test2.jinja
+            template: jinja
+
+Ensure presence of file by specifying its contents:
 
 .. code-block:: yaml
 
@@ -389,10 +499,25 @@ Ensure presence of file by specifying it's contents:
           /tmp/test.txt:
             contents_grains: motd
 
+Ensure presence of file to be serialized through one of the
+serializer modules (see:
+https://docs.saltstack.com/en/latest/ref/serializers/all/index.html):
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        file:
+          /tmp/test.json:
+            serialize: json
+            contents:
+              foo: 1
+              bar: 'bar'
+
 Kernel
 ~~~~~~
 
-Install always up to date LTS kernel and headers from Ubuntu trusty:
+Install always up to date LTS kernel and headers from Ubuntu Trusty:
 
 .. code-block:: yaml
 
@@ -403,7 +528,7 @@ Install always up to date LTS kernel and headers from Ubuntu trusty:
           lts: trusty
           headers: true
 
-Load kernel modules and add them to `/etc/modules`:
+Load kernel modules and add them to ``/etc/modules``:
 
 .. code-block:: yaml
 
@@ -415,8 +540,14 @@ Load kernel modules and add them to `/etc/modules`:
             - tp_smapi
             - 8021q
 
-Configure or blacklist kernel modules with additional options to `/etc/modprobe.d` following example 
-will add `/etc/modprobe.d/nf_conntrack.conf` file with line `options nf_conntrack hashsize=262144`:
+Configure or blacklist kernel modules with additional options to
+``/etc/modprobe.d`` following example will add
+``/etc/modprobe.d/nf_conntrack.conf`` file with line
+``options nf_conntrack hashsize=262144``:
+
+'option' can be a mapping (with 'enabled' and 'value' keys) or a scalar.
+
+Example for 'scalar' option value:
 
 .. code-block:: yaml
 
@@ -428,6 +559,113 @@ will add `/etc/modprobe.d/nf_conntrack.conf` file with line `options nf_conntrac
               option:
                 hashsize: 262144
 
+Example for 'mapping' option value:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              option:
+                hashsize:
+                  enabled: true
+                  value: 262144
+
+NOTE: 'enabled' key is optional and is True by default.
+
+Blacklist a module:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              blacklist: true
+
+A module can have a number of aliases, wildcards are allowed.
+Define an alias for a module:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              alias:
+                nfct:
+                  enabled: true
+                "nf_conn*":
+                  enabled: true
+
+NOTE: 'enabled' key is mandatory as there are no other keys exist.
+
+Execute custom command instead of 'insmod' when inserting a module:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              install:
+                enabled: true
+                command: /bin/true
+
+NOTE: 'enabled' key is optional and is True by default.
+
+Execute custom command instead of 'rmmod' when removing a module:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              remove:
+                enabled: true
+                command: /bin/true
+
+NOTE: 'enabled' key is optional and is True by default.
+
+Define module dependencies:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          module:
+            nf_conntrack:
+              softdep:
+                pre:
+                  1:
+                    enabled: true
+                    value: a
+                  2:
+                    enabled: true
+                    value: b
+                  3:
+                    enabled: true
+                    value: c
+                post:
+                  1:
+                    enabled: true
+                    value: x
+                  2:
+                    enabled: true
+                    value: y
+                  3:
+                    enabled: true
+                    value: z
+
+NOTE: 'enabled' key is optional and is True by default.
 
 
 Install specific kernel version and ensure all other kernel packages are
@@ -443,7 +681,7 @@ not present. Also install extra modules and headers for this kernel:
           headers: true
           version: 4.2.0-22
 
-Systcl kernel parameters
+Systcl kernel parameters:
 
 .. code-block:: yaml
 
@@ -467,6 +705,16 @@ Configure kernel boot options:
             - spectre_v2=off
             - nopti
 
+Alternative way to set kernel boot options:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          transparent_hugepage: always
+          elevator: deadline
+          isolcpu: 1,2,3,4
 
 CPU
 ~~~
@@ -480,6 +728,16 @@ Enable cpufreq governor for every cpu:
         cpu:
           governor: performance
 
+SELinux
+~~~~~~~
+
+Set SELinux mode on System:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        selinux: permissive
 
 CGROUPS
 ~~~~~~~
@@ -525,11 +783,10 @@ Setup linux cgroups:
                 - '*:firefox'
                 - 'student:cp'
 
-
-Shared Libraries
+Shared libraries
 ~~~~~~~~~~~~~~~~
 
-Set additional shared library to Linux system library path
+Set additional shared library to Linux system library path:
 
 .. code-block:: yaml
 
@@ -540,12 +797,11 @@ Set additional shared library to Linux system library path
             java:
               - /usr/lib/jvm/jre-openjdk/lib/amd64/server
               - /opt/java/jre/lib/amd64/server
-    
 
 Certificates
 ~~~~~~~~~~~~
 
-Add certificate authority into system trusted CA bundle
+Add certificate authority into system trusted CA bundle:
 
 .. code-block:: yaml
 
@@ -587,11 +843,43 @@ Install sysfsutils and set sysfs attributes:
               power/state: "root:power"
             devices/system/cpu/cpu0/cpufreq/scaling_governor: powersave
 
+Optional: You can also use list that will ensure order of items.
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        sysfs:
+          scheduler:
+            block/sda/queue/scheduler: deadline
+          power:
+            - mode:
+                power/state: 0660
+            - owner:
+                power/state: "root:power"
+            - devices/system/cpu/cpu0/cpufreq/scaling_governor: powersave
+
+Sysfs definition with disabled automatic write. Attributes are saved
+to configuration, but are not applied during the run.
+Thay will be applied automatically after the reboot.
+
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        sysfs:
+          enable_apply: false
+          scheduler:
+            block/sda/queue/scheduler: deadline
+
+.. note:: The `enable_apply` parameter defaults to `True` if not defined.
+
 Huge Pages
 ~~~~~~~~~~~~
 
 Huge Pages give a performance boost to applications that intensively deal
-with memory allocation/deallocation by decreasing memory fragmentation.
+with memory allocation/deallocation by decreasing memory fragmentation:
 
 .. code-block:: yaml
 
@@ -603,19 +891,22 @@ with memory allocation/deallocation by decreasing memory fragmentation.
               size: 2M
               count: 107520
               mount_point: /mnt/hugepages_2MB
-              mount: false/true # default false
+              mount: false/true # default is true (mount immediately) / false (just save in the fstab)
             large:
               default: true # default automatically mounted
               size: 1G
               count: 210
               mount_point: /mnt/hugepages_1GB
 
-Note: not recommended to use both pagesizes in concurrently.
+.. note:: Not recommended to use both pagesizes concurrently.
 
 Intel SR-IOV
 ~~~~~~~~~~~~
 
-PCI-SIG Single Root I/O Virtualization and Sharing (SR-IOV) specification defines a standardized mechanism to virtualize PCIe devices. The mechanism can virtualize a single PCIe Ethernet controller to appear as multiple PCIe devices.
+PCI-SIG Single Root I/O Virtualization and Sharing (SR-IOV)
+specification defines a standardized mechanism to virtualize
+PCIe devices. The mechanism can virtualize a single PCIe
+Ethernet controller to appear as multiple PCIe devices:
 
 .. code-block:: yaml
 
@@ -634,10 +925,11 @@ PCI-SIG Single Root I/O Virtualization and Sharing (SR-IOV) specification define
 Isolate CPU options
 ~~~~~~~~~~~~~~~~~~~
 
-Remove the specified CPUs, as defined by the cpu_number values, from the general kernel
-SMP balancing and scheduler algroithms. The only way to move a process onto or off an
-"isolated" CPU is via the CPU affinity syscalls. cpu_number begins at 0, so the
-maximum value is 1 less than the number of CPUs on the system.
+Remove the specified CPUs, as defined by the cpu_number values, from
+the general kernel SMP balancing and scheduler algroithms. The only
+way to move a process onto or off an *isolated* CPU is via the CPU
+affinity syscalls. ``cpu_number begins`` at ``0``, so the
+maximum value is ``1`` less than the number of CPUs on the system.:
 
 .. code-block:: yaml
 
@@ -649,7 +941,7 @@ maximum value is 1 less than the number of CPUs on the system.
 Repositories
 ~~~~~~~~~~~~
 
-RedHat based Linux with additional OpenStack repo
+RedHat-based Linux with additional OpenStack repo:
 
 .. code-block:: yaml
 
@@ -663,7 +955,7 @@ RedHat based Linux with additional OpenStack repo
             pgpcheck: 0
 
 Ensure system repository to use czech Debian mirror (``default: true``)
-Also pin it's packages with priority 900.
+Also pin it's packages with priority ``900``:
 
 .. code-block:: yaml
 
@@ -680,8 +972,52 @@ Also pin it's packages with priority 900.
                priority: 900
                package: '*'
 
+If you need to add multiple pin rules for one repo, please use new,ordered definition format
+('pinning' definition will be in priotity to use):
 
-Package manager proxy setup globally:
+.. code-block:: yaml
+
+  linux:
+    system:
+      repo:
+        mcp_saltstack:
+          source: "deb [arch=amd64] http://repo.saltstack.com/apt/ubuntu/16.04/amd64/2017.7/ xenial main"
+          architectures: amd64
+          clean_file: true
+          pinning:
+            10:
+              enabled: true
+              pin: 'release o=SaltStack'
+              priority: 50
+              package: 'libsodium18'
+            20:
+              enabled: true
+              pin: 'release o=SaltStack'
+              priority: 1100
+              package: '*'
+
+
+.. note:: For old Ubuntu releases (<xenial)
+          extra packages for apt transport, like ``apt-transport-https``
+          may be required to be installed manually.
+          (Chicken-eggs issue: we need to install packages to
+          reach repo from where they should be installed)
+          Otherwise, you still can try 'fortune' and install prereq.packages before
+          any repo configuration, using list of requires in map.jinja.
+
+
+Disabling any prerequisite packages installation:
+
+You can simply drop any package pre-installation (before system.linux.repo
+will be processed) via cluster lvl:
+
+.. code-block:: yaml
+
+   linux:
+     system:
+       pkgs: ~
+
+Package manager proxy global setup:
 
 .. code-block:: yaml
 
@@ -739,7 +1075,6 @@ Package manager proxy setup per repository:
           http:  http://proxy.host.local:3142
           https: https://proxy.host.local:3143
 
-
 Remove all repositories:
 
 .. code-block:: yaml
@@ -747,6 +1082,14 @@ Remove all repositories:
     linux:
       system:
         purge_repos: true
+
+Refresh repositories metada, after configuration:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        refresh_repos_meta: true
 
 Setup custom apt config options:
 
@@ -789,12 +1132,11 @@ rc.local example
            # By default this script does nothing.
            exit 0
 
-
 Prompt
 ~~~~~~
 
-Setting prompt is implemented by creating ``/etc/profile.d/prompt.sh``. Every
-user can have different prompt.
+Setting prompt is implemented by creating ``/etc/profile.d/prompt.sh``.
+Every user can have different prompt:
 
 .. code-block:: yaml
 
@@ -804,16 +1146,17 @@ user can have different prompt.
           root: \\n\\[\\033[0;37m\\]\\D{%y/%m/%d %H:%M:%S} $(hostname -f)\\[\\e[0m\\]\\n\\[\\e[1;31m\\][\\u@\\h:\\w]\\[\\e[0m\\]
           default: \\n\\D{%y/%m/%d %H:%M:%S} $(hostname -f)\\n[\\u@\\h:\\w]
 
-On Debian systems to set prompt system-wide it's necessary to remove setting
-PS1 in ``/etc/bash.bashrc`` and ``~/.bashrc`` (which comes from
-``/etc/skel/.bashrc``). This formula will do this automatically, but will not
-touch existing user's ``~/.bashrc`` files except root.
+On Debian systems, to set prompt system-wide, it's necessary to
+remove setting PS1 in ``/etc/bash.bashrc`` and ``~/.bashrc``,
+which comes from ``/etc/skel/.bashrc``. This formula will do
+this automatically, but will not touch existing user's
+``~/.bashrc`` files except root.
 
 Bash
 ~~~~
 
-Fix bash configuration to preserve history across sessions (like ZSH does by
-default).
+Fix bash configuration to preserve history across sessions
+like ZSH does by default:
 
 .. code-block:: yaml
 
@@ -822,11 +1165,54 @@ default).
         bash:
           preserve_history: true
 
+Login banner message
+~~~~~~~~~~~~~~~~~~~~
+
+``/etc/issue`` is a text file which contains a message or system
+identification to be printed before the login prompt. It may contain
+various @char and \char sequences, if supported by the getty-type
+program employed on the system.
+
+Setting logon banner message is easy:
+
+.. code-block:: yaml
+
+    liunx:
+      system:
+        banner:
+          enabled: true
+          contents: |
+            UNAUTHORIZED ACCESS TO THIS SYSTEM IS PROHIBITED
+
+            You must have explicit, authorized permission to access or configure this
+            device. Unauthorized attempts and actions to access or use this system may
+            result in civil and/or criminal penalties.
+            All activities performed on this system are logged and monitored.
+
 Message of the day
 ~~~~~~~~~~~~~~~~~~
 
-``pam_motd`` from package ``update-motd`` is used for dynamic messages of the
-day. Setting custom motd will cleanup existing ones.
+``pam_motd`` from package ``libpam-modules`` is used for dynamic
+messages of the day. Setting custom ``motd`` will clean up existing ones.
+
+Setting static ``motd`` will replace existing ``/etc/motd`` and remove
+scripts from ``/etc/update-motd.d``.
+
+Setting static ``motd``:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        motd: |
+          UNAUTHORIZED ACCESS TO THIS SYSTEM IS PROHIBITED
+
+          You must have explicit, authorized permission to access or configure this
+          device. Unauthorized attempts and actions to access or use this system may
+          result in civil and/or criminal penalties.
+          All activities performed on this system are logged and monitored.
+
+Setting dynamic ``motd``:
 
 .. code-block:: yaml
 
@@ -851,7 +1237,7 @@ day. Setting custom motd will cleanup existing ones.
 Services
 ~~~~~~~~
 
-Stop and disable linux service:
+Stop and disable the ``linux`` service:
 
 .. code-block:: yaml
 
@@ -861,9 +1247,10 @@ Stop and disable linux service:
           apt-daily.timer:
             status: dead
 
-Possible status is dead (disable service by default), running (enable service by default), enabled, disabled.
+Possible statuses are ``dead`` (disable service by default), ``running``
+(enable service by default), ``enabled``, ``disabled``:
 
-Linux with atop service:
+Linux with the ``atop`` service:
 
 .. code-block:: yaml
 
@@ -875,12 +1262,23 @@ Linux with atop service:
           logpath: "/var/log/atop"
           outfile: "/var/log/atop/daily.log"
 
+Linux with the ``mcelog`` service:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        mcelog:
+          enabled: true
+          logging:
+            syslog: true
+            syslog_error: true
+
 RHEL / CentOS
 ^^^^^^^^^^^^^
-
-Unfortunately ``update-motd`` is currently not available for RHEL so there's
-no native support for dynamic motd.
-You can still set static one, only pillar structure differs:
+Currently, ``update-motd`` is not available
+for RHEL. So there is no native support for dynamic ``motd``.
+You can still set a static one, with a different pillar structure:
 
 .. code-block:: yaml
 
@@ -893,8 +1291,8 @@ You can still set static one, only pillar structure differs:
 Haveged
 ~~~~~~~
 
-If you are running headless server and are low on entropy, it may be a good
-idea to setup Haveged.
+If you are running headless server and are low on entropy,
+you may set up Haveged:
 
 .. code-block:: yaml
 
@@ -906,7 +1304,7 @@ idea to setup Haveged.
 Linux network
 -------------
 
-Linux with network manager
+Linux with network manager:
 
 .. code-block:: yaml
 
@@ -915,7 +1313,15 @@ Linux with network manager
         enabled: true
         network_manager: true
 
-Linux with default static network interfaces, default gateway interface and DNS servers
+Execute linux.network.interface state without ifupdown activity:
+
+.. code-block:: bash
+
+   salt-call linux.network.interface pillar='{"linux":{"network":{"noifupdown":True}}}'
+
+
+Linux with default static network interfaces, default gateway
+interface and DNS servers:
 
 .. code-block:: yaml
 
@@ -934,7 +1340,7 @@ Linux with default static network interfaces, default gateway interface and DNS 
             - 8.8.4.4
             mtu: 1500
 
-Linux with bonded interfaces and disabled NetworkManager
+Linux with bonded interfaces and disabled ``NetworkManager``:
 
 .. code-block:: yaml
 
@@ -960,7 +1366,7 @@ Linux with bonded interfaces and disabled NetworkManager
         network_manager:
           disable: true
 
-Linux with vlan interface_params
+Linux with VLAN ``interface_params``:
 
 .. code-block:: yaml
 
@@ -973,7 +1379,7 @@ Linux with vlan interface_params
             use_interfaces:
             - interface: ${linux:interface:bond0}
 
-Linux with wireless interface parameters
+Linux with wireless interface parameters:
 
 .. code-block:: yaml
 
@@ -991,7 +1397,7 @@ Linux with wireless interface parameters
               security: wpa
               priority: 1
 
-Linux networks with routes defined
+Linux networks with routes defined:
 
 .. code-block:: yaml
 
@@ -1009,7 +1415,7 @@ Linux networks with routes defined
                 netmask: 255.255.255.0
                 gateway: 192.168.0.1
 
-Native Linux Bridges
+Native Linux Bridges:
 
 .. code-block:: yaml
 
@@ -1033,7 +1439,7 @@ Native Linux Bridges
             use_interfaces:
             - eth1
 
-OpenVswitch Bridges
+Open vSwitch Bridges:
 
 .. code-block:: yaml
 
@@ -1077,6 +1483,7 @@ OpenVswitch Bridges
             bridge: br-ens7
             port_type: patch
             peer: prv-ens7
+            tag: 109 # [] to unset a tag
             mtu: 65000
           patch-br-prv-br-ens7:
             enabled: true
@@ -1086,6 +1493,7 @@ OpenVswitch Bridges
             type: ovs_port
             port_type: patch
             peer: ens7-prv
+            tag: 109
             mtu: 65000
           ens7:
             enabled: true
@@ -1098,10 +1506,10 @@ OpenVswitch Bridges
 
 Debian manual proto interfaces
 
-When you are changing interface proto from static in up state to manual, you
-may need to flush ip addresses. For example, if you want to use the interface
-and the ip on the bridge. This can be done by setting the ``ipflush_onchange``
-to true.
+When you are changing interface proto from static in up state
+to manual, you may need to flush ip addresses. For example,
+if you want to use the interface and the ip on the bridge.
+This can be done by setting the ``ipflush_onchange`` to true.
 
 .. code-block:: yaml
 
@@ -1117,11 +1525,12 @@ to true.
 
 Debian static proto interfaces
 
-When you are changing interface proto from dhcp in up state to static, you
-may need to flush ip addresses and restart interface to assign ip address from a managed file.
-For example, if you want to use the interface and the ip on the bridge.
-This can be done by setting the ``ipflush_onchange`` with combination
-``restart_on_ipflush`` param set to to true.
+When you are changing interface proto from dhcp in up state to
+static, you may need to flush ip addresses and restart interface
+to assign ip address from a managed file. For example, if you wantto
+use the interface and the ip on the bridge. This can be done by
+setting the ``ipflush_onchange`` with combination ``restart_on_ipflush``
+param set to true.
 
 .. code-block:: yaml
 
@@ -1139,11 +1548,12 @@ This can be done by setting the ``ipflush_onchange`` with combination
 
 Concatinating and removing interface files
 
-Debian based distributions have `/etc/network/interfaces.d/` directory, where
-you can store configuration of network interfaces in separate files. You can
-concatinate the files to the defined destination when needed, this operation
-removes the file from the `/etc/network/interfaces.d/`. If you just need to
-remove iface files, you can use the `remove_iface_files` key.
+Debian based distributions have ``/etc/network/interfaces.d/``
+directory, where you can store configuration of network
+interfaces in separate files. You can concatinate the files
+to the defined destination when needed, this operation removes
+the file from the ``/etc/network/interfaces.d/``. If you just need
+to remove iface files, you can use the ``remove_iface_files`` key.
 
 .. code-block:: yaml
 
@@ -1155,11 +1565,11 @@ remove iface files, you can use the `remove_iface_files` key.
         remove_iface_files:
         - '/etc/network/interfaces.d/90-custom.cfg'
 
+Configure DHCP client
 
-DHCP client configuration
-
-None of the keys is mandatory, include only those you really need. For full list
-of available options under send, supersede, prepend, append refer to dhcp-options(5)
+None of the keys is mandatory, include only those you really need.
+For full list of available options under send, supersede, prepend,
+append refer to dhcp-options(5).
 
 .. code-block:: yaml
 
@@ -1261,11 +1671,10 @@ Linux network systemd settings:
               network:
                 DHCP: yes
 
-
 Configure global environment variables
 
-Use ``/etc/environment`` for static system wide variable assignment after
-boot. Variable expansion is frequently not supported.
+Use ``/etc/environment`` for static system wide variable assignment
+after boot. Variable expansion is frequently not supported.
 
 .. code-block:: yaml
 
@@ -1296,11 +1705,11 @@ boot. Variable expansion is frequently not supported.
             - .domain.com
             - .local
 
-Configure profile.d scripts
+Configure the ``profile.d`` scripts
 
-The profile.d scripts are being sourced during .sh execution and support
-variable expansion in opposite to /etc/environment global settings in
-``/etc/environment``.
+The ``profile.d`` scripts are being sourced during ``.sh`` execution
+and support variable expansion in opposite to /etc/environment global
+settings in ``/etc/environment``.
 
 .. code-block:: yaml
 
@@ -1322,14 +1731,32 @@ variable expansion in opposite to /etc/environment global settings in
             export FTP_PROXY=ftp://127.0.3.3:2121
             export NO_PROXY='.local'
 
+
+Configure login.defs parameters
+-------------------------------
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        login_defs:
+          <opt_name>:
+            enabled: true
+            value: <opt_value>
+
+<opt_name> is a configurational option defined in 'man login.defs'.
+<opt_name> is case sensitive, should be UPPERCASE only!
+
+
 Linux with hosts
 
-Parameter purge_hosts will enforce whole /etc/hosts file, removing entries
-that are not defined in model except defaults for both IPv4 and IPv6 localhost
-and hostname + fqdn.
+Parameter ``purge_hosts`` will enforce whole ``/etc/hosts file``,
+removing entries that are not defined in model except defaults
+for both IPv4 and IPv6 localhost and hostname as well as FQDN.
 
-It's good to use this option if you want to ensure /etc/hosts is always in a
-clean state however it's not enabled by default for safety.
+We recommend using this option to verify that ``/etc/hosts``
+is always in a clean state. However it is not enabled by default
+for security reasons.
 
 .. code-block:: yaml
 
@@ -1356,9 +1783,10 @@ clean state however it's not enabled by default for safety.
 
 Linux with hosts collected from mine
 
-In this case all dns records defined within infrastrucuture will be passed to
-local hosts records or any DNS server. Only hosts with `grain` parameter to
-true will be propagated to the mine.
+All DNS records defined within infrastrucuture
+are passed to the local hosts records or any DNS server. Only
+hosts with the ``grain`` parameter set to ``true`` will be propagated
+to the mine.
 
 .. code-block:: yaml
 
@@ -1374,7 +1802,7 @@ true will be propagated to the mine.
             - node2.domain.com
             - service2.domain.com
 
-Setup resolv.conf, nameservers, domain and search domains
+Set up ``resolv.conf``, nameservers, domain and search domains:
 
 .. code-block:: yaml
 
@@ -1393,13 +1821,24 @@ Setup resolv.conf, nameservers, domain and search domains
           - timeout: 2
           - attempts: 2
 
-setting custom TX queue length for tap interfaces
+Set up custom TX queue length for tap interfaces:
 
 .. code-block:: yaml
 
     linux:
       network:
         tap_custom_txqueuelen: 10000
+
+Open vSwitch native bond:
+
+.. code-block:: yaml
+
+    bond1:
+      enabled: true
+      type: ovs_bond
+      mode: balance-slb
+      bridge: br-ex
+      slaves: eno3 eno4
 
 DPDK OVS interfaces
 
@@ -1478,9 +1917,64 @@ DPDK OVS interfaces
             enabled: true
             type: dpdk_ovs_bridge
 
+**DPDK OVS LACP Bond with vlan tag**
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        bridge: openvswitch
+        dpdk:
+          enabled: true
+          driver: uio
+        openvswitch:
+          pmd_cpu_mask: "0x6"
+          dpdk_socket_mem: "1024,1024"
+          dpdk_lcore_mask: "0x400"
+          memory_channels: "2"
+        interface:
+          eth3:
+            enabled: true
+            type: eth
+            proto: manual
+            name: ${_param:tenant_first_nic}
+          eth4:
+            enabled: true
+            type: eth
+            proto: manual
+            name: ${_param:tenant_second_nic}
+          dpdk0:
+            name: ${_param:tenant_first_nic}
+            pci: "0000:81:00.0"
+            driver: igb_uio
+            bond: bond1
+            enabled: true
+            type: dpdk_ovs_port
+            n_rxq: 2
+          dpdk1:
+            name: ${_param:tenant_second_nic}
+            pci: "0000:81:00.1"
+            driver: igb_uio
+            bond: bond1
+            enabled: true
+            type: dpdk_ovs_port
+            n_rxq: 2
+          bond1:
+            enabled: true
+            bridge: br-prv
+            type: dpdk_ovs_bond
+            mode: balance-slb
+          br-prv:
+            enabled: true
+            type: dpdk_ovs_bridge
+            tag: ${_param:tenant_vlan}
+            address: ${_param:tenant_address}
+            netmask: ${_param:tenant_network_netmask}
+
 **DPDK OVS bridge for VXLAN**
 
-If VXLAN is used as tenant segmentation then ip address must be set on br-prv
+If VXLAN is used as tenant segmentation, IP address must
+be set on ``br-prv``.
 
 .. code-block:: yaml
 
@@ -1496,10 +1990,27 @@ If VXLAN is used as tenant segmentation then ip address must be set on br-prv
             tag: 101
             mtu: 9000
 
+**DPDK OVS bridge with Linux network interface**
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        ...
+        interface:
+          eth0:
+            type: eth
+            ovs_bridge: br-prv
+            ...
+          br-prv:
+            enabled: true
+            type: dpdk_ovs_bridge
+            ...
+
 Linux storage
 -------------
 
-Linux with mounted Samba
+Linux with mounted Samba:
 
 .. code-block:: yaml
 
@@ -1514,7 +2025,7 @@ Linux with mounted Samba
           - file_system: cifs
           - options: guest,uid=myuser,iocharset=utf8,file_mode=0777,dir_mode=0777,noperm
 
-NFS mount
+NFS mount:
 
 .. code-block:: yaml
 
@@ -1529,8 +2040,7 @@ NFS mount
           file_system: nfs
           opts: rw,sync
 
-
-File swap configuration
+File swap configuration:
 
 .. code-block:: yaml
 
@@ -1544,7 +2054,7 @@ File swap configuration
             device: /swapfile
             size: 1024
 
-Partition swap configuration
+Partition swap configuration:
 
 .. code-block:: yaml
 
@@ -1557,7 +2067,8 @@ Partition swap configuration
             engine: partition
             device: /dev/vg0/swap
 
-LVM group `vg1` with one device and `data` volume mounted into `/mnt/data`
+LVM group ``vg1`` with one device and ``data`` volume mounted
+into ``/mnt/data``.
 
 .. code-block:: yaml
 
@@ -1581,7 +2092,8 @@ LVM group `vg1` with one device and `data` volume mounted into `/mnt/data`
                   mount: ${linux:storage:mount:data}
 
 Create partitions on disk. Specify size in MB. It expects empty
-disk without any existing partitions. (set startsector=1, if you want to start partitions from 2048)
+disk without any existing partitions.
+Set ``startsector=1`` if you want to start partitions from ``2048``.
 
 .. code-block:: yaml
 
@@ -1605,7 +2117,7 @@ disk without any existing partitions. (set startsector=1, if you want to start p
                 - size: 10
                   type: ext4
 
-Multipath with Fujitsu Eternus DXL
+Multipath with Fujitsu Eternus DXL:
 
 .. code-block:: yaml
 
@@ -1620,7 +2132,7 @@ Multipath with Fujitsu Eternus DXL
             backends:
             - fujitsu_eternus_dxl
 
-Multipath with Hitachi VSP 1000
+Multipath with Hitachi VSP 1000:
 
 .. code-block:: yaml
 
@@ -1635,7 +2147,7 @@ Multipath with Hitachi VSP 1000
             backends:
             - hitachi_vsp1000
 
-Multipath with IBM Storwize
+Multipath with IBM Storwize:
 
 .. code-block:: yaml
 
@@ -1650,7 +2162,7 @@ Multipath with IBM Storwize
             backends:
             - ibm_storwize
 
-Multipath with multiple backends
+Multipath with multiple backends:
 
 .. code-block:: yaml
 
@@ -1669,7 +2181,7 @@ Multipath with multiple backends
             - fujitsu_eternus_dxl
             - hitachi_vsp1000
 
-PAM LDAP integration
+PAM LDAP integration:
 
 .. code-block:: yaml
 
@@ -1678,6 +2190,9 @@ PAM LDAP integration
         system:
           auth:
             enabled: true
+            mkhomedir:
+              enabled: true
+              umask: 0027
             ldap:
               enabled: true
               binddn: cn=bind,ou=service_users,dc=example,dc=com
@@ -1692,7 +2207,32 @@ PAM LDAP integration
                 shadow: (&(&(objectClass=person)(uidNumber=*))(unixHomeDirectory=*))
                 group:  (&(objectClass=group)(gidNumber=*))
 
-Disabled multipath (the default setup)
+PAM duo 2FA integration
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+        system:
+          auth:
+            enabled: true
+            duo:
+              enabled: true
+              duo_host: localhost
+              duo_ikey: DUO-INTEGRATION-KEY
+              duo_skey: DUO-SECRET-KEY
+
+duo package version may be specified (optional)
+
+.. code-block:: yaml
+
+      linux:
+        system:
+          package:
+            duo-unix:
+              version: 1.10.1-0
+
+Disabled multipath (the default setup):
 
 .. code-block:: yaml
 
@@ -1702,7 +2242,7 @@ Disabled multipath (the default setup)
           multipath:
             enabled: false
 
-Linux with local loopback device
+Linux with local loopback device:
 
 .. code-block:: yaml
 
@@ -1716,8 +2256,8 @@ Linux with local loopback device
 External config generation
 --------------------------
 
-You are able to use config support metadata between formulas and only generate
-config files for external use, eg. docker, etc.
+You are able to use config support metadata between formulas
+and only generate configuration files for external use, for example, Docker, and so on.
 
 .. code-block:: yaml
 
@@ -1742,15 +2282,17 @@ config files for external use, eg. docker, etc.
 Netconsole Remote Kernel Logging
 --------------------------------
 
-Netconsole logger could be configured for configfs-enabled kernels
-(`CONFIG_NETCONSOLE_DYNAMIC` should be enabled). Configuration applies both in
-runtime (if network is already configured), and on-boot after interface
-initialization. Notes:
+Netconsole logger can be configured for the configfs-enabled kernels
+(``CONFIG_NETCONSOLE_DYNAMIC`` must be enabled). The configuration
+applies both in runtime (if network is already configured),
+and on-boot after an interface initialization.
 
- * receiver could be located only in same L3 domain
-   (or you need to configure gateway MAC manually)
- * receiver's MAC is detected only on configuration time
- * using broadcast MAC is not recommended
+.. note::
+
+   * Receiver can be located only on the same L3 domain
+     (or you need to configure gateway MAC manually).
+   * The Receiver MAC is detected only on configuration time.
+   * Using broadcast MAC is not recommended.
 
 .. code-block:: yaml
 
@@ -1766,14 +2308,248 @@ initialization. Notes:
                 interface: bond0
                 mac: "ff:ff:ff:ff:ff:ff" (optional)
 
-Usage
-=====
+Check network params on the environment
+---------------------------------------
 
-Set mtu of network interface eth0 to 1400
+Grab nics and nics states
 
 .. code-block:: bash
 
-    ip link set dev eth0 mtu 1400
+   salt osd001\* net_checks.get_nics
+
+**Example of system output:**
+
+.. code-block:: bash
+
+   osd001.domain.com:
+       |_
+         - bond0
+         - None
+         - 1e:c8:64:42:23:b9
+         - 0
+         - 1500
+       |_
+         - bond1
+         - None
+         - 3c:fd:fe:27:3b:00
+         - 1
+         - 9100
+       |_
+         - fourty1
+         - None
+         - 3c:fd:fe:27:3b:00
+         - 1
+         - 9100
+       |_
+         - fourty2
+         - None
+         - 3c:fd:fe:27:3b:02
+         - 1
+         - 9100
+
+Grab 10G nics PCI addresses for hugepages setup
+
+.. code-block:: bash
+
+   salt cmp001\* net_checks.get_ten_pci
+
+**Example of system output:**
+
+.. code-block:: bash
+
+   cmp001.domain.com:
+       |_
+         - ten1
+         - 0000:19:00.0
+       |_
+         - ten2
+         - 0000:19:00.1
+       |_
+         - ten3
+         - 0000:19:00.2
+       |_
+         - ten4
+         - 0000:19:00.3
+
+Grab ip address for an interface
+
+.. code-block:: bash
+
+   salt cmp001\* net_checks.get_ip iface=one4
+
+**Example of system output:**
+
+.. code-block:: bash
+
+   cmp001.domain.com:
+       10.200.177.101
+
+Grab ip addresses map
+
+.. code-block:: bash
+
+   salt-call net_checks.nodes_addresses
+
+**Example of system output:**
+
+.. code-block:: bash
+
+   local:
+    |_
+      - cid01.domain.com
+      |_
+        |_
+          - pxe
+          - 10.200.177.91
+        |_
+          - control
+          - 10.200.178.91
+    |_
+      - cmn02.domain.com
+      |_
+        |_
+          - storage_access
+          - 10.200.181.67
+        |_
+          - pxe
+          - 10.200.177.67
+        |_
+          - control
+          - 10.200.178.67
+    |_
+      - cmp010.domain.com
+      |_
+        |_
+          - pxe
+          - 10.200.177.110
+        |_
+          - storage_access
+          - 10.200.181.110
+        |_
+          - control
+          - 10.200.178.110
+        |_
+          - vxlan
+          - 10.200.179.110
+
+Verify full mesh connectivity
+
+.. code-block:: bash
+
+   salt-call net_checks.ping_check
+
+**Example of positive system output:**
+
+.. code-block:: bash
+
+   ['PASSED']
+   [INFO    ] ['PASSED']
+   local:
+       True
+
+**Example of system output in case of failure:**
+
+.. code-block:: bash
+
+   FAILED
+   [ERROR   ] FAILED
+   ['control: 10.0.1.92 -> 10.0.1.224: Failed']
+   ['control: 10.0.1.93 -> 10.0.1.224: Failed']
+   ['control: 10.0.1.51 -> 10.0.1.224: Failed']
+   ['control: 10.0.1.102 -> 10.0.1.224: Failed']
+   ['control: 10.0.1.13 -> 10.0.1.224: Failed']
+   ['control: 10.0.1.81 -> 10.0.1.224: Failed']
+   local:
+       False
+
+For this feature to work, please mark addresses with some role.
+Otherwise 'default' role is assumed and mesh would consist of all
+addresses on the environment.
+
+Mesh mark is needed only for interfaces which are enabled and have
+ip address assigned.
+
+Checking dhcp pxe network meaningless, as it is used for salt
+master vs minion communications, therefore treated as checked.
+
+.. code-block:: yaml
+
+   parameters:
+     linux:
+       network:
+         interface:
+           ens3:
+             enabled: true
+             type: eth
+             proto: static
+             address: ${_param:deploy_address}
+             netmask: ${_param:deploy_network_netmask}
+             gateway: ${_param:deploy_network_gateway}
+             mesh: pxe
+
+Check pillars for ip address duplicates
+
+.. code-block:: bash
+
+   salt-call net_checks.verify_addresses
+
+**Example of positive system output:**
+
+.. code-block:: bash
+
+   ['PASSED']
+   [INFO    ] ['PASSED']
+   local:
+       True
+
+**Example of system output in case of failure:**
+
+.. code-block:: bash
+
+   FAILED. Duplicates found
+   [ERROR   ] FAILED. Duplicates found
+   ['gtw01.domain.com', 'gtw02.domain.com', '10.0.1.224']
+   [ERROR   ] ['gtw01.domain.com', 'gtw02.domain.com', '10.0.1.224']
+   local:
+       False
+
+Generate csv report for the env
+
+.. code-block:: bash
+
+   salt -C 'kvm* or cmp* or osd*' net_checks.get_nics_csv \
+     | grep '^\ ' | sed 's/\ *//g' | grep -Ev ^server \
+     | sed '1 i\server,nic_name,ip_addr,mac_addr,link,mtu,chassis_id,chassis_name,port_mac,port_descr'
+
+**Example of system output:**
+
+.. code-block:: bash
+
+   server,nic_name,ip_addr,mac_addr,link,mtu,chassis_id,chassis_name,port_mac,port_descr
+   cmp010.domain.com,bond0,None,b4:96:91:10:5b:3a,1,1500,,,,
+   cmp010.domain.com,bond0.21,10.200.178.110,b4:96:91:10:5b:3a,1,1500,,,,
+   cmp010.domain.com,bond0.22,10.200.179.110,b4:96:91:10:5b:3a,1,1500,,,,
+   cmp010.domain.com,bond1,None,3c:fd:fe:34:ad:22,0,1500,,,,
+   cmp010.domain.com,bond1.24,10.200.181.110,3c:fd:fe:34:ad:22,0,1500,,,,
+   cmp010.domain.com,fourty5,None,3c:fd:fe:34:ad:20,0,9000,,,,
+   cmp010.domain.com,fourty6,None,3c:fd:fe:34:ad:22,0,9000,,,,
+   cmp010.domain.com,one1,None,b4:96:91:10:5b:38,0,1500,,,,
+   cmp010.domain.com,one2,None,b4:96:91:10:5b:39,1,1500,f0:4b:3a:8f:75:40,exnfvaa18-20,548,ge-0/0/22
+   cmp010.domain.com,one3,None,b4:96:91:10:5b:3a,1,1500,f0:4b:3a:8f:75:40,exnfvaa18-20,547,ge-0/0/21
+   cmp010.domain.com,one4,10.200.177.110,b4:96:91:10:5b:3b,1,1500,f0:4b:3a:8f:75:40,exnfvaa18-20,546,ge-0/0/20
+   cmp011.domain.com,bond0,None,b4:96:91:13:6c:aa,1,1500,,,,
+   cmp011.domain.com,bond0.21,10.200.178.111,b4:96:91:13:6c:aa,1,1500,,,,
+   cmp011.domain.com,bond0.22,10.200.179.111,b4:96:91:13:6c:aa,1,1500,,,,
+   ...
+
+Usage
+=====
+
+Set MTU of the eth0 network interface to 1400:
+
+.. code-block:: bash
+
+   ip link set dev eth0 mtu 1400
 
 Read more
 =========
@@ -1784,32 +2560,26 @@ Read more
 Documentation and Bugs
 ======================
 
-To learn how to install and update salt-formulas, consult the documentation
-available online at:
+* http://salt-formulas.readthedocs.io/
+   Learn how to install and update salt-formulas.
 
-    http://salt-formulas.readthedocs.io/
+* https://github.com/salt-formulas/salt-formula-linux/issues
+   In the unfortunate event that bugs are discovered, report the issue to the
+   appropriate issue tracker. Use the Github issue tracker for a specific salt
+   formula.
 
-In the unfortunate event that bugs are discovered, they should be reported to
-the appropriate issue tracker. Use Github issue tracker for specific salt
-formula:
+* https://launchpad.net/salt-formulas
+   For feature requests, bug reports, or blueprints affecting the entire
+   ecosystem, use the Launchpad salt-formulas project.
 
-    https://github.com/salt-formulas/salt-formula-linux/issues
+* https://launchpad.net/~salt-formulas-users
+   Join the salt-formulas-users team and subscribe to mailing list if required.
 
-For feature requests, bug reports or blueprints affecting entire ecosystem,
-use Launchpad salt-formulas project:
+* https://github.com/salt-formulas/salt-formula-linux
+   Develop the salt-formulas projects in the master branch and then submit pull
+   requests against a specific formula.
 
-    https://launchpad.net/salt-formulas
+* #salt-formulas @ irc.freenode.net
+   Use this IRC channel in case of any questions or feedback which is always
+   welcome.
 
-You can also join salt-formulas-users team and subscribe to mailing list:
-
-    https://launchpad.net/~salt-formulas-users
-
-Developers wishing to work on the salt-formulas projects should always base
-their work on master branch and submit pull request against specific formula.
-
-    https://github.com/salt-formulas/salt-formula-linux
-
-Any questions or feedback is always welcome so feel free to join our IRC
-channel:
-
-    #salt-formulas @ irc.freenode.net

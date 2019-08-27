@@ -1,3 +1,4 @@
+{%- from "linux/map.jinja" import monitoring with context %}
 agent:
   input:
     cpu:
@@ -19,7 +20,27 @@ agent:
     kernel:
     net:
     mem:
+    nstat:
+      fieldpass:
+        - packet_drop
+        - time_squeeze
     processes:
     swap:
     system:
+    procstat:
+      process:
+        sshd:
+          exe: sshd
+        cron:
+          exe: cron
     linux_sysctl_fs:
+{%- if monitoring.bond_status.interfaces is defined and monitoring.bond_status.interfaces %}
+    bond:
+      template: linux/files/telegraf.conf
+{%- if monitoring.bond_status.interfaces is list %}
+      bond_interfaces: {{ monitoring.bond_status.interfaces }}
+{%- endif %}
+{%- if monitoring.bond_status.host_proc is defined %}
+      host_proc: {{ monitoring.bond_status.host_proc }}
+{%- endif %}
+{%- endif %}

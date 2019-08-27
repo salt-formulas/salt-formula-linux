@@ -6,6 +6,9 @@ host names/alias by FQDN first and alphabetically
 
 from jinja2 import Undefined
 
+def __virtual__():
+    return 'linux_hosts'
+
 def fqdn_sort_fn(n1, n2):
     l1 = n1.split('.')
     l2 = n2.split('.')

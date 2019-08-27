@@ -1,144 +1,286 @@
 {%- from "linux/map.jinja" import monitoring with context %}
 server:
   alert:
-    SystemCpuIdleTooLow:
-      {%- set cpu_idle_threshold = monitoring.cpu_idle_percentage.warn|float %}
-      if: avg_over_time(cpu_usage_idle{cpu="cpu-total"}[5m]) < {{ cpu_idle_threshold }}
+    SystemCpuFullWarning:
+      {%- set cpu_usage_threshold = monitoring.cpu_usage_percentage.warn|float %}
+      if: >-
+        100 - avg_over_time(cpu_usage_idle{cpu="cpu-total"}[5m]) > {{ cpu_usage_threshold }}
       {% raw %}
+      for: 2m
       labels:
         severity: warning
         service: system
       annotations:
-        summary: 'Idle CPU usage too low on {{ $labels.host }}'
-        description: 'The average idle CPU usage is too low on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ cpu_idle_threshold}}%).'
-    SystemDiskSpaceTooLow:
-      if: 'predict_linear(disk_free[1h], 8*3600) < 0'
-      {% raw %}
-      for: 15m
+        summary: "{%- endraw %}{{ cpu_usage_threshold }}{%- raw %}% CPU usage"
+        description: "The average CPU usage on the {{ $labels.host }} node is {{ $value }}% for 2 minutes."
+    SystemLoadTooHighWarning:
+      {%- endraw %}
+      {%- set load_threshold = monitoring.system_load_threshold.warn|float %}
+      if: >-
+        system_load5 / system_n_cpus > {{ load_threshold }}
+      {%- raw %}
+      for: 5m
       labels:
         severity: warning
         service: system
       annotations:
-        summary: 'Free space for {{ $labels.path }} too low on {{ $labels.host }}'
-        description: 'The disk partition ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}.'
-      {% endraw %}
-    SystemFreeOpenFilesTooLow:
-      if: 'predict_linear(linux_sysctl_fs_file_nr[1h], 8*3600) > linux_sysctl_fs_file_max'
-      {% raw %}
+        summary: "System load is {%- endraw %}{{ load_threshold }}{%- raw %}"
+        description: "The system load per CPU on the {{ $labels.host }} node is {{ $value }} for 5 minutes."
+    SystemLoadTooHighCritical:
+      {%- endraw %}
+      {%- set load_threshold = monitoring.system_load_threshold.crit|float %}
+      if: >-
+        system_load5 / system_n_cpus > {{ load_threshold }}
+      {%- raw %}
+      for: 5m
       labels:
         severity: warning
         service: system
       annotations:
-        summary: 'Free open files for {{ $labels.path }} too low on {{ $labels.host }}'
-        description: 'Host {{ $labels.host }}) will run out of free open files in less than 8 hours.'
-      {% endraw %}
-    SystemDiskErrors:
-      if: 'increase(hdd_errors_total[5m]) > 0'
-      {% raw %}
-      labels:
-        severity: critical
-        service: system
-      annotations:
-        summary: 'Disk {{ $labels.device }} is failing'
-        description: 'The disk ({{ $labels.device }}) is reporting errors on {{ $labels.host }}.'
-      {% endraw %}
-    SystemDiskSpaceFull:
-      if: 'disk_used_percent >= 99 and disk_inodes_total > 0'
-      {% raw %}
-      labels:
-        severity: critical
-        service: system
-      annotations:
-        summary: 'Disk partition {{ $labels.path }} full on {{ $labels.host }}'
-        description: 'The disk partition ({{ $labels.path }}) is used at {{ $value }}% on {{ $labels.host }}.'
-      {% endraw %}
-    SystemDiskInodesTooLow:
-      if: 'predict_linear(disk_inodes_free[1h], 8*3600) < 0'
-      {% raw %}
-      for: 15m
+        summary: "System load is {%- endraw %}{{ load_threshold }}{%- raw %}"
+        description: "The system load per CPU on the {{ $labels.host }} node is {{ $value }} for 5 minutes."
+    SystemDiskFullWarning:
+      {%- endraw %}
+      {%- set disk_threshold = monitoring.disk_usage_percentage.warn|float %}
+      if: >-
+        disk_used_percent >= {{ disk_threshold }}
+      {%- raw %}
+      for: 2m
       labels:
         severity: warning
         service: system
       annotations:
-        summary: 'Free inodes for {{ $labels.path }} too low on {{ $labels.host }}'
-        description: 'The disk inodes ({{ $labels.path }}) will be full in less than 8 hours on {{ $labels.host }}.'
-      {% endraw %}
-    SystemDiskInodesFull:
-      if: 'disk_inodes_used / disk_inodes_total >= 0.99'
-      {% raw %}
+        summary: "Disk partition {{ $labels.path }} is {%- endraw %} {{ disk_threshold }}{%- raw %}% full"
+        description: "The disk partition ({{ $labels.path }}) on the {{ $labels.host }} node is {{ $value }}% full for 2 minutes."
+    SystemDiskFullMajor:
+      {%- endraw %}
+      {%- set disk_threshold = monitoring.disk_usage_percentage.major|float %}
+      if: >-
+        disk_used_percent >= {{ disk_threshold }}
+      {%- raw %}
+      for: 2m
       labels:
-        severity: critical
+        severity: major
         service: system
       annotations:
-        summary: 'Inodes for {{ $labels.path }} full on {{ $labels.host }}'
-        description: 'The disk inodes ({{ $labels.path }}) are used at {{ $value }}% on {{ $labels.host }}.'
-      {% endraw %}
-    SystemMemoryAvailableLow:
-      {%- set mem_avail_warn_threshold = monitoring.free_memory_percentage.warn|float %}
-      if: avg_over_time(mem_available_percent[5m]) < {{ mem_avail_warn_threshold }}
-      {% raw %}
-      labels:
-        severity: warning
-        service: system
-      annotations:
-        summary: 'Free memory low on {{ $labels.host }}'
-        description: 'The percentage of free memory is low on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ mem_avail_warn_threshold }}%).'
-    SystemMemoryAvailableTooLow:
-      {%- set mem_avail_crit_threshold = monitoring.free_memory_percentage.crit|float %}
-      if: avg_over_time(mem_available_percent[5m]) < {{ mem_avail_crit_threshold }}
-      {% raw %}
-      labels:
-        severity: critical
-        service: system
-      annotations:
-        summary: 'Free memory too low on {{ $labels.host }}'
-        description: 'The percentage of free memory is too low on node {{ $labels.host }} (current value={{ $value }}%, threshold={% endraw %}{{ mem_avail_crit_threshold }}%).'
-    SystemLoad5TooHigh:
-      if: system_load5 / system_n_cpus > {{ monitoring.load_5.warn }}
-      {% raw %}
+        summary: "Disk partition {{ $labels.path }} is {%- endraw %} {{ disk_threshold }}{%- raw %}% full"
+        description: "The disk partition ({{ $labels.path }}) on the {{ $labels.host }} node is {{ $value }}% full for 2 minutes."
+    SystemDiskInodesFullWarning:
+      {%- endraw %}
+      {%- set inodes_threshold = monitoring.inodes_usage_percentage.warn|float %}
+      if: >-
+        100 * disk_inodes_used / disk_inodes_total >= {{ inodes_threshold }}
+      for: 2m
       labels:
         severity: warning
         service: system
       annotations:
-        summary: 'High system load (5m) on {{ $labels.host }}'
-        description: 'The 5-minutes system load is too high on node {{ $labels.host }} (current value={{ $value }}, threshold={% endraw %}{{ monitoring.load_5.warn }}).'
+        summary: "{{ inodes_threshold }}{%- raw %}% of inodes for {{ $labels.path }} are used"
+        description: "The {{ $labels.host }} node uses {{ $value }}% of disk inodes in the {{ $labels.path }} volume for 2 minutes."
+    SystemDiskInodesFullMajor:
+      {%- endraw %}
+      {%- set inodes_threshold = monitoring.inodes_usage_percentage.major|float %}
+      if: >-
+        100 * disk_inodes_used / disk_inodes_total >= {{ inodes_threshold }}
+      for: 2m
+      labels:
+        severity: major
+        service: system
+      annotations:
+        summary: "{{ inodes_threshold }}{%- raw %}% of inodes for {{ $labels.path }} are used"
+        description: "The {{ $labels.host }} node uses {{ $value }}% of disk inodes in the {{ $labels.path }} volume for 2 minutes."
+    SystemDiskErrorsTooHigh:
+      if: >-
+        increase(hdd_errors_total[1m]) > 0
+      for: 5m
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: "Disk {{ $labels.device }} is failing"
+        description: "The {{ $labels.device }} disk on the {{ $labels.host }} node is reporting errors for 5 minutes."
+    SystemMemoryFullWarning:
+      {%- endraw %}
+      {%- set mem_threshold = monitoring.memory_usage_percentage.warn|float %}
+      if: >-
+        mem_used_percent >= {{ mem_threshold }}
+      for: 2m
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: "{{ mem_threshold }}{%- raw %}% of memory is used"
+        description: "The {{ $labels.host }} node uses {{ $value }}% of memory for 2 minutes."
+    SystemMemoryFullMajor:
+      {%- endraw %}
+      {%- set mem_threshold = monitoring.memory_usage_percentage.major|float %}
+      if: >-
+        mem_used_percent >= {{ mem_threshold }}
+      for: 2m
+      labels:
+        severity: major
+        service: system
+      annotations:
+        summary: "{{ mem_threshold }}{%- raw %}% of memory is used"
+        description: "The {{ $labels.host }} node uses {{ $value }}% of memory for 2 minutes."
+    SystemSwapFullWarning:
+      {%- endraw %}
+      {%- set swap_threshold = monitoring.swap_usage_percentage.warn|float %}
+      if: >-
+        swap_used_percent >= {{ swap_threshold }}
+      for: 2m
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: "{{ swap_threshold }}{%- raw %}% of swap is used"
+        description: "The swap on the {{ $labels.host }} node is {{ $value }}% used for 2 minutes."
+    SystemSwapFullMinor:
+      {%- endraw %}
+      {%- set swap_threshold = monitoring.swap_usage_percentage.minor|float %}
+      if: >-
+        swap_used_percent >= {{ swap_threshold }}
+      for: 2m
+      labels:
+        severity: minor
+        service: system
+      annotations:
+        summary: "{{ swap_threshold }}{%- raw %}% of swap is used"
+        description: "The swap on the {{ $labels.host }} node is {{ $value }}% used for 2 minutes."
     SystemRxPacketsDroppedTooHigh:
-      {%- set net_rx_dropped_threshold = monitoring.rx_packets_dropped_rate.warn %}
-      if: rate(net_drop_in[1m]) > {{ net_rx_dropped_threshold }}
-      {% raw %}
+      {%- endraw %}
+      {%- set net_rx_dropped_threshold = monitoring.rx_packets_dropped_threshold.warn %}
+      if: >-
+        increase(net_drop_in[1m]) > {{ net_rx_dropped_threshold }}
       labels:
-        severity: critical
+        severity: warning
         service: system
       annotations:
-        summary: 'Too many received packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
-        description: 'The rate of received packets which are dropped is too high on node {{ $labels.host }} for interface {{ $labels.interface }} (current value={{ $value }}/sec, threshold={% endraw %}{{ net_rx_dropped_threshold }}/sec)'
+        summary: "{{ net_rx_dropped_threshold }}{%- raw %} received packets were dropped"
+        description: "{{ $value }} packets received by the {{ $labels.interface }} interface on the {{ $labels.host }} node were dropped during the last minute."
+    SystemRxPacketsDroppedLongTermTooHigh:
+      if: >-
+        increase(net_drop_in[1m]) > 0
+      for: 10m
+      labels:
+        severity: major
+        service: system
+      annotations:
+        summary: "Received packets long term dropping"
+        description: "{{ $value }} packets received by the {{ $labels.interface }} interface on the {{ $labels.host }} node were dropped during the last 10 minutes."
     SystemTxPacketsDroppedTooHigh:
-      {%- set net_tx_dropped_threshold = monitoring.tx_packets_dropped_rate.warn %}
-      if: rate(net_drop_out[1m]) > {{ net_tx_dropped_threshold }}
-      {% raw %}
+      {%- endraw %}
+      {%- set net_tx_dropped_threshold = monitoring.tx_packets_dropped_threshold.warn %}
+      if: >-
+        increase(net_drop_out[1m]) > {{ net_tx_dropped_threshold }}
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: "{{ net_tx_dropped_threshold }}{%- raw %} transmitted packets were dropped"
+        description: "{{ $value }} packets transmitted by the {{ $labels.interface }} interface on the {{ $labels.host }} node were dropped during the last minute."
+    CronProcessDown:
+      if: >-
+        procstat_running{process_name="cron"} == 0
       labels:
         severity: critical
         service: system
       annotations:
-        summary: 'Too many transmitted packets dropped on {{ $labels.host }} for interface {{ $labels.interface }}'
-        description: 'The rate of transmitted packets which are dropped is too high on node {{ $labels.host }} for interface {{ $labels.interface }} (current value={{ $value }}/sec, threshold={% endraw %}{{ net_tx_dropped_threshold }}/sec)'
-    SystemSwapIn:
-      {%- set swap_in_threshold = monitoring.swap_in_rate.warn %}
-      if: rate(swap_in[2m]) > {{ swap_in_threshold }}
-      {% raw %}
+        summary: "Cron process is down"
+        description: "The cron process on the {{ $labels.host }} node is down."
+    SshdProcessDown:
+      if: >-
+        procstat_running{process_name="sshd"} == 0
+      labels:
+        severity: critical
+        service: system
+      annotations:
+        summary: "SSH process is down"
+        description: "The SSH process on the {{ $labels.host }} node is down."
+    SshFailedLoginsTooHigh:
+      {%- endraw %}
+      {%- set threshold = monitoring.failed_auths_threshold.warn %}
+      if: >-
+        increase(failed_logins_total[5m]) > {{ threshold }}
       labels:
         severity: warning
         service: system
       annotations:
-        summary: 'Swap input throughput too high on {{ $labels.host }}'
-        description: 'The rate of swap input bytes is too high on node {{ $labels.host }} (current value={{ $value }}b/s, threshold={% endraw %}{{ swap_in_threshold }}b/s).'
-    SystemSwapOut:
-      {%- set swap_out_threshold = monitoring.swap_out_rate.warn %}
-      if: rate(swap_out[2m]) > {{ swap_out_threshold }}
-      {% raw %}
+        summary: "{{ threshold }}{%- raw %} failed SSH logins"
+        description: "{{ $value }} failed SSH login attempts on the {{ $labels.host }} node during the last 5 minutes."
+    PacketsDroppedByCpuMinor:
+      {%- endraw %}
+      {%- set packets_dropped_minor_threshold = monitoring.packets_dropped_per_cpu_threshold.minor %}
+      if: >-
+        floor(increase(nstat_packet_drop[24h])) > {{ packets_dropped_minor_threshold }}
+      labels:
+        severity: minor
+        service: system
+      annotations:
+        summary: "CPU dropped {{ packets_dropped_minor_threshold }}{%- raw %} packets"
+        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node dropped {{ $value }} packets during the last 24 hours."
+    PacketsDroppedByCpuMajor:
+      {%- endraw %}
+      {%- set packets_dropped_major_threshold = monitoring.packets_dropped_per_cpu_threshold.major %}
+      if: >-
+        floor(increase(nstat_packet_drop[24h])) > {{ packets_dropped_major_threshold }}
+      labels:
+        severity: major
+        service: system
+      annotations:
+        summary: "CPU dropped {{ packets_dropped_major_threshold }}{%- raw %} packets"
+        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node dropped {{ $value }} packets during the last 24 hours."
+    NetRxActionByCpuWarning:
+      {%- endraw %}
+      {%- set net_rx_action_warning_threshold = monitoring.net_rx_action_per_cpu_threshold.warning %}
+      if: >-
+        floor(increase(nstat_time_squeeze[1d])) > {{ net_rx_action_warning_threshold }}
       labels:
         severity: warning
         service: system
       annotations:
-        summary: 'Swap output throughput too high on {{ $labels.host }}'
-        description: 'The rate of swap output bytes is too high on node {{ $labels.host }} (current value={{ $value }}b/s, threshold={% endraw %}{{ swap_out_threshold }}b/s).'
+        summary: "CPU terminated {{ net_rx_action_warning_threshold }}{%- raw %} net_rx_action loops"
+        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node terminated {{ $value }} net_rx_action loops during the last 24 hours. Modify the net.core.netdev_budget kernel parameter."
+    NetRxActionByCpuMinor:
+      {%- endraw %}
+      {%- set net_rx_action_minor_threshold = monitoring.net_rx_action_per_cpu_threshold.minor %}
+      if: >-
+        floor(increase(nstat_time_squeeze[1d])) > {{ net_rx_action_minor_threshold }}
+      labels:
+        severity: minor
+        service: system
+      annotations:
+        summary: "CPU terminated {{ net_rx_action_minor_threshold }}{%- raw %} net_rx_action loops"
+        description: "The {{ $labels.cpu }} CPU on the {{ $labels.host }} node terminated {{ $value }} net_rx_action loops during the last 24 hours. Modify the net.core.netdev_budget kernel parameter."
+{%- endraw %}
+{%- if monitoring.bond_status.interfaces is defined and monitoring.bond_status.interfaces %}
+{%- raw %}
+    BondInterfaceDown:
+      if: >-
+        bond_status < 1
+      labels:
+        severity: critical
+        service: system
+      annotations:
+        summary: "{{ $labels.bond }} bond interface is down"
+        description: "The {{ $labels.bond }} bond interface on the {{ $labels.host }} node has all ifaces down."
+    BondInterfaceSlaveDown:
+      if: >-
+        bond_slave_status < 1
+      labels:
+        severity: warning
+        service: system
+      annotations:
+        summary: "{{ $labels.bond }} bond interface slave {{ $labels.interface }} is down"
+        description: "The {{ $labels.bond }} bond interface slave {{ $labels.interface }} on the {{ $labels.host }} node is down."
+    BondInterfaceSlaveDownMajor:
+      if: >-
+        sum(bond_slave_status) by (bond,host) <= on (bond,host) 0.5 * count(bond_slave_status)
+      labels:
+        severity: major
+        service: system
+      annotations:
+        summary: "50% of bond interface slaves {{ $labels.bond }} are down"
+        description: "{{ $value }} {{ $labels.bond }} bond interface slaves on the {{ $labels.host }} node are down."
+{% endraw %}
+{%- endif %}

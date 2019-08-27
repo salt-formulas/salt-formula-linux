@@ -1,0 +1,41 @@
+# 3.5.2 Ensure SCTP is disabled
+#
+# Description
+# ===========
+# The Stream Control Transmission Protocol (SCTP) is a transport layer
+# protocol used to support message oriented communication, with several
+# streams of messages in one connection. It serves a similar function as
+# TCP and UDP, incorporating features of both. It is message-oriented
+# like UDP, and ensures reliable in-sequence transport of messages with
+# congestion control like TCP.
+#
+# Rationale
+# =========
+# If the protocol is not being used, it is recommended that kernel module
+# not be loaded, disabling the service to reduce the potential attack surface.
+#
+# Audit
+# =====
+# Run the following commands and verify the output is as indicated:
+#
+#   # modprobe -n -v sctp
+#   install /bin/true
+#   # lsmod | grep sctp
+#   <No output>
+#
+# Remediation
+# ===========
+#
+# Edit or create the file /etc/modprobe.d/CIS.conf and add the following line:
+#
+#   install sctp /bin/true
+#
+parameters:
+  linux:
+    system:
+      kernel:
+        module:
+          sctp:
+            install:
+              command: /bin/true
+

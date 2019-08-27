@@ -19,25 +19,30 @@ include:
 
 {%- for hugepages_type, hugepages in system.kernel.hugepages.items() %}
 
-{%- if hugepages.get('mount', False) or hugepages.get('default', False) %}
-
 hugepages_mount_{{ hugepages_type }}:
   mount.mounted:
     - name: {{ hugepages.mount_point }}
-    - device: Hugetlbfs-kvm
+    - device: Hugetlbfs-kvm-{{ hugepages.size|lower }}
     - fstype: hugetlbfs
     - mkmnt: true
     - opts: mode=775,pagesize={{ hugepages.size }}
+    - mount: {{ hugepages.mount|default('true') }}
 
 # Make hugepages available right away with a temporary systctl write
 # This will be handled via krn args after reboot, so don't use `sysctl.present`
+{%- if hugepages.get('default', False) %}
 hugepages_sysctl_vm_nr_hugepages:
   cmd.run:
     - name: "sysctl vm.nr_hugepages={{ hugepages.count }}"
     - unless: "sysctl vm.nr_hugepages | grep -qE '{{ hugepages.count }}'"
-
 {%- endif %}
 
 {%- endfor %}
 
 {%- endif %}
+
+# systemd always creates default mount point at /dev/hugepages
+# we have to disable it, as we configure our own mount point for DPDK.
+mask_dev_hugepages:
+  cmd.run:
+    - name: "systemctl mask dev-hugepages.mount"

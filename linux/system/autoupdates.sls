@@ -6,7 +6,7 @@
 {%- if system.autoupdates.pkgs %}
 linux_autoupdates_packages:
   pkg.installed:
-  - pkgs: {{ system.autoupdates.pkgs }}
+  - pkgs: {{ system.autoupdates.pkgs | json }}
 {%- endif %}
 
 {%- if grains.os_family == 'Debian' %}

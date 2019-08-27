@@ -1,0 +1,52 @@
+# CIS 5.4.1.1 Ensure password expiration is 90 days or less (Scored)
+#
+# Description
+# ===========
+# The PASS_MAX_DAYS parameter in /etc/login.defs allows an administrator to
+# force passwords to expire once they reach a defined age. It is recommended
+# that the PASS_MAX_DAYS parameter be set to less than or equal to 90 days.
+#
+# Rationale
+# =========
+# The window of opportunity for an attacker to leverage compromised credentials
+# or successfully compromise credentials via an online brute force attack is
+# limited by the age of the password. Therefore, reducing the maximum age of a
+# password also reduces an attacker's window of opportunity.
+#
+# Audit
+# =====
+# Run the following command and verify PASS_MAX_DAYS is 90 or less:
+#
+#   # grep PASS_MAX_DAYS /etc/login.defs
+#   PASS_MAX_DAYS 90
+#
+# Verify all users with a password have their maximum days between password
+# change set to 90 or less:
+#
+#   # egrep ^[^:]+:[^\!*] /etc/shadow | cut -d: -f1
+#   <list of users>
+#   # chage --list <user>
+#   Maximum number of days between password change: 90
+#
+# Remediation
+# ===========
+# Set the PASS_MAX_DAYS parameter to 90 in /etc/login.defs :
+#
+#   PASS_MAX_DAYS 90
+#
+# Modify user parameters for all users with a password set to match:
+#
+#   # chage --maxdays 90 <user>
+#
+# Notes
+# =====
+# You can also check this setting in /etc/shadow directly. The 5th field
+# should be 90 or less for all users with a password.
+#
+parameters:
+  linux:
+    system:
+      login_defs:
+        PASS_MAX_DAYS:
+          value: 90
+

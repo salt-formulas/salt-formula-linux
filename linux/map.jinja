@@ -26,6 +26,14 @@
              'logpath': '/var/log/atop',
              'outfile': '/var/log/atop/daily.log'
          },
+        'at': {
+             'pkgs': [],
+             'services': []
+        },
+        'cron': {
+             'pkgs': [],
+             'services': []
+        },
     },
     'Debian': {
         'pkgs': ['python-apt', 'apt-transport-https', 'libmnl0'],
@@ -53,6 +61,16 @@
              'autostart': true,
              'logpath': '/var/log/atop',
              'outfile': '/var/log/atop/daily.log'
+         },
+        'at': {
+             'pkgs': ['at'],
+             'services': ['atd'],
+             'user': {}
+         },
+        'cron': {
+             'pkgs': ['cron'],
+             'services': ['cron'],
+             'user': {}
          },
     },
     'RedHat': {
@@ -82,25 +100,57 @@
              'logpath': '/var/log/atop',
              'outfile': '/var/log/atop/daily.log'
          },
+        'at': {
+             'pkgs': [],
+             'services': []
+        },
+        'cron': {
+             'pkgs': [],
+             'services': []
+        },
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:system')) %}
+
+{% set banner = salt['grains.filter_by']({
+    'BaseDefaults': {
+        'enabled': false,
+    },
+}, grain='os_family', merge=salt['pillar.get']('linux:system:banner'), base='BaseDefaults') %}
 
 {% set auth = salt['grains.filter_by']({
     'Arch': {
         'enabled': false,
+        'duo': {
+            'enabled': false,
+            'duo_host': 'localhost',
+            'duo_ikey': '',
+            'duo_skey': ''
+        }
     },
     'RedHat': {
         'enabled': false,
+        'duo': {
+            'enabled': false,
+            'duo_host': 'localhost',
+            'duo_ikey': '',
+            'duo_skey': ''
+        }
     },
     'Debian': {
         'enabled': false,
+        'duo': {
+            'enabled': false,
+            'duo_host': 'localhost',
+            'duo_ikey': '',
+            'duo_skey': ''
+        }
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:system:auth')) %}
 
 {% set ldap = salt['grains.filter_by']({
     'RedHat': {
         'enabled': false,
-        'pkgs': ['openldap-clients', 'nss-pam-ldapd', 'authconfig'],
+        'pkgs': ['openldap-clients', 'nss-pam-ldapd', 'authconfig', 'nscd'],
         'version': '3',
         'scope': 'sub',
         'uid': 'nslcd',
@@ -108,13 +158,77 @@
     },
     'Debian': {
         'enabled': false,
-        'pkgs': ['libnss-ldapd', 'libpam-ldapd'],
+        'pkgs': ['libnss-ldapd', 'libpam-ldapd', 'nscd'],
         'version': '3',
         'scope': 'sub',
         'uid': 'nslcd',
         'gid': 'nslcd',
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:system:auth:ldap')) %}
+
+{%- load_yaml as login_defs_defaults %}
+Debian:
+    CHFN_RESTRICT:
+        value: 'rwh'
+    DEFAULT_HOME:
+        value: 'yes'
+    ENCRYPT_METHOD:
+        value: 'SHA512'
+    ENV_PATH:
+        value: 'PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games'
+    ENV_SUPATH:
+        value: 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+    ERASECHAR:
+        value: '0177'
+    FAILLOG_ENAB:
+        value: 'yes'
+    FTMP_FILE:
+        value: '/var/log/btmp'
+    GID_MAX:
+        value: '60000'
+    GID_MIN:
+        value: '1000'
+    HUSHLOGIN_FILE:
+        value: '.hushlogin'
+    KILLCHAR:
+        value: '025'
+    LOGIN_RETRIES:
+        value: '5'
+    LOGIN_TIMEOUT:
+        value: '60'
+    LOG_OK_LOGINS:
+        value: 'no'
+    LOG_UNKFAIL_ENAB:
+        value: 'no'
+    MAIL_DIR:
+        value: '/var/mail'
+    PASS_MAX_DAYS:
+        value: '99999'
+    PASS_MIN_DAYS:
+        value: '0'
+    PASS_WARN_AGE:
+        value: '7'
+    SU_NAME:
+        value: 'su'
+    SYSLOG_SG_ENAB:
+        value: 'yes'
+    SYSLOG_SU_ENAB:
+        value: 'yes'
+    TTYGROUP:
+        value: 'tty'
+    TTYPERM:
+        value: '0600'
+    UID_MAX:
+        value: '60000'
+    UID_MIN:
+        value: '1000'
+    UMASK:
+        value: '022'
+    USERGROUPS_ENAB:
+        value: 'yes'
+{%- endload %}
+{%- set login_defs = salt['grains.filter_by'](login_defs_defaults,
+    grain='os_family', merge=salt['pillar.get']('linux:system:login_defs')) %}
 
 {#    'network_name', #}
 
@@ -141,6 +255,13 @@
     'maxwait',
     'stp',
     'gro',
+    'rx',
+    'tx',
+    'sg',
+    'tso',
+    'ufo',
+    'gso',
+    'lro',
     'lacp_rate',
     'ad_select',
     'downdelay',
@@ -152,12 +273,12 @@
     'arp_ip_target',
     'primary',
 ] %}
-
+{% set debian_headers = "linux-headers-" + grains.get('kernelrelease')|string %}
 {% set network = salt['grains.filter_by']({
     'Arch': {
         'pkgs': ['wpa_supplicant', 'dhclient', 'wireless_tools', 'ifenslave'],
-        'bridge_pkgs': ['bridge-utils'],
-        'ovs_pkgs': ['openvswitch-switch'],
+        'bridge_pkgs': ['bridge-utils', 'vlan'],
+        'ovs_pkgs': ['openvswitch-switch', 'vlan'],
         'hostname_file': '/etc/hostname',
         'network_manager': False,
         'systemd': {},
@@ -170,13 +291,14 @@
         'host': {},
         'mine_dns_records': False,
         'dhclient_config': '/etc/dhcp/dhclient.conf',
+        'ovs_nowait': False,
     },
     'Debian': {
         'pkgs': ['ifenslave'],
         'hostname_file': '/etc/hostname',
-        'bridge_pkgs': ['bridge-utils'],
-        'ovs_pkgs': ['openvswitch-switch', 'bridge-utils'],
-        'dpdk_pkgs': ['dpdk', 'dpdk-dev', 'dpdk-igb-uio-dkms', 'dpdk-rte-kni-dkms'],
+        'bridge_pkgs': ['bridge-utils', 'vlan'],
+        'ovs_pkgs': ['openvswitch-switch', 'bridge-utils', 'vlan'],
+        'dpdk_pkgs': ['dpdk', 'dpdk-dev', 'dpdk-igb-uio-dkms', 'dpdk-rte-kni-dkms', debian_headers.encode('utf8') ],
         'network_manager': False,
         'systemd': {},
         'interface': {},
@@ -188,11 +310,12 @@
         'host': {},
         'mine_dns_records': False,
         'dhclient_config': '/etc/dhcp/dhclient.conf',
+        'ovs_nowait': False,
     },
     'RedHat': {
         'pkgs': ['iputils'],
-        'bridge_pkgs': ['bridge-utils'],
-        'ovs_pkgs': ['openvswitch-switch', 'bridge-utils'],
+        'bridge_pkgs': ['bridge-utils', 'vlan'],
+        'ovs_pkgs': ['openvswitch-switch', 'bridge-utils', 'vlan'],
         'hostname_file': '/etc/sysconfig/network',
         'network_manager': False,
         'systemd': {},
@@ -205,6 +328,7 @@
         'host': {},
         'mine_dns_records': False,
         'dhclient_config': '/etc/dhcp/dhclient.conf',
+        'ovs_nowait': False,
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:network')) %}
 
@@ -258,11 +382,17 @@
              'service': 'multipath'
          },
     },
-}, grain='os_family', merge=salt['pillar.get']('linux:storage')) %}
-
+}, merge=salt['grains.filter_by']({
+    'trusty': {
+        'lvm_services': ['udev'],
+    },
+}, grain='oscodename', merge=salt['pillar.get']('linux:storage'))) %}
 
 {% set monitoring = salt['grains.filter_by']({
     'default': {
+        'bond_status': {
+            'interfaces': False
+        },
         'zombie': {
             'warn': 3,
             'crit': 7,
@@ -288,30 +418,52 @@
             'interface_regex': '^[a-z0-9]+$',
             'ignore_selected': False,
         },
-        'bond_status': {
-            'interfaces': False
+        'cpu_usage_percentage': {
+              'warn': 90.0,
         },
-        'cpu_idle_percentage': {
-              'warn': 10.0,
+        'memory_usage_percentage': {
+            'warn': 90.0,
+            'major': 95.0,
         },
-        'free_memory_percentage': {
-              'warn': 10.0,
-              'crit': 5.0,
+        'disk_usage_percentage': {
+            'warn': 85.0,
+            'major': 95.0,
         },
-        'load_5': {
-              'warn': 3,
+        'swap_usage_percentage': {
+            'warn': 50.0,
+            'minor': 90.0,
         },
-        'rx_packets_dropped_rate': {
-              'warn': 100,
+        'inodes_usage_percentage': {
+            'warn': 85.0,
+            'major': 95.0,
         },
-        'tx_packets_dropped_rate': {
-              'warn': 100,
+        'system_load_threshold': {
+            'warn': 1,
+            'crit': 2,
+        },
+        'rx_packets_dropped_threshold': {
+            'warn': 100,
+        },
+        'tx_packets_dropped_threshold': {
+            'warn': 100,
         },
         'swap_in_rate': {
-              'warn': 1024 * 1024,
+            'warn': 1024 * 1024,
         },
         'swap_out_rate': {
-              'warn': 1024 * 1024,
+            'warn': 1024 * 1024,
         },
+        'failed_auths_threshold': {
+            'warn': 5,
+        },
+        'net_rx_action_per_cpu_threshold': {
+            'warning': '500',
+            'minor': '5000'
+        },
+        'packets_dropped_per_cpu_threshold': {
+            'minor': '0',
+            'major': '100'
+        }
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:monitoring')) %}
+
