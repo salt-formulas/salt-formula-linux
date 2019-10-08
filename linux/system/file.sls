@@ -23,6 +23,12 @@ linux_file_{{ file_name }}:
     {%- endif %}
     {%- if file.template is defined %}
     - template: {{ file.template }}
+      {%- if file.defaults is defined %}
+    - defaults: {{ file.defaults|json }}
+      {%- endif %}
+      {%- if file.context is defined %}
+    - context: {{ file.context|json }}
+      {%- endif %}
     {%- endif %}
     {%- elif file.contents is defined %}
     - contents: {{ file.contents|json }}
