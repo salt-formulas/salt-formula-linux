@@ -4,7 +4,7 @@
 
 linux_dpdk_pkgs:
   pkg.installed:
-  - pkgs: {{ network.dpdk_pkgs }}
+  - pkgs: {{ network.dpdk_pkgs | json }}
 
 linux_dpdk_kernel_module:
   kmod.present:

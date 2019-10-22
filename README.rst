@@ -705,6 +705,17 @@ Configure kernel boot options:
             - spectre_v2=off
             - nopti
 
+Alternative way to set kernel boot options:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        kernel:
+          transparent_hugepage: always
+          elevator: deadline
+          isolcpu: 1,2,3,4
+
 CPU
 ~~~
 
@@ -717,6 +728,16 @@ Enable cpufreq governor for every cpu:
         cpu:
           governor: performance
 
+SELinux
+~~~~~~~
+
+Set SELinux mode on System:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        selinux: permissive
 
 CGROUPS
 ~~~~~~~

@@ -173,7 +173,7 @@ linux_auth_nsswitch_config_file:
 
 linux_auth_ldap_packages:
   pkg.installed:
-  - pkgs: {{ ldap.pkgs }}
+  - pkgs: {{ ldap.pkgs | json }}
 
 linux_auth_nslcd_config_file:
   file.managed:

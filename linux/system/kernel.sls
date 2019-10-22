@@ -6,6 +6,7 @@
 {%- set kernel_boot_opts = [] %}
 {%- do kernel_boot_opts.append('isolcpus=' ~ system.kernel.isolcpu) if system.kernel.isolcpu is defined %}
 {%- do kernel_boot_opts.append('elevator=' ~ system.kernel.elevator) if system.kernel.elevator is defined %}
+{%- do kernel_boot_opts.append('transparent_hugepage=' ~ system.kernel.transparent_hugepage) if system.kernel.transparent_hugepage is defined %}
 {%- do kernel_boot_opts.extend(system.kernel.boot_options) if system.kernel.boot_options is defined %}
 
 include:

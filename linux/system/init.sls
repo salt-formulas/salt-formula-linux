@@ -7,8 +7,12 @@ include:
 {%- if system.login_defs is defined %}
 - linux.system.login_defs
 {%- endif %}
+{%- if system.at is defined %}
 - linux.system.at
+{%- endif %}
+{%- if system.cron is defined %}
 - linux.system.cron
+{%- endif %}
 {%- if system.repo|length > 0 %}
 - linux.system.repo
 {%- endif %}

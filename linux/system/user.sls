@@ -23,6 +23,15 @@ system_group_{{ name }}:
     - user: system_user_{{ name }}
 {%- endif %}
 
+{%- if user.get('makedirs') %}
+system_user_home_parentdir_{{ user.home }}:
+  file.directory:
+  - name: {{ user.home | path_join("..") }}
+  - makedirs: true
+  - require_in:
+    - user: system_user_{{ name }}
+{%- endif %}
+
 system_user_{{ name }}:
   user.present:
   - name: {{ name }}

@@ -1,15 +1,15 @@
-{%- from "linux/map.jinja" import system, at with context %}
+{%- from "linux/map.jinja" import system with context %}
 
-{%- if at.get('enabled', false) %}
+{%- if system.at.enabled is defined and system.at.enabled %}
 
 at_packages:
   pkg.installed:
-    - names: {{ at.pkgs }}
+    - names: {{ system.at.pkgs }}
 
 at_services:
   service.running:
     - enable: true
-    - names: {{ at.services }}
+    - names: {{ system.at.services }}
     - require:
       - pkg: at_packages
   {%- if grains.get('noservices') %}
@@ -17,7 +17,7 @@ at_services:
   {%- endif %}
 
   {%- set allow_users = [] %}
-  {%- for user_name, user_params in at.get('user', {}).items() %}
+  {%- for user_name, user_params in system.at.get('user', {}).items() %}
     {%- set user_enabled = user_params.get('enabled', false) and
         system.get('user', {}).get(
           user_name, {'enabled': true}).get('enabled', true) %}

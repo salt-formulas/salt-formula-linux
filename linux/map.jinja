@@ -26,6 +26,14 @@
              'logpath': '/var/log/atop',
              'outfile': '/var/log/atop/daily.log'
          },
+        'at': {
+             'pkgs': [],
+             'services': []
+        },
+        'cron': {
+             'pkgs': [],
+             'services': []
+        },
     },
     'Debian': {
         'pkgs': ['python-apt', 'apt-transport-https', 'libmnl0'],
@@ -53,6 +61,16 @@
              'autostart': true,
              'logpath': '/var/log/atop',
              'outfile': '/var/log/atop/daily.log'
+         },
+        'at': {
+             'pkgs': ['at'],
+             'services': ['atd'],
+             'user': {}
+         },
+        'cron': {
+             'pkgs': ['cron'],
+             'services': ['cron'],
+             'user': {}
          },
     },
     'RedHat': {
@@ -82,26 +100,16 @@
              'logpath': '/var/log/atop',
              'outfile': '/var/log/atop/daily.log'
          },
+        'at': {
+             'pkgs': [],
+             'services': []
+        },
+        'cron': {
+             'pkgs': [],
+             'services': []
+        },
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:system')) %}
-
-{% set at = salt['grains.filter_by']({
-    'Debian': {
-        'enabled': false,
-        'pkgs': ['at'],
-        'services': ['atd'],
-        'user': {}
-    },
-}, grain='os_family', merge=salt['pillar.get']('linux:system:at')) %}
-
-{% set cron = salt['grains.filter_by']({
-    'Debian': {
-        'enabled': false,
-        'pkgs': ['cron'],
-        'services': ['cron'],
-        'user': {}
-    },
-}, grain='os_family', merge=salt['pillar.get']('linux:system:cron')) %}
 
 {% set banner = salt['grains.filter_by']({
     'BaseDefaults': {

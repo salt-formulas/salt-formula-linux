@@ -4,7 +4,7 @@
 
 openvswitch_pkgs:
   pkg.installed:
-    - pkgs: {{ network.ovs_pkgs }}
+    - pkgs: {{ network.ovs_pkgs | json }}
 
 /etc/default/openvswitch-switch:
   file.managed:
