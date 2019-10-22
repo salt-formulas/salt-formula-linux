@@ -43,6 +43,7 @@ linux_job_{{ job.command }}:
       {%- if job.get('identifier', True) %}
     - identifier: {{ job.get('identifier', job.get('name', name)) }}
       {%- endif %}
+    - user: {{ job_user }}
     {%- endif %}
   {%- endfor %}
 {%- endif %}
