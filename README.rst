@@ -206,6 +206,20 @@ This ways ``linux.system.sudo`` pillar map to actual sudo attributes:
             - '!SUPPORT_SHELLS'
             - '!SUPPORT_RESTRICTED'
 
+Configure User authorize_keys:
+
+.. code-block:: yaml
+
+  linux:
+    system:
+      user:
+        root:
+          authorized_keys:
+            present:
+              enc: ssh-dss
+              ssh_key_values:
+                - AAAAB3NzaC1yc2EAAAADAQABAAABAQDXV9QOcqXNZDJR/FW2vjPNKhxWq8b+JzXvnIHGH1xP1+2v8vBpGcai4NuNghapicIXz/Qri0uul comment
+
 Linux with package, latest version:
 
 .. code-block:: yaml

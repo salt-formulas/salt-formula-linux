@@ -106,6 +106,51 @@ system_user_home_{{ user.home }}:
 
 {%- else %}
 
+{%- if user.authorized_keys is defined %}
+  {%- if user.authorized_keys.present is defined %}
+system_user_{{ name }}_authorized_keys_add:
+  ssh_auth.present:
+    - names:
+    {%- for ssh_key_value in user.authorized_keys.present.ssh_key_values %}
+      - {{ ssh_key_value }}
+    {%- endfor %}
+    - user: {{ name }}
+    {%- if user.authorized_keys.present.enc is defined %}
+    - enc: {{ user.authorized_keys.present.enc }}
+    {%- endif %}
+    {%- if user.authorized_keys.present.comment is defined %}
+    - comment: {{ user.authorized_keys.present.comment }}
+    {%- endif %}
+    {%- if user.authorized_keys.present.options is defined %}
+    - options:
+      {%- for option_name, option_value in user.authorized_keys.present.options.items() %}
+      - {{ option_name }}="{{ option_value }}"
+      {%- endfor %}
+    {%- endif %}
+  {%- endif %}
+  {%- if user.authorized_keys.absent is defined %}
+system_user_{{ name }}_authorized_keys_del:
+  ssh_auth.absent:
+    - names:
+    {%- for ssh_key_value in user.authorized_keys.absent_key_values %}
+      - {{ ssh_key_value }}"
+    {%- endfor %}
+    - user: {{ name }}
+    {%- if user.authorized_keys.absent.enc is defined %}
+    - enc: {{ user.authorized_keys.absent.enc }}
+    {%- endif %}
+    {%- if user.authorized_keys.absent.comment is defined %}
+    - comment: {{ user.authorized_keys.absent.comment }}
+    {%- endif %}
+    {%- if user.authorized_keys.absent.options is defined %}
+    - options:
+      {%- for option_name, option_value in user.authorized_keys.absent.options.items() %}
+      - {{ option_name }}="{{ option_value }}"
+      {%- endfor %}
+    {%- endif %}
+ {%- endif %}
+{%- endif %}
+
 /etc/sudoers.d/90-salt-user-{{ name|replace('.', '-') }}:
   file.absent
 
