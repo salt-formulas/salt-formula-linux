@@ -42,6 +42,7 @@ linux_storage_nfs_packages:
   - mkmnt: True
   - opts: {{ mount.get('opts', 'defaults,noatime') }}
   - mount: {{ mount.get('mount', 'True') }}
+  - persist: {{ mount.get('save_to_fstab', 'False') }}
   {%- if mount.file_system == 'xfs' %}
   - require:
     - pkg: xfs_packages_{{ mount.device }}
