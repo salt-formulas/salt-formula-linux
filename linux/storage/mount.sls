@@ -41,6 +41,7 @@ linux_storage_nfs_packages:
   - fstype: {{ mount.file_system }}
   - mkmnt: True
   - opts: {{ mount.get('opts', 'defaults,noatime') }}
+  - mount: {{ mount.get('mount', 'True') }}
   {%- if mount.file_system == 'xfs' %}
   - require:
     - pkg: xfs_packages_{{ mount.device }}
