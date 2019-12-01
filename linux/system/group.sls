@@ -11,13 +11,6 @@
 
 {%- if group.enabled %}
 
-{%- set requires = [] %}
-{%- for user in group.get('addusers', []) %}
-  {%- if user in system.get('user', {}).keys() %}
-    {%- do requires.append({'user': 'system_user_'+user}) %}
-  {%- endif %}
-{%- endfor %}
-
 system_group_{{ group_name }}:
   group.present:
   - name: {{ group.get('name', group_name) }}
@@ -27,10 +20,19 @@ system_group_{{ group_name }}:
   {%- if group.gid is defined and group.gid %}
   - gid: {{ group.gid }}
   {%- endif %}
+{%- if group.members is defined %}
+  - members: {{ group.members|json }}
+{%- else %}
+{%- set requires = [] %}
+{%- for user in group.get('addusers', []) %}
+  {%- if user in system.get('user', {}).keys() %}
+    {%- do requires.append({'user': 'system_user_'+user}) %}
+  {%- endif %}
+{%- endfor %}
   - require: {{ requires|yaml }}
 {{ set_p('addusers', group)|indent(2, True) }}
 {{ set_p('delusers', group)|indent(2, True) }}
-
+{% endif %}
 {%- else %}
 
 system_group_{{ group_name }}:
