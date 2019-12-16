@@ -50,7 +50,10 @@ linux_file_{{ file_name }}:
     {%- if file.encoding is defined %}
     - encoding: {{ file.encoding }}
     {%- endif %}
-
+    {%- if file.replace is defined %}
+    - replace: {{ file.replace }}
+    {%- endif %}
+ 
 {%- endfor %}
 
 {%- endif %}
