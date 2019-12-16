@@ -39,6 +39,7 @@ linux_file_{{ file_name }}:
     - name: {{ file_name }}
     {%- endif %}
     - makedirs: {{ file.get('makedirs', 'True') }}
+    - replace: {{ file.get('replace', 'True') }}
     - user: {{ file.get('user', 'root') }}
     - group: {{ file.get('group', 'root') }}
     {%- if file.mode is defined %}
@@ -50,7 +51,7 @@ linux_file_{{ file_name }}:
     {%- if file.encoding is defined %}
     - encoding: {{ file.encoding }}
     {%- endif %}
-
+ 
 {%- endfor %}
 
 {%- endif %}
