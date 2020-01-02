@@ -383,6 +383,9 @@ Debian:
          },
     },
 }, merge=salt['grains.filter_by']({
+    'buster': {
+        'lvm_services': ['lvm2-monitor'],
+    },
     'trusty': {
         'lvm_services': ['udev'],
     },
