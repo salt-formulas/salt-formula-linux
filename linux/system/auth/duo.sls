@@ -3,6 +3,8 @@
 package_duo:
   pkg.installed:
     - name: duo-unix
+    - skip_verify: True
+
 
 login_duo:
   file.managed:
