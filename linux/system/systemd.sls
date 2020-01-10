@@ -1,5 +1,9 @@
 {%- from "linux/map.jinja" import system with context %}
 {%- if system.enabled and grains.get('init', None) == 'systemd' %}
+{%- if system.systemd.journal is defined %}
+include: 
+  - linux.system.journal
+{%- endif %}
 
 {%- if system.systemd.system is defined %}
 linux_systemd_system_config:

@@ -3,14 +3,14 @@
 
 {%- if system.systemd.journal is defined %}
 
-linux_systemd_system_config:
+linux_systemd_journal_config:
   file.managed:
     - name: /etc/systemd/journald.conf.d/90-salt.conf
     - source: salt://linux/files/journal.conf
     - template: jinja
     - makedirs: True
     - defaults:
-        settings: {{ system.systemd.journal }}
+        settings: {{ system.systemd.journal|tojson }}
     - watch_in:
       - module: linux_journal_systemd_reload
 
