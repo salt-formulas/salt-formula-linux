@@ -26,18 +26,20 @@ install:
   - bundle install
 
 env:
-  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2016.3 SUITE=network
-  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2016.3 SUITE=system
   - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2017.7 SUITE=network
   - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2017.7 SUITE=system
   - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=network
   - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=system
   - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=duo
+  - PLATFORM=netmanagers/salt-2019.2-py3:ubuntu-18.04 SUITE=network
+  # - PLATFORM=netmanagers/salt-2019.2-py3:ubuntu-18.04 SUITE=system
+  # - PLATFORM=netmanagers/salt-2019.2-py3:ubuntu-18.04 SUITE=duo 
   # - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2017.7 SUITE=network
   # - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2017.7 SUITE=system
   # - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2018.3 SUITE=network
   # - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2018.3 SUITE=system
-
+  # - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2016.3 SUITE=system
+  # - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2016.3 SUITE=network
 before_script:
   - set -o pipefail
   - make test | tail
