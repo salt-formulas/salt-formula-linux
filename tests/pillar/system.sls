@@ -458,7 +458,6 @@ linux:
         - host1
         - host2
         - .local
-
     # pillars for netconsole setup
     netconsole:
       enabled: true
