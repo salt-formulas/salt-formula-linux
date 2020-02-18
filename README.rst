@@ -430,6 +430,18 @@ Systemd settings:
               DefaultLimitCPU: 2
               DefaultLimitNPROC: 4
 
+Systemd journal settings:
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        systemd:
+          journal:
+            SystemMaxUse: "50M"
+            RuntimeMaxFiles: "100"
+            
 Ensure presence of directory:
 
 .. code-block:: yaml

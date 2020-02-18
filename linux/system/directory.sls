@@ -1,5 +1,6 @@
 {%- from "linux/map.jinja" import system with context %}
 
+{%- if system.directory is defined %}
 {%- for name, dir in system.directory.items() %}
 
 {{ dir.name|default(name) }}:
@@ -13,3 +14,4 @@
     {%- endif %}
 
 {%- endfor %}
+{% endif %}
