@@ -327,6 +327,22 @@ identifier same as command resulting in not being able to change it):
             hour: 2
             minute: 0
 
+Added the opportunity to set a job with a special keyword like '@reboot' or '@hourly'. Quotes must be used, otherwise PyYAML will strip the '@' sign.
+
+.. code-block:: yaml
+
+    linux:
+      system:
+        ...
+        job:
+          cmd1:
+            command: '/cmd/to/run'
+            identifier: cmd1
+            enabled: true
+            user: 'root'
+            special: '@reboot'
+
+
 Managing 'at' tasks
 -------------------
 

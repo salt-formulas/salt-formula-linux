@@ -17,20 +17,24 @@ linux_job_{{ job.command }}:
     - identifier: {{ job.get('identifier', job.get('name', name)) }}
       {%- endif %}
     - user: {{ job_user }}
-      {%- if job.minute is defined %}
+      {%- if job.special is defined %}
+    - special: '{{ job.special }}'
+      {%- else %}
+        {%- if job.minute is defined %}
     - minute: '{{ job.minute }}'
-      {%- endif %}
-      {%- if job.hour is defined %}
+        {%- endif %}
+        {%- if job.hour is defined %}
     - hour: '{{ job.hour }}'
-      {%- endif %}
-      {%- if job.daymonth is defined %}
+        {%- endif %}
+        {%- if job.daymonth is defined %}
     - daymonth: '{{ job.daymonth }}'
-      {%- endif %}
-      {%- if job.month is defined %}
+        {%- endif %}
+        {%- if job.month is defined %}
     - month: '{{ job.month }}'
       {%- endif %}
-      {%- if job.dayweek is defined %}
+        {%- if job.dayweek is defined %}
     - dayweek: '{{ job.dayweek }}'
+        {%- endif %}
       {%- endif %}
     - require:
       - sls: linux.system.cron
