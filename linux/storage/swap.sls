@@ -1,6 +1,8 @@
 {%- from "linux/map.jinja" import storage with context %}
 {%- if storage.enabled %}
 
+{%- if storage.swap.enabled is not defined or storage.swap.enabled %}
+
 {%- for swap_name, swap in storage.swap.items() %}
 
 {%- if swap.enabled %}
@@ -74,5 +76,13 @@ linux_disable_swap_{{ swap.engine }}_{{ swap.device }}:
 {%- endif %}
 
 {%- endfor %}
+
+{%- elif storage.swap.enabled is defined and not storage.swap.enabled %}
+
+linux_disable_swap:
+  cmd.run:
+    - name: 'swapoff -a'
+
+{%- endif %}
 
 {%- endif %}
