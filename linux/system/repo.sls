@@ -36,7 +36,7 @@ purge_sources_list_d_repos:
   - clean: True
   {%- endif %}
 
-  {%- for name, repo in system.repo.items() %}
+  {%- for name, repo in system.repo.items() | sort %}
     {%- set name=repo.get('name', name) %}
     {%- if grains.os_family == 'Debian' %}
 
