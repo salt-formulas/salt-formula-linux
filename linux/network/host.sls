@@ -70,10 +70,17 @@ linux_host_{{ name }}:
 
 linux_host_{{ name }}_order_fix:
   module.run:
+{%- if 'module.run' in salt['config.get']('use_superseded', default=[]) %}
+    - file.replace:
+      - path: /etc/hosts
+      - pattern: {{ before }}
+      - repl: {{ after }}
+{%- else %}
     - name: file.replace
     - path: /etc/hosts
     - pattern: {{ before }}
     - repl: {{ after }}
+{%- endif %}
     - watch:
       - host: linux_host_{{ name }}
     - onlyif:

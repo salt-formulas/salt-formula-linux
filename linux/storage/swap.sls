@@ -59,9 +59,15 @@ linux_set_swap_file_status_{{ swap.device }}:
 
 {{ swap.device }}:
   module.run:
+  {%- if 'module.run' in salt['config.get']('use_superseded', default=[]) %}
+    - mount.rm_fstab:
+      - m_name: none
+      - device: {{ swap.device }}
+  {%- else %}
     - name: mount.rm_fstab
     - m_name: none
     - device: {{ swap.device }}
+  {%- endif %}
     - onlyif: grep -q {{ swap.device }} /etc/fstab
 
 linux_disable_swap_{{ swap.engine }}_{{ swap.device }}:
