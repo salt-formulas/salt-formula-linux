@@ -30,9 +30,15 @@ ondemand_service_disable:
 {% if salt['file.file_exists']('/sys/'+ core_key) %}
 governor_write_sysfs_cpu_core_{{ cpu_core }}:
   module.run:
+  {%- if 'module.run' in salt['config.get']('use_superseded', default=[]) %}
+    - sysfs.write:
+      - key: {{ core_key }}
+      - value: {{ system.cpu.governor }}
+  {%- else %}
     - name: sysfs.write
     - key: {{ core_key }}
     - value: {{ system.cpu.governor }}
+  {%- endif %}
 {% endif %}
 
 {%- endfor %}

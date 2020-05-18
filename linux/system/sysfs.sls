@@ -44,9 +44,15 @@ linux_sysfs_package:
       {#- Sysfs cannot be set in docker, LXC, etc. #}
 linux_sysfs_write_{{ list_idx }}_{{ name }}_{{ key }}:
   module.run:
+        {%- if 'module.run' in salt['config.get']('use_superseded', default=[]) %}
+    - sysfs.write:
+      - key: {{ key }}
+      - value: {{ value }}
+        {%- else %}
     - name: sysfs.write
     - key: {{ key }}
     - value: {{ value }}
+        {%- endif %}
       {%- endif %}
     {%- endif %}
   {%- endfor %}

@@ -223,7 +223,11 @@ default_repo_list:
 refresh_db:
   {%- if system.get('refresh_repos_meta', True) %}
   module.run:
+    {%- if 'module.run' in salt['config.get']('use_superseded', default=[]) %}
+    - pkg.refresh_db: []
+    {%- else %}
     - name: pkg.refresh_db
+    {% endif %}
   {%- else %}
   test.succeed_without_changes
   {%- endif %}
