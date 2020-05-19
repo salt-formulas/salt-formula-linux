@@ -19,8 +19,14 @@ openvswitch_pkgs:
     - template: jinja
     - require:
       - pkg: openvswitch_pkgs
+
+openvswitch_sytemctl_reload:
   module.run:
+{%- if 'module.run' in salt['config.get']('use_superseded', default=[]) %}
+    - service.systemctl_reload: []
+{%- else %}
     - name: service.systemctl_reload
+{%- endif %}
     - onchanges:
       - file: /etc/systemd/system/openvswitch-switch.service
 
