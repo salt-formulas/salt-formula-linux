@@ -383,6 +383,9 @@ Debian:
          },
     },
 }, merge=salt['grains.filter_by']({
+    'focal': {
+      'lvm_services': ['lvm2-monitor'],
+    },
     'buster': {
         'lvm_services': ['lvm2-monitor'],
     },
@@ -469,4 +472,3 @@ Debian:
         }
     },
 }, grain='os_family', merge=salt['pillar.get']('linux:monitoring')) %}
-
