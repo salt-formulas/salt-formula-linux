@@ -6,9 +6,6 @@ include:
 {%- if network.host|length > 0 or network.get('purge_hosts', True) %}
 - linux.network.host
 {%- endif %}
-{%- if network.resolv is defined %}
-- linux.network.resolv
-{%- endif %}
 {%- if network.dpdk is defined %}
 - linux.network.dpdk
 {%- endif %}
@@ -23,5 +20,8 @@ include:
 {%- endif %}
 {%- if network.interface|length > 0 %}
 - linux.network.interface
+{%- endif %}
+{%- if network.resolv is defined %}
+- linux.network.resolv
 {%- endif %}
 - linux.network.proxy
