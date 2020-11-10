@@ -457,7 +457,7 @@ Systemd journal settings:
           journal:
             SystemMaxUse: "50M"
             RuntimeMaxFiles: "100"
-            
+
 Ensure presence of directory:
 
 .. code-block:: yaml
@@ -2119,6 +2119,30 @@ into ``/mnt/data``.
                   size: 40G
                   mount: ${linux:storage:mount:data}
 
+Salt now also supports expanding and shrinking a LV:
+
+To reduce the size of an LV the option force must be set to true.
+! Caution this can destroy the file system if it is not shrunk before !
+only some file systems can be shrunk.
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+          lvm:
+            vg1:
+              enabled: true
+              devices:
+                - /dev/sdb
+              volume:
+                data:              # to expand
+                  size: 50G
+                  mount: ${linux:storage:mount:data}
+                data:              # to reduce
+                  size: 30G
+                  force: true
+                  mount: ${linux:storage:mount:data}
+
 Create partitions on disk. Specify size in MB. It expects empty
 disk without any existing partitions.
 Set ``startsector=1`` if you want to start partitions from ``2048``.
@@ -2610,4 +2634,3 @@ Documentation and Bugs
 * #salt-formulas @ irc.freenode.net
    Use this IRC channel in case of any questions or feedback which is always
    welcome.
-
