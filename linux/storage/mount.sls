@@ -38,6 +38,8 @@ linux_storage_nfs_packages_{{ mount.path }}:
   - mkmnt: True
   - opts: {{ mount.get('opts', 'defaults,noatime') }}
   {%- if mount.file_system == 'xfs' %}
+  - dump: {{ mount.dump|default('0', true) }}
+  - pass_num: {{ mount.pass_num|default('0', true) }}
   - require:
     - pkg: xfs_packages_{{ mount.device }}
   {%- endif %}
