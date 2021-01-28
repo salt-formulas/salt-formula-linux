@@ -2068,6 +2068,25 @@ NFS mount:
           file_system: nfs
           opts: rw,sync
 
+Bind mount:
+
+.. code-block:: yaml
+
+  linux:
+    storage:
+      enabled: true
+      mount:
+        mount_bind:
+          enabled: true
+          path: /mnt/bind/name
+          device: /mnt/source/bind
+          file_system: none
+          opts: bind,defaults
+          dump: 0
+          pass_num: 1
+
+
+
 File swap configuration:
 
 .. code-block:: yaml
