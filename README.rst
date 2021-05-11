@@ -1368,6 +1368,29 @@ interface and DNS servers:
             - 8.8.4.4
             mtu: 1500
 
+
+Linux with IPv4 and IPv6 static network interfaces, default gateway
+
+            .. code-block:: yaml
+
+                linux:
+                  network:
+                    enabled: true
+                    interface:
+                      eth0:
+                        enabled: true
+                        type: eth
+                        address: 192.168.0.102
+                        netmask: 255.255.255.0
+                        gateway: 192.168.0.1
+
+                        enable_ipv6: true
+                        ipv6proto: static
+                        ipv6ipaddr:  1234:abcd::ffff:192.168.0.102
+                        ipv6gateway: 1234:abcd::ffff:192.168.0.1
+                        ipv6netmask: 64
+
+
 Linux with bonded interfaces and disabled ``NetworkManager``:
 
 .. code-block:: yaml
