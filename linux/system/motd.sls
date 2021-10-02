@@ -25,6 +25,10 @@ motd_fix_pam_sshd:
 /etc/motd:
   file.absent
 
+exist_/etc/update-motd.d:
+  file.directory:
+    - name: /etc/update-motd.d
+
 {%- for motd in system.motd %}
 {%- set motd_index = loop.index %}
 
@@ -35,8 +39,10 @@ motd_{{ motd_index }}_{{ name }}:
     - source: salt://linux/files/motd.sh
     - template: jinja
     - mode: 755
-    - require:
+    - require_in:
       - file: /etc/update-motd.d
+    - require:
+      - file: exist_/etc/update-motd.d
     - defaults:
         index: {{ motd_index }}
         motd_name: {{ name }}
