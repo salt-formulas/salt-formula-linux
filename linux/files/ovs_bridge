@@ -9,6 +9,10 @@ netmask {{ bridge.netmask }}
 {%- if bridge.gateway is defined %}
 gateway {{ bridge.gateway }}
 {%- endif %}
+{%- if bridge.ovs_ports is defined %}
+ovs_ports {{ bridge.ovs_ports }}
+{%- endif %}
 {%- if bridge.ovs_options is defined %}
 ovs_options {{ bridge.ovs_options }}
 {%- endif %}
+
