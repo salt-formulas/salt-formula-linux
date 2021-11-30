@@ -109,7 +109,14 @@
              'services': []
         },
     },
-}, grain='os_family', merge=salt['pillar.get']('linux:system')) %}
+}, merge=salt['grains.filter_by']({
+    'bullseye': {
+        'pkgs': ['python3-apt', 'apt-transport-https', 'libmnl0'],
+    },
+    'sid': {
+        'pkgs': ['python3-apt', 'apt-transport-https', 'libmnl0'],
+    },
+}, grain='oscodename', merge=salt['pillar.get']('linux:system'))) %}
 
 {% set banner = salt['grains.filter_by']({
     'BaseDefaults': {
