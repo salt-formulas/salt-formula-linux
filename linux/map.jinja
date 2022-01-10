@@ -393,6 +393,9 @@ Debian:
          },
     },
 }, merge=salt['grains.filter_by']({
+    'CentOS Stream 8': {
+      'lvm_services': ['lvm2-lvmpolld', 'lvm2-monitor'],
+    },
     'focal': {
       'lvm_services': ['lvm2-monitor'],
     },
