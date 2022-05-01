@@ -6,7 +6,7 @@ grub_d_directory:
     - mode: 755
     - makedirs: True
 
-{%- if grains['os_family'] == 'RedHat' %}
+{%- if grains['os_family'] in ['RedHat','Suse'] %}
   {%- set boot_grub_cfg = '/boot/grub2/grub.cfg' %}
 /etc/default/grub:
   file.append:

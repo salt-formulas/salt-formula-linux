@@ -166,7 +166,7 @@ linux_repo_{{ name }}:
       {%- endif %}
     {%- endif %}
 
-    {%- if grains.os_family == "RedHat" %}
+    {%- if grains.os_family in ["RedHat", "Suse"] %}
 
       {%- if repo.get('enabled', True) %}
         {%- if repo.get('proxy', {}).get('enabled', False) %}
