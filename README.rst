@@ -980,7 +980,7 @@ RedHat-based Linux with additional OpenStack repo:
           rdo-icehouse:
             enabled: true
             source: 'http://repos.fedorapeople.org/repos/openstack/openstack-icehouse/epel-6/'
-            pgpcheck: 0
+            gpgcheck: 0
 
 Ensure system repository to use czech Debian mirror (``default: true``)
 Also pin it's packages with priority ``900``:
