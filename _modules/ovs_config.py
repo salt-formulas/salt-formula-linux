@@ -22,7 +22,7 @@ def __virtual__():
 
 def _retcode_to_bool(retcode):
     '''
-    Evaulates ovs-vsctl command`s retcode value.
+    Evaluates ovs-vsctl command`s retcode value.
 
     Args:
         retcode: Value of retcode field from response.
