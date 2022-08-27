@@ -259,7 +259,17 @@ linux_interface_{{ interface_name }}:
   {%- endif %}
   {% endif %}
   - ipaddr: {{ interface.address }}
+  {%- if interface.ipv6_address is defined %}
+  - enable_ipv6: true
+  - ipv6ipaddr: {{ interface.ipv6_address }}
+  {%- endif %}
   - netmask: {{ interface.netmask }}
+  {%- if interface.ipv6_netmask is defined %}
+  - ipv6netmask: {{ interface.ipv6_netmask }}
+  {%- endif %}
+  {%- if interface.ipv6_gateway is defined %}
+  - ipv6gateway: {{ interface.ipv6_gateway }}
+  {%- endif %}
   {%- else %}
   - proto: {{ interface.get('proto', 'dhcp') }}
   {%- endif %}

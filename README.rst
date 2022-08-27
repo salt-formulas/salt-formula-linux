@@ -1368,6 +1368,28 @@ interface and DNS servers:
             - 8.8.4.4
             mtu: 1500
 
+Also example how to add ipv6 address
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        enabled: true
+        interface:
+          eth0:
+            enabled: True
+            type: eth
+            address: 192.168.0.102
+            netmask: 255.255.255.0
+            gateway: 192.168.0.1
+            name_servers:
+              - 8.8.8.8
+              - 8.8.4.4
+            ipv6_address: 2403:df70:a111:304::41
+            ipv6_netmask: 64
+            ipv6_gateway: 2403:df70:a111:304::1
+
+
 Linux with bonded interfaces and disabled ``NetworkManager``:
 
 .. code-block:: yaml
