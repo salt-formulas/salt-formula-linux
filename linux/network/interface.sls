@@ -283,6 +283,9 @@ linux_interface_{{ interface_name }}:
   {%- if interface.name_servers is defined %}
   - dns: {{ interface.name_servers }}
   {%- endif %}
+  {%- if interface.metric is defined and grains.os_family == 'Debian' %}
+  - metric: {{ interface.metric }}
+  {%- endif %}
   {%- if interface.wireless is defined and grains.os_family == 'Debian' %}
   {%- if interface.wireless.security == "wpa" %}
   - wpa-ssid: {{ interface.wireless.essid }}

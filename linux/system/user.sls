@@ -49,7 +49,7 @@ system_user_{{ name }}:
   {%- if user.gid is defined and user.gid %}
   - gid: {{ user.gid }}
   {%- else %}
-  - gid_from_name: true
+  - gid: {{ name }}
   {%- endif %}
   {%- if user.groups is defined %}
   - groups: {{ user.groups }}

@@ -109,7 +109,17 @@
              'services': []
         },
     },
-}, grain='os_family', merge=salt['pillar.get']('linux:system')) %}
+}, merge=salt['grains.filter_by']({
+    'bullseye': {
+        'pkgs': ['python3-apt', 'apt-transport-https', 'libmnl0'],
+    },
+    'bookworm': {
+        'pkgs': ['python3-apt', 'apt-transport-https', 'libmnl0'],
+    },
+    'sid': {
+        'pkgs': ['python3-apt', 'apt-transport-https', 'libmnl0'],
+    },
+}, grain='oscodename', merge=salt['pillar.get']('linux:system'))) %}
 
 {% set banner = salt['grains.filter_by']({
     'BaseDefaults': {
@@ -383,10 +393,22 @@ Debian:
          },
     },
 }, merge=salt['grains.filter_by']({
+    'CentOS Stream 8': {
+      'lvm_services': ['lvm2-lvmpolld', 'lvm2-monitor'],
+    },
     'focal': {
       'lvm_services': ['lvm2-monitor'],
     },
     'buster': {
+        'lvm_services': ['lvm2-monitor'],
+    },
+    'bullseye': {
+        'lvm_services': ['lvm2-monitor'],
+    },
+    'bookworm': {
+        'lvm_services': ['lvm2-monitor'],
+    },
+    'sid': {
         'lvm_services': ['lvm2-monitor'],
     },
     'trusty': {
