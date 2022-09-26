@@ -317,6 +317,9 @@ linux_interface_{{ interface_name }}:
   - slaves: {{ interface.slaves }}
   - mode: {{ interface.mode }}
   {%- endif %}
+  {%- if interface.ipv6addrs is defined %}
+  - ipv6addrs: {{ interface.ipv6addrs }}
+  {%- endif %}
 
 
 {%- if salt['grains.get']('saltversion') < '2017.7' %}

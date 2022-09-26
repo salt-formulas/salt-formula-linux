@@ -7,6 +7,7 @@
 
 {%- if not mount.file_system in ['nfs', 'nfs4', 'cifs', 'tmpfs'] %}
 
+{%- if mount.make_fs is defined and mount.make_fs %}
 mkfs_{{ mount.device}}:
   cmd.run:
   - name: "mkfs.{{ mount.file_system }} -L {{ name }} {{ mount.device }}"
@@ -16,11 +17,14 @@ mkfs_{{ mount.device}}:
   {%- if mount.file_system == 'xfs' %}
   - require:
     - pkg: xfs_packages_{{ mount.device }}
+  {%- endif %}
+{%- endif %}
 
+{%- if mount.file_system == 'xfs' %}
 xfs_packages_{{ mount.device }}:
   pkg.installed:
     - name: xfsprogs
-  {%- endif %}
+{% endif %}
 
 {%- endif %}
 
@@ -37,6 +41,8 @@ linux_storage_nfs_packages_{{ mount.path }}:
   - fstype: {{ mount.file_system }}
   - mkmnt: True
   - opts: {{ mount.get('opts', 'defaults,noatime') }}
+  - mount: {{ mount.get('mount', 'True') }}
+  - persist: {{ mount.get('save_to_fstab', 'False') }}
   {%- if mount.file_system == 'xfs' %}
   - require:
     - pkg: xfs_packages_{{ mount.device }}
