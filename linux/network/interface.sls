@@ -263,6 +263,20 @@ linux_interface_{{ interface_name }}:
   {%- else %}
   - proto: {{ interface.get('proto', 'dhcp') }}
   {%- endif %}
+
+  # IPv6
+  {%- if interface.enable_ipv6 is defined %}
+  - enable_ipv6: {{ interface.enable_ipv6 }}
+  {%-   if interface.ipv6ipaddr is defined %}
+  {%-     if grains.os_family == 'Debian' %}
+  - ipv6proto: {{ interface.get('ipv6proto', 'static') }}
+  {%-     endif %}
+  - ipv6ipaddr: {{ interface.ipv6ipaddr }}
+  - ipv6gateway: {{ interface.ipv6gateway }}
+  - ipv6netmask: {{ interface.ipv6netmask }}
+  {%-   endif %}
+  {%- endif %}
+
   {%- if interface.type == 'slave' %}
   - master: {{ interface.master }}
   {%- endif %}

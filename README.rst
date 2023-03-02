@@ -457,7 +457,7 @@ Systemd journal settings:
           journal:
             SystemMaxUse: "50M"
             RuntimeMaxFiles: "100"
-            
+
 Ensure presence of directory:
 
 .. code-block:: yaml
@@ -1368,6 +1368,29 @@ interface and DNS servers:
             - 8.8.4.4
             mtu: 1500
 
+
+Linux with IPv4 and IPv6 static network interfaces, default gateway
+
+            .. code-block:: yaml
+
+                linux:
+                  network:
+                    enabled: true
+                    interface:
+                      eth0:
+                        enabled: true
+                        type: eth
+                        address: 192.168.0.102
+                        netmask: 255.255.255.0
+                        gateway: 192.168.0.1
+
+                        enable_ipv6: true
+                        ipv6proto: static
+                        ipv6ipaddr:  1234:abcd::ffff:192.168.0.102
+                        ipv6gateway: 1234:abcd::ffff:192.168.0.1
+                        ipv6netmask: 64
+
+
 Linux with bonded interfaces and disabled ``NetworkManager``:
 
 .. code-block:: yaml
@@ -2068,6 +2091,25 @@ NFS mount:
           file_system: nfs
           opts: rw,sync
 
+Bind mount:
+
+.. code-block:: yaml
+
+  linux:
+    storage:
+      enabled: true
+      mount:
+        mount_bind:
+          enabled: true
+          path: /mnt/bind/name
+          device: /mnt/source/bind
+          file_system: none
+          opts: bind,defaults
+          dump: 0
+          pass_num: 1
+
+
+
 File swap configuration:
 
 .. code-block:: yaml
@@ -2117,6 +2159,30 @@ into ``/mnt/data``.
               volume:
                 data:
                   size: 40G
+                  mount: ${linux:storage:mount:data}
+
+Salt now also supports expanding and shrinking a LV:
+
+To reduce the size of an LV the option force must be set to true.
+! Caution this can destroy the file system if it is not shrunk before !
+only some file systems can be shrunk.
+
+.. code-block:: yaml
+
+    parameters:
+      linux:
+          lvm:
+            vg1:
+              enabled: true
+              devices:
+                - /dev/sdb
+              volume:
+                data:              # to expand
+                  size: 50G
+                  mount: ${linux:storage:mount:data}
+                data:              # to reduce
+                  size: 30G
+                  force: true
                   mount: ${linux:storage:mount:data}
 
 Create partitions on disk. Specify size in MB. It expects empty
@@ -2610,4 +2676,3 @@ Documentation and Bugs
 * #salt-formulas @ irc.freenode.net
    Use this IRC channel in case of any questions or feedback which is always
    welcome.
-

@@ -5,7 +5,7 @@
 
 {%- if mount.enabled %}
 
-{%- if not mount.file_system in ['nfs', 'nfs4', 'cifs', 'tmpfs'] %}
+{%- if not mount.file_system in ['nfs', 'nfs4', 'cifs', 'tmpfs', 'none'] %}
 
 mkfs_{{ mount.device}}:
   cmd.run:
@@ -37,6 +37,8 @@ linux_storage_nfs_packages_{{ mount.path }}:
   - fstype: {{ mount.file_system }}
   - mkmnt: True
   - opts: {{ mount.get('opts', 'defaults,noatime') }}
+  - dump: {{ mount.dump|default('0', true) }}
+  - pass_num: {{ mount.pass_num|default('0', true) }}
   {%- if mount.file_system == 'xfs' %}
   - require:
     - pkg: xfs_packages_{{ mount.device }}
