@@ -119,6 +119,9 @@
     'sid': {
         'pkgs': ['python3-apt', 'apt-transport-https', 'libmnl0'],
     },
+    'jammy': {
+        'pkgs': ['python3-apt', 'apt-transport-https', 'libmnl0'],
+    },
 }, grain='oscodename', merge=salt['pillar.get']('linux:system'))) %}
 
 {% set banner = salt['grains.filter_by']({
