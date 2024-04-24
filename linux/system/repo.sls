@@ -135,6 +135,21 @@ linux_repo_{{ name }}:
             {%- if repo.key_url is defined and (grains['saltversioninfo'] >= [2017, 7] or repo.key_url.startswith('salt://')) %}
   - key_url: {{ repo.key_url }}
             {%- endif %}
+{#
+    Disable apt-key usage when salt version is at least 3005, and the user provides
+    'signed-by=' in their source, and we're on a newer version of Debian or Ubuntu.
+    apt-key is deprecated, see the following for more context:
+    https://docs.saltproject.io/en/latest/ref/states/all/salt.states.pkgrepo.html#apt-key-deprecated
+#}
+            {%- if grains['saltversioninfo'] >= [3005, 0] and
+              'signed-by=' in repo.source and
+              (
+                (grains['os'] == 'Debian' and grains['osrelease_info'] >= (11,)) or
+                (grains['os'] == 'Ubuntu' and grains['osrelease_info'] >= (22, 4))
+              )
+            %}
+  - aptkey: False
+            {%- endif %}
   - consolidate: {{ repo.get('consolidate', False) }}
   - require:
     - file: /etc/apt/apt.conf.d/99proxies-salt-{{ name }}
