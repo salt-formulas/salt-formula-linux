@@ -231,7 +231,7 @@ default_repo_list:
     - replace: True
     {%- endif %}
     - defaults:
-        default_repos: {{ default_repos }}
+        default_repos: {{ default_repos|yaml }}
 
   {%- endif %}
 
