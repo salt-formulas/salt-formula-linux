@@ -1522,6 +1522,7 @@ Open vSwitch Bridges:
             enabled: true
             name: br-ens7
             type: ovs_bridge
+            ovs_ports: ens7
             proto: manual
             mtu: 9000
             use_interfaces:

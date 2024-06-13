@@ -152,7 +152,7 @@ linux_interfaces_include_{{ interface_name }}:
       source /etc/network/interfaces.u/*
 
 ovs_bridge_{{ interface_name }}:
-  file.managed:
+  file.append:
   - name: /etc/network/interfaces.u/ifcfg-{{ interface_name }}
   - makedirs: True
   - source: salt://linux/files/ovs_bridge
@@ -175,6 +175,18 @@ ovs_bond_{{ interface_name }}:
     - unless: ovs-vsctl show | grep -A 2 'Port.*{{ interface_name }}.'
     - require:
       - ovs_bridge_{{ interface.bridge }}_present
+
+ovs_bond_persistent_{{ interface_name }}:
+  file.append:
+    - name: /etc/network/interfaces.u/ifcfg-{{ interface.bridge }}
+    - makedirs: True
+    - source: salt://linux/files/ovs_port
+    - template: jinja
+    - context:
+        port_name: {{ interface_name }}
+        port: {{ interface|yaml }}
+    - require:
+      - ovs_bridge_{{ interface.bridge }}
 
 {%- elif interface.type == 'ovs_port' %}
 
