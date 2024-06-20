@@ -2022,6 +2022,33 @@ DPDK OVS interfaces
             address: ${_param:tenant_address}
             netmask: ${_param:tenant_network_netmask}
 
+**Linux Network Interface configuration**
+
+Configuration of network interface eth0 on RedHad.
+Parameter ipv6addrs used to bind ipv6 aliases to the network interface.
+
+.. code-block:: yaml
+
+    linux:
+      network:
+        ...
+        interface:
+          eth0:
+            enabled: true
+            type: eth
+            address: 192.168.0.1
+            netmask: 255.255.255.0
+            gateway: 192.168.0.154
+            name_servers:
+              - 192.168.0.10
+              - 192.168.0.11
+            ipv6_address: fd8f:a45a:2ed2:d37c::7
+            ipv6_netmask: 64
+            ipv6_gateway: fd8f:a45a:2ed2:d37c::1
+            ipv6addrs:
+              - fd8f:a45a:2ed2:d37c:ffff:fffe/128
+              - fd8f:a45a:2ed2:d37c:ffff:ffff/128
+
 **DPDK OVS bridge for VXLAN**
 
 If VXLAN is used as tenant segmentation, IP address must
