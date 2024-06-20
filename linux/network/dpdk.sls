@@ -41,6 +41,27 @@ openvswitch_dpdk_pkgs:
     - openvswitch-switch
     - bridge-utils
 
+{# create drop-in dpdk dependency for openvswitch-switch (ovsdb-server) #}
+/etc/systemd/system/openvswitch-switch.service.d/dpdk.conf:
+  file.managed:
+    - makedirs: true
+    - require:
+      - pkg: openvswitch_dpdk_pkgs
+    - contents: |
+        [Unit]
+        Requires=dpdk.service
+        After=dpdk.service
+
+{# create drop-in dpdk post-start reload of openvswitch-nonetwork #}
+/etc/systemd/system/dpdk.service.d/openvswitch-nonetwork.conf:
+  file.managed:
+    - makedirs: true
+    - require:
+      - pkg: openvswitch_dpdk_pkgs
+    - contents: |
+        [Service]
+        ExecStartPost=/bin/systemctl restart openvswitch-nonetwork
+
 linux_network_dpdk_ovs_service:
   cmd.run:
   - name: "ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true"
