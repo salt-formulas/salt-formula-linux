@@ -237,6 +237,8 @@ ovs_port_up_{{ interface_name }}:
     - file: ovs_port_{{ interface_name }}
     - openvswitch_bridge: ovs_bridge_{{ interface.bridge }}_present
     - file: linux_interfaces_final_include
+  - unless:
+    - ip link show {{ interface_name }} | grep -q '\<UP\>'
 
 {%- endif %}
 
